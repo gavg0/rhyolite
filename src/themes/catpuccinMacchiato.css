@@ -3,39 +3,39 @@
     color: #cad3f5;
 
     --ck-color-base-background: #24273a !important;
-    --ck-color-base-border: #b7b0a7 !important;
+    --ck-color-base-border: #1e2030 !important;
 
-    --ck-color-base-focus: #b7b0a7 !important;
+    --ck-color-base-focus: #1e2030 !important;
 
-    --ck-color-button-default-active-background: #e7c6c2 !important;
-    --ck-color-button-default-hover-background: #e7c6c2 !important;
+    --ck-color-button-default-active-background: #363a4f !important;
+    --ck-color-button-default-hover-background: #494d64 !important;
 
-    --ck-color-button-on-color: #b7b0a7 !important;
-    --ck-color-upload-bar-background: #b7b0a7 !important;
-    --ck-color-focus-border: #b7b0a7 !important;
-    --ck-color-focus-outer-shadow: #b7b0a7 !important;
+    --ck-color-button-on-color: #8087a2 !important;
+    --ck-color-upload-bar-background: #8087a2 !important;
+    --ck-color-focus-border: #8087a2 !important;
+    --ck-color-focus-outer-shadow: #8087a2 !important;
 
-    --ck-color-base-text: #1e1e2f !important;
+    --ck-color-base-text: #cad3f5 !important;
 
     --ck-color-base-active: none !important;
     --ck-color-base-active-focus: none !important;
 
-    --ck-color-link-default: #ca9ee6 !important;
+    --ck-color-link-default: #b7bdf8 !important;
 
     --ck-focus-ring: none !important;
     --ck-border-radius: 10px !important;
 }
 
 ::selection {
-    background: #ca9ee6;
+    background: #939ab7;
 }
 
 .ck-content text {
-    color: #cad3f5;
+    color: var(--text-color);
 }
 
 .ck ck-button__label {
-    color: #1e1e2f;
+    color: var(--text-color);
 }
 
 #popup {
@@ -46,11 +46,11 @@
 }
 
 .focused {
-    background-color: #e7c6c2;
+    background-color: #181926;
 }
 
 .navigation {
-    background-color: #f4dbd6;
+    background-color: #1e2030;
 }
 
 kbd {

@@ -1,4 +1,4 @@
-# Fextify(revanced)
+# FextifyPlus
 
 <img src='assets\example.png'>
 A simple text editor written in Tauri, inspired by Obsidian. 

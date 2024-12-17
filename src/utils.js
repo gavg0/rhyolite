@@ -138,7 +138,8 @@ async function handle_open_file(path) {
 
     let info = await open_file(path);
 
-    window.title.val(info[0]);
+    let extracted_title = decodeURIComponent(info[0]).split('\\');
+    window.title.val(extracted_title[extracted_title.length - 1]);
     window.editor.setData(info[1]);
     window.path = info[0];
 
@@ -171,7 +172,7 @@ async function manage_tabs(tabs) {
         const info = await read_file_by_id(tabs[i]);
 
         tippy(`.pages > li:nth-child(${i + 1})`, {
-            content: info[0],
+            content: decodeURIComponent(info[0]),
         });
     }
 }
@@ -196,7 +197,7 @@ async function switch_tab(target) {
 
     const info = await read_file_by_id(tabs[target.textContent - 1]);
 
-    window.title.val(info[0]);
+    window.title.val(decodeURIComponent(info[0]));
     window.editor.setData(info[1]);
     window.path = window.title.val();
 

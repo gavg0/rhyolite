@@ -6,6 +6,40 @@
     <link data-trunk rel="css" href="styles.css" />
     <link data-trunk rel="copy-dir" href="public" />
     <link data-trunk rel="rust" data-wasm-opt="z" />
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    <script>
+      function initialize_quill(editor_id) {
+        const toolbarOptions = [
+          ['bold', 'italic', 'underline', 'strike'], // Formatting buttons
+          ['blockquote', 'code-block'], // Block types
+
+          [{ header: 1 }, { header: 2 }], // Header options
+          [{ list: 'ordered' }, { list: 'bullet' }], // List options
+          [{ script: 'sub' }, { script: 'super' }], // Subscript/Superscript
+          [{ indent: '-1' }, { indent: '+1' }], // Indent
+          [{ direction: 'rtl' }], // Text direction
+
+          [{ size: ['small', false, 'large', 'huge'] }], // Font size
+          [{ header: [1, 2, 3, 4, 5, 6, false] }], // Header levels
+
+          [{ color: [] }, { background: [] }], // Text color and background
+          [{ font: [] }], // Font family
+          [{ align: [] }], // Text alignment
+
+          ['clean'], // Remove formatting
+          ['link', 'image', 'video'], // Media
+        ];
+
+        const editor = new Quill(`#${editor_id}`, {
+          modules: {
+            toolbar: toolbarOptions,
+          },
+          theme: 'snow', // Use the 'snow' theme
+        });
+        console.log("Quill editor initialized!");
+      }
+    </script>
   </head>
   <body></body>
 </html>

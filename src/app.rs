@@ -13,6 +13,7 @@ use uuid;
 extern "C" {
     #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"])]
     async fn invoke(cmd: &str, args: JsValue) -> JsValue;
+    fn initialize_quill(editor_id: &str);
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -44,6 +45,10 @@ pub fn App() -> impl IntoView {
         if current_id.get().is_empty() {
             set_current_id.set(generate_id());
         }
+    });
+
+    Effect::new(move |_| {
+        initialize_quill("editor");
     });
 
     // Auto-save function
@@ -163,14 +168,15 @@ pub fn App() -> impl IntoView {
                     on:input=update_title
                 />
             </div>
-            <div class="textbox-container">
-                <textarea
-                    class="rounded-container"
-                    placeholder="Start typing..."
-                    prop:value=textbox_text
-                    on:input=update_textbox
-                />
-            </div>
+            // <div class="textbox-container">
+            //     <textarea
+            //         class="rounded-container"
+            //         placeholder="Start typing..."
+            //         prop:value=textbox_text
+            //         on:input=update_textbox
+            //     />
+            // </div>
+            <div id="editor" class="textbox-container rounded-container"></div>
             <div class="word-char-counter">
                 {move || format!("Words: {} | Characters: {}", word_count.get(), char_count.get())}
             </div>

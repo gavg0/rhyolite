@@ -22,12 +22,21 @@ struct DocumentData {
     content: String,
 }
 
+// Function to count words, accounting for multiple whitespaces
+fn count_words(text: &str) -> usize {
+    text.split_whitespace().count()
+}
+
 #[component]
 pub fn App() -> impl IntoView {
     let (title_text, set_title_text) = prelude::signal(String::new());
     let (textbox_text, set_textbox_text) = prelude::signal(String::new());
     let (recent_documents, set_recent_documents) = prelude::signal(Vec::<DocumentData>::new());
     let (current_id, set_current_id) = prelude::signal(String::new()); // Signal for the unique ID
+    
+    // New signals for word and character counts
+    let (word_count, set_word_count) = prelude::signal(0);
+    let (char_count, set_char_count) = prelude::signal(0);
 
     // Generate a new unique ID when the app starts
     let generate_id = || uuid::Uuid::new_v4().to_string();
@@ -57,6 +66,13 @@ pub fn App() -> impl IntoView {
             }
         });
     };
+
+    // Update word and character counts whenever text changes
+    Effect::new(move |_| {
+        let current_text = textbox_text.get();
+        set_word_count.set(count_words(&current_text));
+        set_char_count.set(current_text.chars().count());
+    });
 
     // Debounce auto-save (modify this to debounce less aggressively)
     Effect::new(move |_| {
@@ -154,6 +170,9 @@ pub fn App() -> impl IntoView {
                     prop:value=textbox_text
                     on:input=update_textbox
                 />
+            </div>
+            <div class="word-char-counter">
+                {move || format!("Words: {} | Characters: {}", word_count.get(), char_count.get())}
             </div>
         </main>
     }

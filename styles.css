@@ -139,7 +139,7 @@ textarea.rounded-container {
 
 .title-textarea {
   text-align: center;
-  font-size: 1.5em;
+  font-size: 1.6em;
   font-weight: bold;
   overflow: hidden; /* Hide scrollbars */
   scrollbar-width: none; 
@@ -148,6 +148,7 @@ textarea.rounded-container {
 
 .title-textarea::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
+  width: 0;
   }
 
 /* @media (prefers-color-scheme: dark) {

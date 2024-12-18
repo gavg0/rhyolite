@@ -2,52 +2,115 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
-use serde_json::{json, Value};
+// use serde_json::{json, Value};
 use std::sync::Mutex;
 use once_cell::sync::Lazy;
+use dirs;
+use sanitize_filename;
 
-#[derive(Serialize, Deserialize)]
-struct JsonData {
-    children: Vec<Child>,
+#[derive(Serialize, Deserialize, Clone)]
+struct DocumentData {
+    title: String,
+    content: String,
 }
 
-#[derive(Serialize, Deserialize)]
-struct Child {
-    id: String,
-    path: String,
-}
+static RECENT_FILES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
-static PATH: Lazy<Mutex<String>> = Lazy::new(|| {
-    Mutex::new("C:/Users/User/Documents/GitHub/text-editor/Folder".to_string())
-});
-
-#[tauri::command]
-fn save_file(path: String, content: String) -> Result<(), String> {
-    // Lock the Mutex and clone the string
-    let base_path = PATH.lock().map_err(|_| "Failed to lock PATH Mutex")?.clone();
+fn get_documents_dir() -> PathBuf {
+    let mut path = dirs::document_dir().expect("Could not find Documents directory");
+    path.push("FextifyPlus");
     
-    // Create the full path
-    let full_path = PathBuf::from(base_path).join(path);
+    // Create the directory if it doesn't exist
+    fs::create_dir_all(&path).expect("Could not create FextifyPlus directory");
     
-    // Write the content to the file
-    fs::write(&full_path, &content)
-        .map_err(|e| format!("Failed to write to file: {}", e))?;
-    
-    Ok(())
+    path
 }
 
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+fn save_document(title: String, content: String) -> Result<String, String> {
+    let documents_dir = get_documents_dir();
+    
+    // Use title as filename, or 'untitled' if empty
+    let filename = if title.trim().is_empty() { 
+        "untitled".to_string() 
+    } else { 
+        title.trim().to_string() 
+    };
+    
+    // Ensure filename is valid
+    let safe_filename = sanitize_filename::sanitize(&format!("{}.json", filename));
+    let file_path = documents_dir.join(safe_filename);
+    
+    let document_data = DocumentData {
+        title: title.clone(),
+        content: content.clone(),
+    };
+    
+    // Save file
+    match serde_json::to_string_pretty(&document_data) {
+        Ok(json_content) => {
+            match fs::write(&file_path, json_content) {
+                Ok(_) => {
+                    // Update recent files
+                    let mut recent_files = RECENT_FILES.lock().unwrap();
+                    if !recent_files.contains(&file_path.to_string_lossy().to_string()) {
+                        recent_files.push(file_path.to_string_lossy().to_string());
+                    }
+                    Ok(file_path.to_string_lossy().to_string())
+                },
+                Err(e) => Err(format!("Failed to write file: {}", e))
+            }
+        },
+        Err(e) => Err(format!("Failed to serialize document: {}", e))
+    }
 }
+
+#[tauri::command]
+fn load_recent_files() -> Result<Vec<DocumentData>, String> {
+    let documents_dir = get_documents_dir();
+    
+    // Read all JSON files in the directory
+    let files = match fs::read_dir(&documents_dir) {
+        Ok(entries) => entries
+            .filter_map(|entry| entry.ok())
+            .filter(|entry| {
+                entry.path().extension()
+                    .map_or(false, |ext| ext == "json")
+            })
+            .filter_map(|entry| {
+                let path = entry.path();
+                fs::read_to_string(&path)
+                    .ok()
+                    .and_then(|content| serde_json::from_str::<DocumentData>(&content).ok())
+            })
+            .collect(),
+        Err(e) => return Err(format!("Failed to read directory: {}", e))
+    };
+    
+    Ok(files)
+}
+
+#[tauri::command]
+fn delete_document(filename: String) -> Result<(), String> {
+    let documents_dir = get_documents_dir();
+    let file_path = documents_dir.join(filename);
+    
+    match fs::remove_file(file_path) {
+        Ok(_) => Ok(()),
+        Err(e) => Err(format!("Failed to delete file: {}", e))
+    }
+}
+
+
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            greet,
-            save_file
+            save_document,
+            load_recent_files,
+            delete_document
             ]
         )
         .run(tauri::generate_context!())

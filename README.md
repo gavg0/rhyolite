@@ -5,7 +5,14 @@ A simple text editor written in Tauri, inspired by Obsidian.
 
 <br>
 
-This is a **prototype**, not a fully polished version and is a fork of [fextify](https://github.com/face-hh/fextify) since the original repo was not being updated or maintained anymore.
+This is a **prototype**, not a fully polished version and is a fork of [fextify](https://github.com/face-hh/fextify) since the original repo was not being updated or maintained anymore. !!CAUTION!! The project is going under a lot of improvements, migrations and upgrades, it is advised to wait till a new binary is released and then test the project! 
+
+# Changes include but are not limited too:-
+- Rewriting the backend and frontend using Tauri and Leptos.
+- Changing the default editor for ckeditor too quilt(since ckeditor 5 is not free anymore.)
+- Maybe a renaming and icon change in future(planned).
+
+I decided to redo the whole project and continue developement on it cause I really liked the project and as a new dev I also wanted to make an open source project of my own, but before that I needed some experience so decided to contribute to this!
 
 # How to run?
 

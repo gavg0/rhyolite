@@ -7,7 +7,7 @@ use std::sync::Mutex;
 use once_cell::sync::Lazy;
 use dirs;
 use sanitize_filename;
-use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, TagEnd};
+//use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, TagEnd};
 
 #[derive(Serialize, Deserialize, Clone)]
 struct DocumentData {

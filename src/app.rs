@@ -108,15 +108,8 @@ pub fn App() -> impl IntoView {
         spawn_local(async move {
             if let Some(input_event) = ev.dyn_into::<web_sys::InputEvent>().ok() {
                 let v = event_target_value(&input_event);
-    
-                // Perform Markdown conversion
-                let args = serde_wasm_bindgen::to_value(&json!(v)).unwrap();
-                let converted_text = invoke("convert_markdown", args).await.as_string();
-                if let Some(converted_text) = converted_text {
-                    set_textbox_text.set(converted_text);
-                } else {
-                    set_textbox_text.set(v);
-                }
+                set_textbox_text.set(v);
+                
             }
         });
     };

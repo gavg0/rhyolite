@@ -31,12 +31,19 @@ fn get_documents_dir() -> PathBuf {
 fn save_document(id: String, title: String, content: String) -> Result<String, String> {
     let documents_dir = get_documents_dir();
     
-    // Use ID as the filename
-    let safe_filename = sanitize_filename::sanitize(&format!("{}.json", id));
-    let file_path = documents_dir.join(safe_filename);
+    // Use title as filename, fallback to 'untitled' if empty
+    let filename = if title.trim().is_empty() { 
+        "untitled".to_string() 
+    } else { 
+        title.trim().to_string() 
+    };
+    
+    // Ensure filename is valid and append .json
+    let safe_filename = sanitize_filename::sanitize(&format!("{}.json", filename));
+    let file_path = documents_dir.join(&safe_filename);
     
     let document_data = DocumentData {
-        id,  // Use the provided ID
+        id,  // Keep the original ID
         title: title.clone(),
         content: content.clone(),
     };
@@ -44,6 +51,30 @@ fn save_document(id: String, title: String, content: String) -> Result<String, S
     // Save file
     match serde_json::to_string_pretty(&document_data) {
         Ok(json_content) => {
+            // First, check if a file with this ID already exists
+            let existing_files: Vec<PathBuf> = fs::read_dir(&documents_dir)
+                .map_err(|e| format!("Failed to read directory: {}", e))?
+                .filter_map(|entry| entry.ok())
+                .filter_map(|entry| {
+                    let path = entry.path();
+                    // Try to read the file content to extract the ID
+                    fs::read_to_string(&path)
+                        .ok()
+                        .and_then(|content| 
+                            serde_json::from_str::<DocumentData>(&content)
+                                .ok()
+                                .filter(|doc| doc.id == document_data.id)
+                                .map(|_| path)
+                        )
+                })
+                .collect();
+            
+            // Remove any existing files with the same ID
+            for old_file in existing_files {
+                fs::remove_file(&old_file).map_err(|e| format!("Failed to remove old file: {}", e))?;
+            }
+            
+            // Write the new file
             match fs::write(&file_path, json_content) {
                 Ok(_) => Ok(file_path.to_string_lossy().to_string()),
                 Err(e) => Err(format!("Failed to write file: {}", e))
@@ -81,12 +112,32 @@ fn load_recent_files() -> Result<Vec<DocumentData>, String> {
 #[tauri::command]
 fn delete_document(id: String) -> Result<(), String> {
     let documents_dir = get_documents_dir();
-    let file_path = documents_dir.join(format!("{}.json", sanitize_filename::sanitize(&id)));
     
-    match fs::remove_file(file_path) {
-        Ok(_) => Ok(()),
-        Err(e) => Err(format!("Failed to delete file: {}", e))
+    // Find and delete all files with the matching ID
+    let files_to_delete: Vec<PathBuf> = fs::read_dir(&documents_dir)
+        .map_err(|e| format!("Failed to read directory: {}", e))?
+        .filter_map(|entry| entry.ok())
+        .filter_map(|entry| {
+            let path = entry.path();
+            // Try to read the file content to extract the ID
+            fs::read_to_string(&path)
+                .ok()
+                .and_then(|content| 
+                    serde_json::from_str::<DocumentData>(&content)
+                        .ok()
+                        .filter(|doc| doc.id == id)
+                        .map(|_| path)
+                )
+        })
+        .collect();
+    
+    // Delete all matching files
+    for file_path in files_to_delete {
+        fs::remove_file(&file_path)
+            .map_err(|e| format!("Failed to delete file {}: {}", file_path.display(), e))?;
     }
+    
+    Ok(())
 }
 
 

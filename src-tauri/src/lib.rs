@@ -10,6 +10,7 @@ use sanitize_filename;
 
 #[derive(Serialize, Deserialize, Clone)]
 struct DocumentData {
+    id: String,  // Add this line
     title: String,
     content: String,
 }
@@ -27,21 +28,15 @@ fn get_documents_dir() -> PathBuf {
 }
 
 #[tauri::command]
-fn save_document(title: String, content: String) -> Result<String, String> {
+fn save_document(id: String, title: String, content: String) -> Result<String, String> {
     let documents_dir = get_documents_dir();
     
-    // Use title as filename, or 'untitled' if empty
-    let filename = if title.trim().is_empty() { 
-        "untitled".to_string() 
-    } else { 
-        title.trim().to_string() 
-    };
-    
-    // Ensure filename is valid
-    let safe_filename = sanitize_filename::sanitize(&format!("{}.json", filename));
+    // Use ID as the filename
+    let safe_filename = sanitize_filename::sanitize(&format!("{}.json", id));
     let file_path = documents_dir.join(safe_filename);
     
     let document_data = DocumentData {
+        id,  // Use the provided ID
         title: title.clone(),
         content: content.clone(),
     };
@@ -50,14 +45,7 @@ fn save_document(title: String, content: String) -> Result<String, String> {
     match serde_json::to_string_pretty(&document_data) {
         Ok(json_content) => {
             match fs::write(&file_path, json_content) {
-                Ok(_) => {
-                    // Update recent files
-                    let mut recent_files = RECENT_FILES.lock().unwrap();
-                    if !recent_files.contains(&file_path.to_string_lossy().to_string()) {
-                        recent_files.push(file_path.to_string_lossy().to_string());
-                    }
-                    Ok(file_path.to_string_lossy().to_string())
-                },
+                Ok(_) => Ok(file_path.to_string_lossy().to_string()),
                 Err(e) => Err(format!("Failed to write file: {}", e))
             }
         },
@@ -91,9 +79,9 @@ fn load_recent_files() -> Result<Vec<DocumentData>, String> {
 }
 
 #[tauri::command]
-fn delete_document(filename: String) -> Result<(), String> {
+fn delete_document(id: String) -> Result<(), String> {
     let documents_dir = get_documents_dir();
-    let file_path = documents_dir.join(filename);
+    let file_path = documents_dir.join(format!("{}.json", sanitize_filename::sanitize(&id)));
     
     match fs::remove_file(file_path) {
         Ok(_) => Ok(()),

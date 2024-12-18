@@ -1,8 +1,10 @@
 use ev::KeyboardEvent;
 // use leptos::leptos_dom::ev::SubmitEvent;
 use leptos::*;
+use prelude::*;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
+use wasm_bindgen_futures::spawn_local;
 use std::time::Duration;
 use serde_json::json;
 use uuid;
@@ -22,68 +24,75 @@ struct DocumentData {
 
 #[component]
 pub fn App() -> impl IntoView {
-    let (title_text, set_title_text) = create_signal(String::new());
-    let (textbox_text, set_textbox_text) = create_signal(String::new());
-    let (recent_documents, set_recent_documents) = create_signal(Vec::<DocumentData>::new());
-    let (current_id, set_current_id) = create_signal(String::new()); // Signal for the unique ID
+    let (title_text, set_title_text) = prelude::signal(String::new());
+    let (textbox_text, set_textbox_text) = prelude::signal(String::new());
+    let (recent_documents, set_recent_documents) = prelude::signal(Vec::<DocumentData>::new());
+    let (current_id, set_current_id) = prelude::signal(String::new()); // Signal for the unique ID
 
     // Generate a new unique ID when the app starts
     let generate_id = || uuid::Uuid::new_v4().to_string();
-    create_effect(move |_| {
+    prelude::Effect::new(move |_| {
         if current_id.get().is_empty() {
             set_current_id.set(generate_id());
         }
     });
 
     // Auto-save function
-    let auto_save = create_action(move |_| async move {
-        let id = current_id.get_untracked();
-        let title = title_text.get_untracked();
-        let content = textbox_text.get_untracked();
+    let auto_save = move || {
+        spawn_local(async move {
+            let id = current_id.get();
+            let title = title_text.get();
+            let content = textbox_text.get();
 
-        // Only save if there's content
-        if !title.is_empty() || !content.is_empty() {
-            let args = serde_wasm_bindgen::to_value(&json!({
-                "id": id,
-                "title": title,
-                "content": content
-            }))
-            .unwrap();
+            // Only save if there's content
+            if !title.is_empty() || !content.is_empty() {
+                let args = serde_wasm_bindgen::to_value(&json!({
+                    "id": id,
+                    "title": title,
+                    "content": content
+                }))
+                .unwrap();
 
-            let _ = invoke("save_document", args).await;
-        }
-    });
+                let _ = invoke("save_document", args).await;
+            }
+        });
+    };
 
     // Debounce auto-save (modify this to debounce less aggressively)
-    create_effect(move |_| {
+    Effect::new(move |_| {
         let _title = title_text.get(); // Trigger dependency
         let _content = textbox_text.get(); // Trigger dependency
 
         set_timeout(move || {
-            auto_save.dispatch(());
-        }, Duration::from_millis(1000)); // Increased to 1 second to reduce file writes
+            auto_save();
+        }, Duration::from_millis(1000));
     });
 
-    let load_recent_documents = create_action(move |_| async move {
-        let json_value = invoke("load_recent_files", JsValue::NULL).await;
-
-        if let Some(json_str) = json_value.as_string() {
-            if let Ok(docs) = serde_json::from_str::<Vec<DocumentData>>(&json_str) {
-                if let Some(last_doc) = docs.last() {
-                    set_current_id.set(last_doc.id.clone());
-                    set_title_text.set(last_doc.title.clone());
-                    set_textbox_text.set(last_doc.content.clone());
+    let load_recent_documents = move || {
+        spawn_local(async move {
+            let json_value = invoke("load_recent_files", JsValue::NULL).await;
+    
+            if let Some(json_str) = json_value.as_string() {
+                if let Ok(docs) = serde_json::from_str::<Vec<DocumentData>>(&json_str) {
+                    if let Some(last_doc) = docs.last() {
+                        set_current_id.set(last_doc.id.clone());
+                        set_title_text.set(last_doc.title.clone());
+                        set_textbox_text.set(last_doc.content.clone());
+                    }
+                    // If you still want to track recent documents
+                    set_recent_documents.set(docs);
+                } else {
+                    //tracing::error!("Failed to parse recent documents");
                 }
-                set_recent_documents.set(docs);
+            } else {
+                //tracing::error!("Failed to get JSON string from load_recent_files");
             }
-        } else {
-            print!("Failed to parse the response from `load_recent_files`.");
-        }
-    });
+        });
+    };
 
     // Load documents when component mounts
-    create_effect(move |_| {
-        load_recent_documents.dispatch(());
+    Effect::new(move |_| {
+        load_recent_documents();
     });
 
     // Update title and textbox handlers
@@ -95,10 +104,21 @@ pub fn App() -> impl IntoView {
     };
 
     let update_textbox = move |ev: ev::Event| {
-        if let Some(input_event) = ev.dyn_into::<web_sys::InputEvent>().ok() {
-            let v = event_target_value(&input_event);
-            set_textbox_text.set(v);
-        }
+        // Create an async block inside the closure
+        spawn_local(async move {
+            if let Some(input_event) = ev.dyn_into::<web_sys::InputEvent>().ok() {
+                let v = event_target_value(&input_event);
+    
+                // Perform Markdown conversion
+                let args = serde_wasm_bindgen::to_value(&json!(v)).unwrap();
+                let converted_text = invoke("convert_markdown", args).await.as_string();
+                if let Some(converted_text) = converted_text {
+                    set_textbox_text.set(converted_text);
+                } else {
+                    set_textbox_text.set(v);
+                }
+            }
+        });
     };
     // Delete document handler (Ctrl+X)
     let delete_document = move |ev: KeyboardEvent| {
@@ -130,7 +150,7 @@ pub fn App() -> impl IntoView {
                 <textarea
                     class="rounded-container"
                     placeholder="Enter Title here..."
-                    value=title_text
+                    prop:value=title_text
                     on:input=update_title
                 />
             </div>
@@ -138,7 +158,7 @@ pub fn App() -> impl IntoView {
                 <textarea
                     class="rounded-container"
                     placeholder="Start typing..."
-                    value=textbox_text
+                    prop:value=textbox_text
                     on:input=update_textbox
                 />
             </div>

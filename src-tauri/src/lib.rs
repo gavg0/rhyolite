@@ -7,6 +7,7 @@ use std::sync::Mutex;
 use once_cell::sync::Lazy;
 use dirs;
 use sanitize_filename;
+use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, TagEnd};
 
 #[derive(Serialize, Deserialize, Clone)]
 struct DocumentData {
@@ -140,6 +141,58 @@ fn delete_document(id: String) -> Result<(), String> {
     Ok(())
 }
 
+#[tauri::command]
+fn convert_markdown(text: String) -> Result<String, String> {
+    let mut options = Options::empty();
+    options.insert(Options::ENABLE_STRIKETHROUGH);
+    options.insert(Options::ENABLE_TABLES);
+    options.insert(Options::ENABLE_TASKLISTS);
+
+    let parser = Parser::new_ext(&text, options);
+    let mut formatted_text = String::new();
+    let mut in_code_block = false;
+
+    for event in parser {
+        match event {
+            Event::Start(tag) => match tag {
+                Tag::Heading { level, .. } => {
+                    formatted_text.push_str(&"#".repeat(level as usize));
+                    formatted_text.push(' ');
+                },
+                Tag::CodeBlock(kind) => {
+                    in_code_block = true;
+                    formatted_text.push_str("```");
+                    if let CodeBlockKind::Fenced(lang) = kind {
+                        formatted_text.push_str(&lang);
+                    }
+                    formatted_text.push('\n');
+                },
+                Tag::List(_) => formatted_text.push_str("- "),
+                Tag::Strong => formatted_text.push_str("**"),
+                Tag::Emphasis => formatted_text.push_str("*"),
+                Tag::Strikethrough => formatted_text.push_str("~~"),
+                _ => {}
+            },
+            Event::End(tag) => match tag {
+                TagEnd::Heading { .. } => formatted_text.push('\n'),
+                TagEnd::CodeBlock => {
+                    in_code_block = false;
+                    formatted_text.push_str("```\n");
+                },
+                TagEnd::Strong => formatted_text.push_str("**"),
+                TagEnd::Emphasis => formatted_text.push_str("*"),
+                TagEnd::Strikethrough => formatted_text.push_str("~~"),
+                _ => {}
+            },
+            Event::Text(text) => formatted_text.push_str(&text),
+            _ => {}
+        }
+    }
+
+    Ok(formatted_text)
+}
+
+
 
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -149,7 +202,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             save_document,
             load_recent_files,
-            delete_document
+            delete_document,
+            convert_markdown
             ]
         )
         .run(tauri::generate_context!())

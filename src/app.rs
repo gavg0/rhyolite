@@ -176,7 +176,7 @@ pub fn App() -> impl IntoView {
             //         on:input=update_textbox
             //     />
             // </div>
-            <div id="editor" class="textbox-container rounded-container"></div>
+            <div id="editor" class="quillbox-container"></div>
             <div class="word-char-counter">
                 {move || format!("Words: {} | Characters: {}", word_count.get(), char_count.get())}
             </div>

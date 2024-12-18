@@ -108,10 +108,20 @@ button {
   padding: 0.5%;
   width: 80%;
   height: 100%;
-  display: flex;
   justify-content: center;
   max-width: 700px;
-  z-index: 10;
+  /* z-index: 10; */
+}
+
+.quillbox-container {
+  flex-grow: 1; /* Allow textbox container to grow and fill remaining space */
+  display: flex;
+  padding: 0.5%;
+  width: 80%;
+  height: 100%;
+  max-width: 700px;
+  border-radius: 15px;
+  border-color: transparent;
 }
 
 .rounded-container {

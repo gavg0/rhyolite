@@ -5,6 +5,9 @@ use prelude::*;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::spawn_local;
+use wasm_bindgen::closure::Closure;
+use web_sys::{HtmlElement, Window};
+use wasm_bindgen::JsCast;
 use std::time::Duration;
 use serde_json::json;
 use uuid;
@@ -14,6 +17,7 @@ extern "C" {
     #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"])]
     async fn invoke(cmd: &str, args: JsValue) -> JsValue;
     fn initialize_quill(editor_id: &str);
+    fn get_quill_content(editor_id: &str) -> String;
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -56,7 +60,7 @@ pub fn App() -> impl IntoView {
         spawn_local(async move {
             let id = current_id.get();
             let title = title_text.get();
-            let content = textbox_text.get();
+            let content = get_quill_content("editor");
 
             // Only save if there's content
             if !title.is_empty() || !content.is_empty() {

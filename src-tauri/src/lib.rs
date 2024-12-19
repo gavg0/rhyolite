@@ -9,6 +9,7 @@ use once_cell::sync::Lazy;
 use dirs;
 use sanitize_filename;
 use uuid::Uuid;
+use tauri::{Manager, WindowEvent};
 //use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, TagEnd};
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -25,10 +26,40 @@ struct Tab {
     title: String
 }
 
-//static RECENT_FILES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
+#[derive(Serialize, Deserialize, Clone)]
+struct UserData {
+    ids: Vec<String>,  // Vec to store the IDs of open tabs
+}
+
+static RECENT_FILES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
 static TABS: Lazy<Mutex<Vec<Tab>>> = Lazy::new(|| Mutex::new(Vec::new()));
 static TOTAL_TABS: Lazy<Mutex<u64>> = Lazy::new(|| Mutex::new(0));
 
+fn on_app_close() {
+    // Collect the IDs of all open tabs
+    let tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e)).unwrap();
+    let ids: Vec<String> = tabs.iter().map(|tab| tab.id.clone()).collect();
+
+    // Create the UserData struct
+    let user_data = UserData { ids };
+
+    // Define the path to save the userdata.json file
+    let appdata_dir = get_documents_dir().join("appdata");
+    fs::create_dir_all(&appdata_dir).expect("Could not create appdata directory");
+
+    let userdata_path = appdata_dir.join("userdata.json");
+
+    // Serialize the UserData struct to JSON
+    match serde_json::to_string_pretty(&user_data) {
+        Ok(json_content) => {
+            // Write the JSON to the file
+            if let Err(e) = fs::write(userdata_path, json_content) {
+                eprintln!("Failed to save userdata: {}", e);
+            }
+        },
+        Err(e) => eprintln!("Failed to serialize userdata: {}", e),
+    }
+}
 
 fn get_documents_dir() -> PathBuf {
     let mut path = dirs::document_dir().expect("Could not find Documents directory");
@@ -66,6 +97,28 @@ fn new_tab() -> Result<Tab, String> {
 }
 
 #[tauri::command]
+fn load_tab(id_in: String, title: String) -> Result<Tab, String> {
+    // Lock TOTAL_TABS to update the total count
+    let mut total_tabs = TOTAL_TABS.lock().map_err(|e| format!("Failed to lock TOTAL_TABS: {}", e))?;
+    *total_tabs += 1;
+
+    // Lock TABS to add a new tab
+    let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
+
+    // Create a new tab
+    let new_tab = Tab {
+        order: *total_tabs,
+        id: id_in,
+        title: title,
+    };
+
+    // Add the tab to TABS
+    tabs.push(new_tab.clone());
+
+    Ok(new_tab)
+}
+
+#[tauri::command]
 fn reset_tab_order_count() -> Result<(), String> {
     let mut total_tabs = TOTAL_TABS.lock().map_err(|e| format!("Failed to lock TOTAL_TABS: {}", e))?;
     *total_tabs = 0;
@@ -76,88 +129,89 @@ fn reset_tab_order_count() -> Result<(), String> {
 fn get_document_content(id: String) -> Result<Option<DocumentData>, String> {
     let documents_dir = get_documents_dir();
     
-    // Read all JSON files in the directory
-    let files = fs::read_dir(&documents_dir)
-        .map_err(|e| format!("Failed to read directory: {}", e))?;
+    // Try to find the file with the name matching the ID
+    let file_path = documents_dir.join(format!("{}.json", id));
     
-    // Find the document with matching ID
-    for entry in files {
-        if let Ok(entry) = entry {
-            if let Ok(content) = fs::read_to_string(entry.path()) {
-                if let Ok(doc) = serde_json::from_str::<DocumentData>(&content) {
-                    if doc.id == id {
-                        return Ok(Some(doc));
-                    }
-                }
-            }
-        }
+    // Check if the file exists
+    if !file_path.exists() {
+        return Ok(None);  // Return None if no file is found
     }
-    
-    Ok(None)
+
+    // Read the content of the file
+    match fs::read_to_string(&file_path) {
+        Ok(content) => {
+            match serde_json::from_str::<DocumentData>(&content) {
+                Ok(doc) => Ok(Some(doc)),
+                Err(e) => Err(format!("Failed to parse JSON from file: {}", e)),
+            }
+        },
+        Err(e) => Err(format!("Failed to read file: {}", e)),
+    }
 }
 
 #[tauri::command]
 fn save_document(id: String, title: String, content: String) -> Result<String, String> {
     let documents_dir = get_documents_dir();
     
-    // Use title as filename, fallback to 'untitled' if empty
-    let filename = if title.trim().is_empty() { 
-        "untitled".to_string() 
-    } else { 
-        title.trim().to_string() 
-    };
-    
-    // Ensure filename is valid and append .json
-    let safe_filename = sanitize_filename::sanitize(&format!("{}.json", filename));
+    // Use the id as the filename
+    let safe_filename = sanitize_filename::sanitize(&format!("{}.json", id));
     let file_path = documents_dir.join(&safe_filename);
     
     let document_data = DocumentData {
-        id,  // Keep the original ID
+        id: id.clone(),  // Keep the original ID
         title: title.clone(),
         content: content.clone(),
     };
     
-    // Save file
+    // Serialize the document data
     match serde_json::to_string_pretty(&document_data) {
         Ok(json_content) => {
-            // First, check if a file with this ID already exists
-            let existing_files: Vec<PathBuf> = fs::read_dir(&documents_dir)
-                .map_err(|e| format!("Failed to read directory: {}", e))?
-                .filter_map(|entry| entry.ok())
-                .filter_map(|entry| {
-                    let path = entry.path();
-                    // Try to read the file content to extract the ID
-                    fs::read_to_string(&path)
-                        .ok()
-                        .and_then(|content| 
-                            serde_json::from_str::<DocumentData>(&content)
-                                .ok()
-                                .filter(|doc| doc.id == document_data.id)
-                                .map(|_| path)
-                        )
-                })
-                .collect();
-            
-            // Remove any existing files with the same ID
-            for old_file in existing_files {
-                fs::remove_file(&old_file).map_err(|e| format!("Failed to remove old file: {}", e))?;
-            }
-            
+            // If a file with the same ID already exists, we can simply overwrite it
             // Write the new file
             match fs::write(&file_path, json_content) {
                 Ok(_) => Ok(file_path.to_string_lossy().to_string()),
-                Err(e) => Err(format!("Failed to write file: {}", e))
+                Err(e) => Err(format!("Failed to write file: {}", e)),
             }
         },
-        Err(e) => Err(format!("Failed to serialize document: {}", e))
+        Err(e) => Err(format!("Failed to serialize document: {}", e)),
     }
 }
 
+
 #[tauri::command]
 fn load_recent_files() -> Result<Vec<DocumentData>, String> {
+    let appdata_dir = get_documents_dir().join("appdata");
+    let userdata_path = appdata_dir.join("userdata.json");
+
+    // Check if userdata.json exists
+    if userdata_path.exists() {
+        // Read and deserialize the UserData
+        match fs::read_to_string(&userdata_path) {
+            Ok(content) => {
+                match serde_json::from_str::<UserData>(&content) {
+                    Ok(user_data) => {
+                        let mut recent_files = Vec::new();
+
+                        for id in user_data.ids {
+                            // Try to load each document by ID
+                            match get_document_content(id.clone()) {
+                                Ok(Some(doc)) => recent_files.push(doc),
+                                _ => continue, // Skip if the document could not be loaded
+                            }
+                        }
+                        
+                        return Ok(recent_files);
+                    },
+                    Err(e) => return Err(format!("Failed to deserialize userdata: {}", e)),
+                }
+            },
+            Err(e) => return Err(format!("Failed to read userdata file: {}", e)),
+        }
+    }
+
+    // If userdata.json doesn't exist, load all available documents
     let documents_dir = get_documents_dir();
     
-    // Read all JSON files in the directory
     let files = match fs::read_dir(&documents_dir) {
         Ok(entries) => entries
             .filter_map(|entry| entry.ok())
@@ -172,9 +226,9 @@ fn load_recent_files() -> Result<Vec<DocumentData>, String> {
                     .and_then(|content| serde_json::from_str::<DocumentData>(&content).ok())
             })
             .collect(),
-        Err(e) => return Err(format!("Failed to read directory: {}", e))
+        Err(e) => return Err(format!("Failed to read directory: {}", e)),
     };
-    
+
     Ok(files)
 }
 
@@ -182,42 +236,46 @@ fn load_recent_files() -> Result<Vec<DocumentData>, String> {
 fn delete_document(id: String) -> Result<(), String> {
     let documents_dir = get_documents_dir();
     
-    // Find and delete all files with the matching ID
-    let files_to_delete: Vec<PathBuf> = fs::read_dir(&documents_dir)
-        .map_err(|e| format!("Failed to read directory: {}", e))?
-        .filter_map(|entry| entry.ok())
-        .filter_map(|entry| {
-            let path = entry.path();
-            // Try to read the file content to extract the ID
-            fs::read_to_string(&path)
-                .ok()
-                .and_then(|content| 
-                    serde_json::from_str::<DocumentData>(&content)
-                        .ok()
-                        .filter(|doc| doc.id == id)
-                        .map(|_| path)
-                )
-        })
-        .collect();
+    // Generate the expected filename using the ID
+    let filename = sanitize_filename::sanitize(&format!("{}.json", id));
+    let file_path = documents_dir.join(&filename);
     
-    // Delete all matching files
-    for file_path in files_to_delete {
+    // Remove the tab from TABS
+    let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
+    tabs.retain(|tab| tab.id != id);
+    
+    // Check if the file exists and delete it
+    if file_path.exists() {
         fs::remove_file(&file_path)
             .map_err(|e| format!("Failed to delete file {}: {}", file_path.display(), e))?;
+        Ok(())
+    } else {
+        Err(format!("File with ID {} not found", id))
     }
-    
-    Ok(())
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .on_window_event(|window, event| {
+            match event {
+                WindowEvent::CloseRequested { api, .. } => {
+                    // Call the function to save UserData when the app is closing
+                    on_app_close();
+
+                    // Prevent the window from closing immediately
+                    window.close().unwrap();
+                }
+                _ => {}
+            }
+        })
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             save_document,
             load_recent_files,
             delete_document,
             new_tab,
+            load_tab,
             get_document_content,
             reset_tab_order_count
             ]

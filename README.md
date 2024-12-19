@@ -18,17 +18,17 @@ I decided to redo the whole project and continue developement on it cause I real
 
 ## Windows
 
-Run the `fextify_[version]_x64_en-US.msi` msi installer or run the `fextify_[version]_x64-setup.exe` installer included in the [releases section](https://github.com/face-hh/fextify/releases).
+Run the `Rhyolite_[version]_x64_en-US.msi` msi installer or run the `Rhyolite_[version]_x64-setup.exe` installer included in the [releases section](https://github.com/RedddFoxxyy/Rhyolite/releases).
 
 ## GNU/Linux
 
 ### Debian and/or Ubuntu
 
-Install the `.deb` version of the package from the [releases section](https://github.com/face-hh/fextify/releases).
+Install the `.deb` version of the package from the [releases section](https://github.com/RedddFoxxyy/Rhyolite/releases).
 
 ### AppImage and raw linux
 
-For any other GNU/Linux distribution you can use the `.AppImage` or run the `raw linux` version from the [the releases section/](https://github.com/face-hh/fextify/releases).
+For any other GNU/Linux distribution you can use the `.AppImage` or run the `raw linux` version from the [the releases section/](https://github.com/RedddFoxxyy/Rhyolite/releases).
 
 Note: You might need to make them executable by running `chmod +x fextify.AppImage` or `chmod +x fextify-linux`.
 
@@ -59,7 +59,7 @@ You can duplicate the `src/themes/default.css` and modify its colors. We recomme
 
 You can open a pull request to add your theme in `/src/themes`. We will add it if it's good.
 
-Alternatively, you can join our [Discord server](https://discord.gg/8Wh4PtnmnJ) and post it on the `fextify-themes` forum!
+~~Alternatively, you can join our [Discord server](https://discord.gg/8Wh4PtnmnJ) and post it on the `fextify-themes` forum!~~
 
 # Known bugs
 

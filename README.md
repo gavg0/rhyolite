@@ -10,9 +10,9 @@ This is a **prototype**, not a fully polished version and is a fork of [fextify]
 # Changes include but are not limited too:-
 - Rewriting the backend and frontend using Tauri and Svelte.
 - Changing the default editor from ckeditor to quilt(since ckeditor 5 is not free anymore.)
-- Maybe a renaming and icon change in future(planned).
+- ~~Maybe a renaming and icon change in future(planned).~~(Renamed to Rhyolite)
 
-I decided to redo the whole project and continue developement on it cause I really liked the project and as a new dev I also wanted to make an open source project of my own, but before that I needed some experience so decided to contribute to this!
+I decided to redo the whole project and continue developement on it cause I really liked the project and as a new dev I also wanted to make an open source project of my own, but before that I needed some experience so decided to contribute to this! I also renamed the project to Rhyolite(a volcanic rock just like obsidian!).
 
 # How to run?
 

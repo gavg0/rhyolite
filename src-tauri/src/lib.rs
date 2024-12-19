@@ -1,4 +1,5 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
@@ -141,6 +142,10 @@ fn delete_document(id: String) -> Result<(), String> {
     Ok(())
 }
 
+#[tauri::command]
+fn greet(name: &str) -> String {
+    format!("Hello, {}! You've been greeted from Rust!", name)
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -149,7 +154,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             save_document,
             load_recent_files,
-            delete_document
+            delete_document,
+            greet
             ]
         )
         .run(tauri::generate_context!())

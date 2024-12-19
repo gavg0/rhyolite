@@ -17,6 +17,12 @@ struct DocumentData {
     content: String,
 }
 
+#[derive(Serialize, Deserialize, Clone)]
+struct Tab {
+    id: String,
+    title: String
+}
+
 //static RECENT_FILES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
 fn get_documents_dir() -> PathBuf {

@@ -104,7 +104,21 @@
     } catch (error) {
         console.error('Failed to switch tab:', error);
     }
-}
+  }
+
+  async function cycleTabs() {
+    if (tabs.length > 0) {
+      // Find the current tab index
+      const currentTabIndex = tabs.findIndex(tab => tab.id === currentId);
+      
+      // Determine the next tab index, looping back to the first if at the end
+      const nextTabIndex = (currentTabIndex + 1) % tabs.length;
+      const nextTab = tabs[nextTabIndex];
+
+      // Switch to the next tab
+      switchTab(nextTab.id);
+    }
+  }
 
   async function autoSave() {
     if (!titleText && !quill?.getText().trim()) return;
@@ -160,6 +174,11 @@
     if (event.ctrlKey && event.key === 't') {
       event.preventDefault();
       toggleToolbar();
+    }
+    // Handle Ctrl + Tab (cycle through tabs)
+    if (event.ctrlKey && event.key === 'Tab') {
+      event.preventDefault();
+      cycleTabs();
     }
   }
 
@@ -244,12 +263,6 @@
         aria-selected={currentId === tab.id}
         aria-controls="editor"
         onclick={() => switchTab(tab.id)}
-        onkeydown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            switchTab(tab.id);
-          }
-        }}
       >
         {tab.order}
       </button>

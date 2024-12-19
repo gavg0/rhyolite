@@ -179,6 +179,37 @@ textarea.rounded-container {
   z-index: 10;
 }
 
+.tab-counter {
+  position: fixed;
+  left: -18px;
+  bottom: -18px;
+  display: flex;
+  gap: 8px;
+  padding: 10px 25px 25px 25px;
+  background-color: transparent;
+  border-radius: 18px;
+  z-index: 10;
+}
+
+.tab-square {
+  width: 28px;
+  height: 28px;
+  background-color: var(--container-color);
+  color: var(--container-text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.tab-square:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
 /* @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;

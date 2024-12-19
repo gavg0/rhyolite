@@ -4,8 +4,8 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 // use serde_json::{json, Value};
-use std::sync::Mutex;
-use once_cell::sync::Lazy;
+//use std::sync::Mutex;
+//use once_cell::sync::Lazy;
 use dirs;
 use sanitize_filename;
 //use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, TagEnd};
@@ -17,7 +17,7 @@ struct DocumentData {
     content: String,
 }
 
-static RECENT_FILES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
+//static RECENT_FILES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
 fn get_documents_dir() -> PathBuf {
     let mut path = dirs::document_dir().expect("Could not find Documents directory");

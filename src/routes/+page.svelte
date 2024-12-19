@@ -15,6 +15,7 @@
   let wordCount = $state(0);
   let charCount = $state(0);
   let isToolbarVisible = $state(false);
+  let tabCount = $state(1);
 
   // Initialize Quill
   let quill;
@@ -143,6 +144,7 @@
       currentId = '';
       titleText = '';
       quill?.setContents([]);
+      tabCount--;
     } catch (error) {
       console.error('Failed to delete document:', error);
     }
@@ -153,6 +155,7 @@
       currentId = uuidv4();
       titleText = '';
       quill?.setContents([]);
+      tabCount++;
     } catch (error) {
       console.error('Failed to delete document:', error);
     }
@@ -184,5 +187,13 @@
   
   <div class="word-char-counter">
     {wordCount} Words {charCount} Characters
+  </div>
+
+  <div class="tab-counter">
+    {#each Array(tabCount) as _, i}
+      <div class="tab-square">
+        {i + 1}
+      </div>
+    {/each}
   </div>
 </main>

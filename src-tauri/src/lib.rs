@@ -66,6 +66,37 @@ fn new_tab() -> Result<Tab, String> {
 }
 
 #[tauri::command]
+fn reset_tab_order_count() -> Result<(), String> {
+    let mut total_tabs = TOTAL_TABS.lock().map_err(|e| format!("Failed to lock TOTAL_TABS: {}", e))?;
+    *total_tabs = 0;
+    Ok(())
+}
+
+#[tauri::command]
+fn get_document_content(id: String) -> Result<Option<DocumentData>, String> {
+    let documents_dir = get_documents_dir();
+    
+    // Read all JSON files in the directory
+    let files = fs::read_dir(&documents_dir)
+        .map_err(|e| format!("Failed to read directory: {}", e))?;
+    
+    // Find the document with matching ID
+    for entry in files {
+        if let Ok(entry) = entry {
+            if let Ok(content) = fs::read_to_string(entry.path()) {
+                if let Ok(doc) = serde_json::from_str::<DocumentData>(&content) {
+                    if doc.id == id {
+                        return Ok(Some(doc));
+                    }
+                }
+            }
+        }
+    }
+    
+    Ok(None)
+}
+
+#[tauri::command]
 fn save_document(id: String, title: String, content: String) -> Result<String, String> {
     let documents_dir = get_documents_dir();
     
@@ -186,7 +217,9 @@ pub fn run() {
             save_document,
             load_recent_files,
             delete_document,
-            new_tab
+            new_tab,
+            get_document_content,
+            reset_tab_order_count
             ]
         )
         .run(tauri::generate_context!())

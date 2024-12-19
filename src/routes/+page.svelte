@@ -16,6 +16,7 @@
   let charCount = $state(0);
   let isToolbarVisible = $state(false);
   let tabCount = $state(1);
+  let tabs = $state([]);
 
   // Initialize Quill
   let quill;
@@ -60,13 +61,12 @@
         charCount = Math.max(0, text.length - 1);
     });
     
-    // Generate new ID if none exists
-    if (!currentId) {
-      currentId = uuidv4();
-    }
-    
-    // Load recent documents
     loadRecentDocuments();
+    
+    // If no documents were loaded, create a new tab
+    if (recentDocuments.length === 0) {
+      addnewtab()
+    }
 
     // Set up auto-save
     const autoSaveInterval = setInterval(autoSave, 1000);
@@ -79,6 +79,32 @@
   function countWords(text) {
     return text.split(/\s+/).filter(word => word.length > 0).length;
   }
+
+  async function addnewtab() {
+    const newTab = await invoke('new_tab');
+      tabs = [newTab];
+      currentId = newTab.id;
+  }
+
+  async function switchTab(tabId) {
+    try {
+        const docResult = await invoke('get_document_content', { id: tabId });
+        
+        if (docResult) {
+            // Document exists, load its content
+            currentId = tabId;
+            titleText = docResult.title;
+            quill?.setContents(JSON.parse(docResult.content));
+        } else {
+            // No document exists for this tab (new tab)
+            currentId = tabId;
+            titleText = '';
+            quill?.setContents([]);
+        }
+    } catch (error) {
+        console.error('Failed to switch tab:', error);
+    }
+}
 
   async function autoSave() {
     if (!titleText && !quill?.getText().trim()) return;
@@ -100,6 +126,14 @@
       recentDocuments = docs;
       
       if (recentDocuments.length > 0) {
+        // Create tabs for each loaded document
+        tabs = recentDocuments.map(doc => ({
+          order: tabs.length + 1,
+          id: doc.id,
+          title: doc.title
+        }));
+        
+        // Load the last document
         const lastDoc = recentDocuments[recentDocuments.length - 1];
         currentId = lastDoc.id;
         titleText = lastDoc.title;
@@ -141,10 +175,20 @@
   async function deleteDocument() {
     try {
       await invoke('delete_document', { id: currentId });
-      currentId = '';
-      titleText = '';
-      quill?.setContents([]);
-      tabCount--;
+      tabs = tabs.filter(tab => tab.id !== currentId);
+      
+      if (tabs.length > 0) {
+        // Switch to the last remaining tab
+        const lastTab = tabs[tabs.length - 1];
+        currentId = lastTab.id;
+        const docResult = await invoke('get_document_content', { id: currentId });
+        titleText = docResult.title;
+        quill?.setContents(JSON.parse(docResult.content));
+      } else {
+        // If no tabs remain, create a new one
+        await invoke('reset_tab_order_count')
+        await newDocument();
+      }
     } catch (error) {
       console.error('Failed to delete document:', error);
     }
@@ -152,12 +196,13 @@
 
   async function newDocument() {
     try {
-      currentId = uuidv4();
+      const newTab = await invoke('new_tab');
+      tabs = [...tabs, newTab];
+      currentId = newTab.id;
       titleText = '';
       quill?.setContents([]);
-      tabCount++;
     } catch (error) {
-      console.error('Failed to delete document:', error);
+      console.error('Failed to create new document:', error);
     }
   }
 
@@ -189,11 +234,25 @@
     {wordCount} Words {charCount} Characters
   </div>
 
-  <div class="tab-counter">
-    {#each Array(tabCount) as _, i}
-      <div class="tab-square">
-        {i + 1}
-      </div>
+  <div class="tab-counter" role="tablist" aria-label="Document tabs">
+    {#each tabs as tab}
+      <button
+        type="button"
+        class="tab-square"
+        class:active={currentId === tab.id}
+        role="tab"
+        aria-selected={currentId === tab.id}
+        aria-controls="editor"
+        onclick={() => switchTab(tab.id)}
+        onkeydown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            switchTab(tab.id);
+          }
+        }}
+      >
+        {tab.order}
+      </button>
     {/each}
   </div>
 </main>

@@ -14,6 +14,8 @@
   let currentId = $state('');
   let wordCount = $state(0);
   let charCount = $state(0);
+  let isToolbarVisible = $state(false);
+
   // Initialize Quill
   let quill;
   const toolbarOptions = [
@@ -49,6 +51,7 @@
     });
 
     document.querySelector('#editor').classList.add('quill-dark-theme');
+    document.querySelector('.ql-toolbar').style.display = 'none';
 
     quill.on('text-change', () => {
         const text = quill.getText() || '';
@@ -119,6 +122,19 @@
       event.preventDefault();
       newDocument();
     }
+    if (event.ctrlKey && event.key === 't') {
+      event.preventDefault();
+      toggleToolbar();
+    }
+  }
+
+  // New function to toggle toolbar
+  function toggleToolbar() {
+    isToolbarVisible = !isToolbarVisible;
+    const toolbar = document.querySelector('.ql-toolbar');
+    if (toolbar) {
+      toolbar.style.display = isToolbarVisible ? 'block' : 'none';
+    }
   }
 
   async function deleteDocument() {
@@ -167,6 +183,6 @@
   <div id="editor" class="quillbox-container"></div>
   
   <div class="word-char-counter">
-    Words: {wordCount} | Characters: {charCount}
+    {wordCount} Words {charCount} Characters
   </div>
 </main>

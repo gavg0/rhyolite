@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
   import { invoke } from "@tauri-apps/api/core";
   import '../styles/styles.css';
+  import '../styles/quill-dark-theme.css';
   import { v4 as uuidv4 } from 'uuid';
   import Quill from 'quill';
 
@@ -44,7 +45,10 @@
       modules: {
             toolbar: toolbarOptions,
           },
+      bounds: '#editor'
     });
+
+    document.querySelector('#editor').classList.add('quill-dark-theme');
 
     quill.on('text-change', () => {
         const text = quill.getText() || '';
@@ -107,9 +111,13 @@
   }
 
   function handleKeydown(event) {
-    if (event.ctrlKey && event.key === 'x') {
+    if (event.ctrlKey && event.key === 'd') {
       event.preventDefault();
       deleteDocument();
+    }
+    if (event.ctrlKey && event.key === 'n') {
+      event.preventDefault();
+      newDocument();
     }
   }
 
@@ -117,6 +125,16 @@
     try {
       await invoke('delete_document', { id: currentId });
       currentId = '';
+      titleText = '';
+      quill?.setContents([]);
+    } catch (error) {
+      console.error('Failed to delete document:', error);
+    }
+  }
+
+  async function newDocument() {
+    try {
+      currentId = uuidv4();
       titleText = '';
       quill?.setContents([]);
     } catch (error) {

@@ -4,8 +4,8 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 // use serde_json::{json, Value};
-//use std::sync::Mutex;
-//use once_cell::sync::Lazy;
+use std::sync::Mutex;
+use once_cell::sync::Lazy;
 use dirs;
 use sanitize_filename;
 //use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, TagEnd};
@@ -24,6 +24,7 @@ struct Tab {
 }
 
 //static RECENT_FILES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
+static TABS: Lazy<Mutex<Vec<Tab>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
 fn get_documents_dir() -> PathBuf {
     let mut path = dirs::document_dir().expect("Could not find Documents directory");
@@ -148,11 +149,6 @@ fn delete_document(id: String) -> Result<(), String> {
     Ok(())
 }
 
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -160,8 +156,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             save_document,
             load_recent_files,
-            delete_document,
-            greet
+            delete_document
             ]
         )
         .run(tauri::generate_context!())

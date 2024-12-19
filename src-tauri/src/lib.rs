@@ -8,6 +8,7 @@ use std::sync::Mutex;
 use once_cell::sync::Lazy;
 use dirs;
 use sanitize_filename;
+use uuid::Uuid;
 //use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, TagEnd};
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -19,12 +20,15 @@ struct DocumentData {
 
 #[derive(Serialize, Deserialize, Clone)]
 struct Tab {
+    order: u64,
     id: String,
     title: String
 }
 
 //static RECENT_FILES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
 static TABS: Lazy<Mutex<Vec<Tab>>> = Lazy::new(|| Mutex::new(Vec::new()));
+static TOTAL_TABS: Lazy<Mutex<u64>> = Lazy::new(|| Mutex::new(0));
+
 
 fn get_documents_dir() -> PathBuf {
     let mut path = dirs::document_dir().expect("Could not find Documents directory");
@@ -34,6 +38,31 @@ fn get_documents_dir() -> PathBuf {
     fs::create_dir_all(&path).expect("Could not create FextifyPlus directory");
     
     path
+}
+
+#[tauri::command]
+fn new_tab() -> Result<Tab, String> {
+    // Lock TOTAL_TABS to update the total count
+    let mut total_tabs = TOTAL_TABS.lock().map_err(|e| format!("Failed to lock TOTAL_TABS: {}", e))?;
+    *total_tabs += 1;
+
+    // Lock TABS to add a new tab
+    let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
+
+    // Generate a new unique ID using UUID
+    let new_id = Uuid::new_v4().to_string();
+
+    // Create a new tab
+    let new_tab = Tab {
+        order: *total_tabs,
+        id: new_id.clone(),
+        title: String::new(),
+    };
+
+    // Add the tab to TABS
+    tabs.push(new_tab.clone());
+
+    Ok(new_tab)
 }
 
 #[tauri::command]
@@ -156,7 +185,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             save_document,
             load_recent_files,
-            delete_document
+            delete_document,
+            new_tab
             ]
         )
         .run(tauri::generate_context!())

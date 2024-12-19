@@ -28,7 +28,7 @@ struct Tab {
 
 #[derive(Serialize, Deserialize, Clone)]
 struct UserData {
-    ids: Vec<String>,  // Vec to store the IDs of open tabs
+    tabs: Vec<Tab>,  // Store complete Tab structs instead of just IDs
 }
 
 static RECENT_FILES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
@@ -36,23 +36,16 @@ static TABS: Lazy<Mutex<Vec<Tab>>> = Lazy::new(|| Mutex::new(Vec::new()));
 static TOTAL_TABS: Lazy<Mutex<u64>> = Lazy::new(|| Mutex::new(0));
 
 fn on_app_close() {
-    // Collect the IDs of all open tabs
+    // Save the complete tabs information
     let tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e)).unwrap();
-    let ids: Vec<String> = tabs.iter().map(|tab| tab.id.clone()).collect();
+    let user_data = UserData { tabs: tabs.clone() };
 
-    // Create the UserData struct
-    let user_data = UserData { ids };
-
-    // Define the path to save the userdata.json file
     let appdata_dir = get_documents_dir().join("appdata");
     fs::create_dir_all(&appdata_dir).expect("Could not create appdata directory");
-
     let userdata_path = appdata_dir.join("userdata.json");
 
-    // Serialize the UserData struct to JSON
     match serde_json::to_string_pretty(&user_data) {
         Ok(json_content) => {
-            // Write the JSON to the file
             if let Err(e) = fs::write(userdata_path, json_content) {
                 eprintln!("Failed to save userdata: {}", e);
             }
@@ -126,6 +119,25 @@ fn reset_tab_order_count() -> Result<(), String> {
 }
 
 #[tauri::command]
+fn reorder_tabs() -> Result<Vec<Tab>, String> {
+    let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
+    let mut ordered_tabs = Vec::new();
+    
+    // Create new tabs with updated order
+    for (index, tab) in tabs.iter().enumerate() {
+        ordered_tabs.push(Tab {
+            order: (index + 1) as u64,
+            id: tab.id.clone(),
+            title: tab.title.clone()
+        });
+    }
+    
+    // Replace old tabs with reordered tabs
+    *tabs = ordered_tabs.clone();
+    Ok(ordered_tabs)
+}
+
+#[tauri::command]
 fn get_document_content(id: String) -> Result<Option<DocumentData>, String> {
     let documents_dir = get_documents_dir();
     
@@ -191,12 +203,17 @@ fn load_recent_files() -> Result<Vec<DocumentData>, String> {
                 match serde_json::from_str::<UserData>(&content) {
                     Ok(user_data) => {
                         let mut recent_files = Vec::new();
-
-                        for id in user_data.ids {
+                        
+                        // Sort tabs by order
+                        let mut tabs = user_data.tabs;
+                        tabs.sort_by_key(|tab| tab.order);
+                        
+                        // Load tabs in the correct order
+                        for tab in tabs {
                             // Try to load each document by ID
-                            match get_document_content(id.clone()) {
+                            match get_document_content(tab.id.clone()) {
                                 Ok(Some(doc)) => recent_files.push(doc),
-                                _ => continue, // Skip if the document could not be loaded
+                                _ => continue,
                             }
                         }
                         
@@ -235,8 +252,6 @@ fn load_recent_files() -> Result<Vec<DocumentData>, String> {
 #[tauri::command]
 fn delete_document(id: String) -> Result<(), String> {
     let documents_dir = get_documents_dir();
-    
-    // Generate the expected filename using the ID
     let filename = sanitize_filename::sanitize(&format!("{}.json", id));
     let file_path = documents_dir.join(&filename);
     
@@ -277,7 +292,8 @@ pub fn run() {
             new_tab,
             load_tab,
             get_document_content,
-            reset_tab_order_count
+            reset_tab_order_count,
+            reorder_tabs
             ]
         )
         .run(tauri::generate_context!())

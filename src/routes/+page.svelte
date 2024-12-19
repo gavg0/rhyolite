@@ -61,12 +61,12 @@
         charCount = Math.max(0, text.length - 1);
     });
     
-    loadRecentDocuments();
-    
-    // If no documents were loaded, create a new tab
-    if (recentDocuments.length === 0) {
-      addnewtab()
-    }
+    loadRecentDocuments().then(() => {
+      // Only create a new tab if no documents were loaded
+      if (tabs.length === 0) {
+        addnewtab();
+      }
+    });
 
     // Set up auto-save
     const autoSaveInterval = setInterval(autoSave, 1000);
@@ -140,12 +140,18 @@
       recentDocuments = docs;
       
       if (recentDocuments.length > 0) {
+        // Reset tab order count before loading tabs
+        await invoke('reset_tab_order_count');
+        
         // Create tabs for each loaded document
-        tabs = recentDocuments.map(doc => ({
-          order: tabs.length + 1,
-          id: doc.id,
-          title: doc.title
-        }));
+        for (const doc of recentDocuments) {
+          // Use load_tab instead of creating tabs directly
+          const newTab = await invoke('load_tab', {
+            idIn: doc.id,
+            title: doc.title
+          });
+          tabs = [...tabs, newTab];
+        }
         
         // Load the last document
         const lastDoc = recentDocuments[recentDocuments.length - 1];
@@ -193,23 +199,27 @@
 
   async function deleteDocument() {
     try {
-      await invoke('delete_document', { id: currentId });
-      tabs = tabs.filter(tab => tab.id !== currentId);
-      
-      if (tabs.length > 0) {
-        // Switch to the last remaining tab
-        const lastTab = tabs[tabs.length - 1];
-        currentId = lastTab.id;
-        const docResult = await invoke('get_document_content', { id: currentId });
-        titleText = docResult.title;
-        quill?.setContents(JSON.parse(docResult.content));
-      } else {
-        // If no tabs remain, create a new one
-        await invoke('reset_tab_order_count')
-        await newDocument();
-      }
-    } catch (error) {
-      console.error('Failed to delete document:', error);
+        // Delete the document and its tab
+        await invoke('delete_document', { id: currentId });
+        
+        // Get reordered tabs from Rust
+        const reorderedTabs = await invoke('reorder_tabs');
+        tabs = reorderedTabs;
+        
+        if (tabs.length > 0) {
+            // Switch to the last remaining tab
+            const lastTab = tabs[tabs.length - 1];
+            currentId = lastTab.id;
+            const docResult = await invoke('get_document_content', { id: currentId });
+            titleText = docResult.title;
+            quill?.setContents(JSON.parse(docResult.content));
+        } else {
+            // If no tabs remain, create a new one
+            await invoke('reset_tab_order_count')
+            await newDocument();
+        }
+      } catch (error) {
+        console.error('Failed to delete document:', error);
     }
   }
 

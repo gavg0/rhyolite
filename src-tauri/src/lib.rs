@@ -80,7 +80,7 @@ fn new_tab() -> Result<Tab, String> {
     let new_tab = Tab {
         order: *total_tabs,
         id: new_id.clone(),
-        title: String::new(),
+        title: ("Untitled").to_string(),
     };
 
     // Add the tab to TABS

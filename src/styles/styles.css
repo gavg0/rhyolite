@@ -12,6 +12,8 @@
   --container-color: #1b1b1b;
   --container-text-color: #e0e0e0;
 
+  --ui-element-background: #c7c7c731;
+
   --editor-bg: #1b1b1b;
   --editor-text: #e0e0e0;
   --editor-border: #333;
@@ -55,7 +57,7 @@ a {
 }
 
 a:hover {
-  color: #535bf2;
+  color: #ffffff;
 }
 
 input,
@@ -76,7 +78,7 @@ button {
 }
 
 button:hover {
-  border-color: #396cd8;
+  border-color: #b1b1b1;
 }
 button:active {
   border-color: #396cd8;
@@ -94,36 +96,25 @@ button {
 
 .title-container {
   flex-shrink: 0; /* Prevent title from shrinking */
-  width: 80%;
+  width: 70%;
   height: 10%;
   display: flex;
   padding: 0.5%;
   justify-content: center;
-  max-width: 700px;
+  /* max-width: 700px; */
   min-height: 100px;
   max-height: 200px;
   z-index: 10;
-}
-
-.textbox-container {
-  flex-grow: 0; /* Allow textbox container to grow and fill remaining space */
-  display: flex;
-  padding: 0.5%;
-  width: 80%;
-  height: 100%;
-  justify-content: center;
-  max-width: 700px;
-  /* z-index: 10; */
 }
 
 .quillbox-container {
   flex-grow: 1; /* Allow textbox container to grow and fill remaining space */
   display: flex;
   margin: 0.5%;
-  margin-bottom: 1%;
-  width: 80%;
+  margin-bottom: 45px;
+  width: 70%;
   height: 100%;
-  max-width: 700px;
+  /* max-width: 700px; */
   border-radius: 15px;
   border-color: transparent;
   overflow: hidden;
@@ -184,19 +175,19 @@ textarea.rounded-container {
 
 .tab-counter {
   position: fixed;
-  left: -18px;
-  bottom: -18px;
+  left: 2px;
+  bottom: 2px;
   display: flex;
   gap: 8px;
-  padding: 10px 25px 25px 25px;
+  padding: 10px;
   background-color: transparent;
-  border-radius: 18px;
+  border-radius: 10px;
   z-index: 10;
 }
 
 .tab-square {
-  width: 28px;
-  height: 28px;
+  width: 25px;
+  height: 25px;
   background-color: var(--container-color);
   color: var(--container-text-color);
   display: flex;
@@ -205,11 +196,12 @@ textarea.rounded-container {
   border-radius: 4px;
   font-size: 0.9em;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: all 0.1s ease;
 }
 
 .tab-square:hover {
   transform: scale(1.1);
+  border-color: var(--container-text-color);
   cursor: pointer;
 }
 

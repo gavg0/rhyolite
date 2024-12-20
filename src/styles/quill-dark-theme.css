@@ -14,8 +14,7 @@ border: none !important;
 background-color: var(--editor-bg);
 border-radius: 15px;
 /* border-bottom: 1px solid var(--editor-border) !important; */
-width: 80%;
-max-width: 700px;
+width: 70%;
 margin: 0.5%;
 }
 

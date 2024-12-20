@@ -68,7 +68,7 @@
     });
 
     // Set up auto-save
-    const autoSaveInterval = setInterval(autoSave, 1000);
+    const autoSaveInterval = setInterval(autoSave, 500);
 
     return () => {
       clearInterval(autoSaveInterval);
@@ -83,6 +83,7 @@
     const newTab = await invoke('new_tab');
       tabs = [newTab];
       currentId = newTab.id;
+      titleText = newTab.title;
   }
 
   async function switchTab(tabId) {
@@ -227,7 +228,7 @@
       const newTab = await invoke('new_tab');
       tabs = [...tabs, newTab];
       currentId = newTab.id;
-      titleText = '';
+      titleText = newTab.title;
       quill?.setContents([]);
     } catch (error) {
       console.error('Failed to create new document:', error);

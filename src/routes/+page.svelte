@@ -45,7 +45,9 @@
       { icon: 'B', format: 'bold' },
       { icon: 'I', format: 'italic' },
       { icon: 'U', format: 'underline' },
-      { icon: '¶', format: 'blockquote' }
+      { icon: 'S', format: 'strike' },
+      { icon: '¶', format: 'blockquote' },
+      { icon: '<>', format: 'code-block' }
   ];
 
   onMount(() => {
@@ -86,7 +88,11 @@
           const button = document.createElement('button');
           button.textContent = option.icon;
           button.onclick = () => {
-            quill.format(option.format, !quill.getFormat()[option.format]);
+            if (option.value !== undefined) {
+              quill.format(option.format, option.value);
+            } else {
+              quill.format(option.format, !quill.getFormat()[option.format]);
+            }
           };
           customTooltip.appendChild(button);
         });

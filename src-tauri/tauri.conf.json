@@ -28,7 +28,8 @@
     "icon": [
       "icons/icon.png",
       "icons/icon.ico",
-      "icons/icon.icns"
+      "icons/icon.icns",
+      "icons/Square44x44Logo.png"
     ],
     "windows":{
       "webviewInstallMode": {

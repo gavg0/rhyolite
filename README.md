@@ -28,9 +28,9 @@ Install the `.deb` version of the package from the [releases section](https://gi
 
 ### AppImage and raw linux
 
-For any other GNU/Linux distribution you can use the `~~.AppImage~~`(AppImage is not yet available) or run the `raw linux(linux_binary)` version from the [the releases section/](https://github.com/RedddFoxxyy/Rhyolite/releases).
+For any other GNU/Linux distribution you can use the ~~.AppImage~~(AppImage is not yet available) or run the `raw linux(linux_binary)` version from the [the releases section/](https://github.com/RedddFoxxyy/Rhyolite/releases).
 
-Note: You might need to make them executable by running `~~chmod +x Rhyolite.AppImage~~` or `chmod +x Rhyolite_[version]_linux_binary`.
+Note: You might need to make them executable by running ~~chmod +x Rhyolite.AppImage~~ or `chmod +x Rhyolite_[version]_linux_binary`.
 
 # Manual compilation
 

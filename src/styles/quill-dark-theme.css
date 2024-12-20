@@ -16,7 +16,42 @@ border-radius: 15px;
 /* border-bottom: 1px solid var(--editor-border) !important; */
 width: 70%;
 margin: 0.5%;
+transition: opacity 0.3s ease, transform 0.3s ease;
+transform: translateY(-120%);
 }
+
+.ql-toolbar.ql-snow.visible {
+opacity: 1;
+transform: translateY(0);
+pointer-events: auto;
+}
+
+/* Inline tooltip styles */
+.ql-tooltip {
+background-color: var(--editor-bg);
+border: 1px solid var(--editor-border);
+border-radius: 8px;
+padding: 8px;
+display: flex;
+gap: 8px;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+z-index: 1001;
+}
+
+.ql-tooltip button {
+background: transparent;
+border: none;
+padding: 4px 8px;
+color: var(--editor-text);
+cursor: pointer;
+border-radius: 4px;
+}
+
+.ql-tooltip button:hover {
+background-color: var(--ui-element-background);
+}
+
+
 
 /* Toolbar buttons */
 .ql-toolbar.ql-snow .ql-picker-label,

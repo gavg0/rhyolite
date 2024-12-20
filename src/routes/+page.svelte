@@ -40,26 +40,75 @@
           ['link', 'image', 'video'], // Media
         ];
 
+  let customTooltip;
+    const quickFormatOptions = [
+      { icon: 'B', format: 'bold' },
+      { icon: 'I', format: 'italic' },
+      { icon: 'U', format: 'underline' },
+      { icon: '¶', format: 'blockquote' }
+  ];
+
   onMount(() => {
     // Initialize Quill editor
     quill = new Quill('#editor', {
       theme: 'snow',
       placeholder: 'start typing...',
       modules: {
-            toolbar: toolbarOptions,
-          },
+        toolbar: toolbarOptions,
+      },
       bounds: '#editor'
     });
 
     document.querySelector('#editor').classList.add('quill-dark-theme');
     document.querySelector('.ql-toolbar').style.display = 'none';
 
-    quill.on('text-change', () => {
-        const text = quill.getText() || '';
-        wordCount = countWords(text);
-        charCount = Math.max(0, text.length - 1);
+    // Create custom tooltip element
+    customTooltip = document.createElement('div');
+    customTooltip.className = 'ql-tooltip';
+    document.body.appendChild(customTooltip);
+
+    // Add selection change handler
+    quill.on('selection-change', (range) => {
+      if (range && range.length > 0) {
+        const bounds = quill.getBounds(range.index, range.length);
+        const quillContainer = document.querySelector('#editor');
+        const containerBounds = quillContainer.getBoundingClientRect();
+
+        customTooltip.style.position = 'absolute';
+        customTooltip.style.left = `${containerBounds.left + bounds.left}px`;
+        customTooltip.style.top = `${containerBounds.top + bounds.top - 40}px`;
+        
+        // Clear existing buttons
+        customTooltip.innerHTML = '';
+        
+        // Add format buttons
+        quickFormatOptions.forEach(option => {
+          const button = document.createElement('button');
+          button.textContent = option.icon;
+          button.onclick = () => {
+            quill.format(option.format, !quill.getFormat()[option.format]);
+          };
+          customTooltip.appendChild(button);
+        });
+
+        customTooltip.style.display = 'flex';
+      } else {
+        customTooltip.style.display = 'none';
+      }
     });
-    
+
+    quill.on('text-change', () => {
+      const text = quill.getText() || '';
+      wordCount = countWords(text);
+      charCount = Math.max(0, text.length - 1);
+    });
+
+    const toolbar = document.querySelector('.ql-toolbar');
+    if (toolbar) {
+      toolbar.style.display = 'none';
+      toolbar.classList.remove('visible');
+    }
+      
     loadRecentDocuments().then(() => {
       // Only create a new tab if no documents were loaded
       if (tabs.length === 0) {
@@ -71,6 +120,8 @@
     const autoSaveInterval = setInterval(autoSave, 500);
 
     return () => {
+      // Cleanup
+      customTooltip?.remove();
       clearInterval(autoSaveInterval);
     };
   });
@@ -193,7 +244,19 @@
     isToolbarVisible = !isToolbarVisible;
     const toolbar = document.querySelector('.ql-toolbar');
     if (toolbar) {
-      toolbar.style.display = isToolbarVisible ? 'block' : 'none';
+      if (isToolbarVisible) {
+        toolbar.style.display = 'block';
+        // Small delay to ensure display: block is applied before adding visible class
+        setTimeout(() => {
+          toolbar.classList.add('visible');
+        }, 10);
+      } else {
+        toolbar.classList.remove('visible');
+        // Wait for transition to complete before hiding
+        setTimeout(() => {
+          toolbar.style.display = 'none';
+        }, 300); // Match this with your transition duration
+      }
     }
   }
 
@@ -257,7 +320,10 @@
     ></textarea>
   </div>
   
-  <div id="editor" class="quillbox-container"></div>
+  <div id="editor" class="quillbox-container">
+    <div class="ql-toolbar ql-snow" class:visible={isToolbarVisible}></div>
+    <div class="ql-container ql-snow"></div>
+  </div>
   
   <div class="word-char-counter">
     {wordCount} Words {charCount} Characters

@@ -31,6 +31,8 @@
       "icons/icon.icns",
       "icons/Square44x44Logo.png"
     ],
+    "licenseFile": "../LICENSE.txt",
+    "license": "Apache-2.0",
     "windows":{
       "webviewInstallMode": {
         "type": "embedBootstrapper"

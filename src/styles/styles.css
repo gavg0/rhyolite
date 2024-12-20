@@ -136,7 +136,7 @@ button {
   /* max-width: 700px; */
   min-height: 100px;
   max-height: 200px;
-  z-index: 10;
+  z-index: 60;
 }
 
 .quillbox-container {

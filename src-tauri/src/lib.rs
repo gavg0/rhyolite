@@ -9,7 +9,7 @@ use once_cell::sync::Lazy;
 use dirs;
 use sanitize_filename;
 use uuid::Uuid;
-use tauri::{Manager, WindowEvent};
+use tauri::WindowEvent;
 //use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, TagEnd};
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -31,7 +31,7 @@ struct UserData {
     tabs: Vec<Tab>,  // Store complete Tab structs instead of just IDs
 }
 
-static RECENT_FILES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
+// static RECENT_FILES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
 static TABS: Lazy<Mutex<Vec<Tab>>> = Lazy::new(|| Mutex::new(Vec::new()));
 static TOTAL_TABS: Lazy<Mutex<u64>> = Lazy::new(|| Mutex::new(0));
 

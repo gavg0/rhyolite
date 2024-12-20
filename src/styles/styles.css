@@ -1,6 +1,5 @@
-.logo.leptos:hover {
-  filter: drop-shadow(0 0 2em #a82e20);
-}
+@import "quill-dark-theme.css";
+
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -12,6 +11,14 @@
 
   --container-color: #1b1b1b;
   --container-text-color: #e0e0e0;
+
+  --editor-bg: #1b1b1b;
+  --editor-text: #e0e0e0;
+  --editor-border: #333;
+  --editor-accent: #646cff;
+  --editor-placeholder: #666;
+  --editor-blockquote: #c0c0c0;
+  --editor-code-bg: #1a1a1a;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;

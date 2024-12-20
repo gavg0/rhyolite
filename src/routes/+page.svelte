@@ -3,7 +3,6 @@
   import { onMount } from 'svelte';
   import { invoke } from "@tauri-apps/api/core";
   import '../styles/styles.css';
-  import '../styles/quill-dark-theme.css';
   import { v4 as uuidv4 } from 'uuid';
   import Quill from 'quill';
 

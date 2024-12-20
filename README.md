@@ -28,13 +28,13 @@ Install the `.deb` version of the package from the [releases section](https://gi
 
 ### AppImage and raw linux
 
-For any other GNU/Linux distribution you can use the `.AppImage` or run the `raw linux` version from the [the releases section/](https://github.com/RedddFoxxyy/Rhyolite/releases).
+For any other GNU/Linux distribution you can use the `~~.AppImage~~`(AppImage is not yet available) or run the `raw linux(linux_binary)` version from the [the releases section/](https://github.com/RedddFoxxyy/Rhyolite/releases).
 
-Note: You might need to make them executable by running `chmod +x fextify.AppImage` or `chmod +x fextify-linux`.
+Note: You might need to make them executable by running `~~chmod +x Rhyolite.AppImage~~` or `chmod +x Rhyolite_[version]_linux_binary`.
 
 # Manual compilation
 
-For manual compilation run `npm run tauri build -- --target x86_64-pc-windows-msvc` on Windows, or `npm run tauri build` on GNU/Linux.
+For manual compilation run `npm run tauri build` in the source dir.
 
 NOTE: if you run into any compilation error you can always debug the error with `npm run tauri build --verbose`.
 
@@ -61,4 +61,6 @@ You can open a pull request to add your theme in `/src/themes`. We will add it i
 
 # Known bugs
 
-1. Changing the title of any file to a duplicate causes a panic & `config.json` to mess up. For the time being, avoid naming files the same. In case this happens, nuke `config.json` by emptying all arrays & restart the software.
+1. The themeing is not good, so some stuff might be hard to see.
+2. Tab icon can sometimes glitch out.
+3. The command Pallete has not bene implemented yet.

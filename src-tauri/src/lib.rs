@@ -1,5 +1,4 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
@@ -274,7 +273,7 @@ pub fn run() {
     tauri::Builder::default()
         .on_window_event(|window, event| {
             match event {
-                WindowEvent::CloseRequested { api, .. } => {
+                WindowEvent::CloseRequested { .. } => {
                     // Call the function to save UserData when the app is closing
                     on_app_close();
 

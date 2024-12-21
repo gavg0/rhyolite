@@ -1,5 +1,4 @@
 <script lang="ts">
-// @ts-nocheck
 import { onMount } from 'svelte';
 import { invoke } from "@tauri-apps/api/core";
 import '../styles/styles.css';
@@ -79,8 +78,16 @@ onMount(() => {
     bounds: '#editor'
   });
 
-  document.querySelector('#editor').classList.add('quill-dark-theme');
-  document.querySelector('.ql-toolbar').style.display = 'none';
+  const editorElement = document.querySelector('#editor');
+  const toolbarElement = document.querySelector('.ql-toolbar');
+  
+  if (editorElement) {
+    editorElement.classList.add('quill-dark-theme');
+  }
+  
+  if (toolbarElement instanceof HTMLElement) {
+    toolbarElement.style.display = 'none';
+  }
 
   // Create custom tooltip element
   customTooltip = document.createElement('div');
@@ -88,34 +95,37 @@ onMount(() => {
   document.body.appendChild(customTooltip);
 
   // Add selection change handler
-  quill.on('selection-change', (range) => {
+  quill.on('selection-change', (range: { index: number; length: number } | null) => {
     if (range && range.length > 0) {
       const bounds = quill.getBounds(range.index, range.length);
       const quillContainer = document.querySelector('#editor');
-      const containerBounds = quillContainer.getBoundingClientRect();
-
-      customTooltip.style.position = 'absolute';
-      customTooltip.style.left = `${containerBounds.left + bounds.left}px`;
-      customTooltip.style.top = `${containerBounds.top + bounds.top - 40}px`;
       
-      // Clear existing buttons
-      customTooltip.innerHTML = '';
-      
-      // Add format buttons
-      quickFormatOptions.forEach(option => {
-        const button = document.createElement('button');
-        button.textContent = option.icon;
-        button.onclick = () => {
-          if (option.value !== undefined) {
-            quill.format(option.format, option.value);
-          } else {
-            quill.format(option.format, !quill.getFormat()[option.format]);
-          }
-        };
-        customTooltip.appendChild(button);
-      });
+      if (quillContainer instanceof HTMLElement) {
+        const containerBounds = quillContainer.getBoundingClientRect();
 
-      customTooltip.style.display = 'flex';
+        customTooltip.style.position = 'absolute';
+        customTooltip.style.left = `${containerBounds.left + bounds.left}px`;
+        customTooltip.style.top = `${containerBounds.top + bounds.top - 40}px`;
+        
+        // Clear existing buttons
+        customTooltip.innerHTML = '';
+        
+        // Add format buttons
+        quickFormatOptions.forEach(option => {
+          const button = document.createElement('button');
+          button.textContent = option.icon;
+          button.onclick = () => {
+            if (option.value !== undefined) {
+              quill.format(option.format, option.value);
+            } else {
+              quill.format(option.format, !quill.getFormat()[option.format]);
+            }
+          };
+          customTooltip.appendChild(button);
+        });
+
+        customTooltip.style.display = 'flex';
+      }
     } else {
       customTooltip.style.display = 'none';
     }
@@ -128,13 +138,12 @@ onMount(() => {
   });
 
   const toolbar = document.querySelector('.ql-toolbar');
-  if (toolbar) {
+  if (toolbar instanceof HTMLElement) {
     toolbar.style.display = 'none';
     toolbar.classList.remove('visible');
   }
     
   loadRecentDocuments().then(() => {
-    // Only create a new tab if no documents were loaded
     if (tabs.length === 0) {
       addnewtab();
     }
@@ -252,23 +261,20 @@ function handleKeydown(event: KeyboardEvent): void {
   }
 }
 
-// New function to toggle toolbar
-function toggleToolbar() {
+function toggleToolbar(): void {
   isToolbarVisible = !isToolbarVisible;
   const toolbar = document.querySelector('.ql-toolbar');
   if (toolbar) {
     if (isToolbarVisible) {
       toolbar.style.display = 'block';
-      // Small delay to ensure display: block is applied before adding visible class
       setTimeout(() => {
         toolbar.classList.add('visible');
       }, 10);
     } else {
       toolbar.classList.remove('visible');
-      // Wait for transition to complete before hiding
       setTimeout(() => {
         toolbar.style.display = 'none';
-      }, 300); // Match this with your transition duration
+      }, 300);
     }
   }
 }

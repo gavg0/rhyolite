@@ -57,7 +57,7 @@ You can duplicate the `src/themes/default.css` and modify its colors. We recomme
 
 You can open a pull request to add your theme in `/src/themes`. We will add it if it's good.
 
-~~Alternatively, you can join our [Discord server](https://discord.gg/8Wh4PtnmnJ) and post it on the `fextify-themes` forum!~~
+~~Alternatively, you can join our [Discord server](https://discord.gg/K6FAd8FTma) and post it on the `fextify-themes` forum!~~
 
 # Known bugs
 

@@ -104,8 +104,8 @@ onMount(() => {
         const containerBounds = quillContainer.getBoundingClientRect();
 
         customTooltip.style.position = 'absolute';
-        customTooltip.style.left = `${containerBounds.left + bounds.left}px`;
-        customTooltip.style.top = `${containerBounds.top + bounds.top - 40}px`;
+        customTooltip.style.left = `${containerBounds.left + bounds!.left}px`;
+        customTooltip.style.top = `${containerBounds.top + bounds!.top - 40}px`;
         
         // Clear existing buttons
         customTooltip.innerHTML = '';

@@ -120,19 +120,24 @@ fn reset_tab_order_count() -> Result<(), String> {
 #[tauri::command]
 fn reorder_tabs() -> Result<Vec<Tab>, String> {
     let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
-    let mut ordered_tabs = Vec::new();
     
-    // Create new tabs with updated order
-    for (index, tab) in tabs.iter().enumerate() {
-        ordered_tabs.push(Tab {
+    // Create new tabs with sequential ordering starting from 1
+    let ordered_tabs: Vec<Tab> = tabs.iter()
+        .enumerate()
+        .map(|(index, tab)| Tab {
             order: (index + 1) as u64,
             id: tab.id.clone(),
             title: tab.title.clone()
-        });
-    }
+        })
+        .collect();
     
-    // Replace old tabs with reordered tabs
+    // Update the stored tabs
     *tabs = ordered_tabs.clone();
+    
+    // Update TOTAL_TABS to match the actual number of tabs
+    let mut total_tabs = TOTAL_TABS.lock().map_err(|e| format!("Failed to lock TOTAL_TABS: {}", e))?;
+    *total_tabs = tabs.len() as u64;
+    
     Ok(ordered_tabs)
 }
 
@@ -258,14 +263,17 @@ fn delete_document(id: String) -> Result<(), String> {
     let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
     tabs.retain(|tab| tab.id != id);
     
-    // Check if the file exists and delete it
+    // Update TOTAL_TABS to match the actual number of tabs
+    let mut total_tabs = TOTAL_TABS.lock().map_err(|e| format!("Failed to lock TOTAL_TABS: {}", e))?;
+    *total_tabs = tabs.len() as u64;
+    
+    // Delete the file if it exists
     if file_path.exists() {
         fs::remove_file(&file_path)
             .map_err(|e| format!("Failed to delete file {}: {}", file_path.display(), e))?;
-        Ok(())
-    } else {
-        Err(format!("File with ID {} not found", id))
     }
+    
+    Ok(())
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

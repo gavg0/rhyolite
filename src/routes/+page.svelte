@@ -218,6 +218,7 @@ async function loadRecentDocuments(): Promise<void> {
     
     if (recentDocuments.length > 0) {
       await invoke('reset_tab_order_count');
+      tabs = []; // Clear existing tabs
       
       for (const doc of recentDocuments) {
         const newTab: Tab = await invoke('load_tab', {
@@ -227,10 +228,16 @@ async function loadRecentDocuments(): Promise<void> {
         tabs = [...tabs, newTab];
       }
       
+      // Ensure correct ordering
+      const reorderedTabs: Tab[] = await invoke('reorder_tabs');
+      tabs = reorderedTabs;
+      
       const lastDoc = recentDocuments[recentDocuments.length - 1];
       currentId = lastDoc.id;
       titleText = lastDoc.title;
       quill?.setContents(JSON.parse(lastDoc.content));
+    } else {
+      addnewtab();
     }
   } catch (error) {
     console.error('Failed to load documents:', error);
@@ -282,6 +289,9 @@ function toggleToolbar(): void {
 async function deleteDocument(): Promise<void> {
   try {
     await invoke('delete_document', { id: currentId });
+
+    // Remove the deleted tab from local state
+    tabs = tabs.filter(tab => tab.id !== currentId);
     
     const reorderedTabs: Tab[] = await invoke('reorder_tabs');
     tabs = reorderedTabs;
@@ -294,7 +304,7 @@ async function deleteDocument(): Promise<void> {
       quill?.setContents(JSON.parse(docResult.content));
     } else {
       await invoke('reset_tab_order_count')
-      await newDocument();
+      await addnewtab();
     }
   } catch (error) {
     console.error('Failed to delete document:', error);
@@ -303,11 +313,18 @@ async function deleteDocument(): Promise<void> {
 
 async function newDocument(): Promise<void> {
   try {
+    const currentTabCount = tabs.length;
     const newTab: Tab = await invoke('new_tab');
+    
+    // Update local state with the new tab
     tabs = [...tabs, newTab];
     currentId = newTab.id;
     titleText = newTab.title;
     quill?.setContents([]);
+    
+    // Ensure tab order is correct
+    const reorderedTabs: Tab[] = await invoke('reorder_tabs');
+    tabs = reorderedTabs;
   } catch (error) {
     console.error('Failed to create new document:', error);
   }

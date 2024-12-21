@@ -179,21 +179,16 @@ async function switchTab(tabId: string): Promise<void> {
   }
 }
 
-async function cycleTabs() {
+async function cycleTabs(): Promise<void> {
   if (tabs.length > 0) {
-    // Find the current tab index
     const currentTabIndex = tabs.findIndex(tab => tab.id === currentId);
-    
-    // Determine the next tab index, looping back to the first if at the end
     const nextTabIndex = (currentTabIndex + 1) % tabs.length;
     const nextTab = tabs[nextTabIndex];
-
-    // Switch to the next tab
-    switchTab(nextTab.id);
+    await switchTab(nextTab.id);
   }
 }
 
-async function autoSave() {
+async function autoSave(): Promise<void> {
   if (!titleText && !quill?.getText().trim()) return;
 
   try {
@@ -207,26 +202,22 @@ async function autoSave() {
   }
 }
 
-async function loadRecentDocuments() {
+async function loadRecentDocuments(): Promise<void> {
   try {
-    const docs = await invoke('load_recent_files');
+    const docs: Document[] = await invoke('load_recent_files');
     recentDocuments = docs;
     
     if (recentDocuments.length > 0) {
-      // Reset tab order count before loading tabs
       await invoke('reset_tab_order_count');
       
-      // Create tabs for each loaded document
       for (const doc of recentDocuments) {
-        // Use load_tab instead of creating tabs directly
-        const newTab = await invoke('load_tab', {
+        const newTab: Tab = await invoke('load_tab', {
           idIn: doc.id,
           title: doc.title
         });
         tabs = [...tabs, newTab];
       }
       
-      // Load the last document
       const lastDoc = recentDocuments[recentDocuments.length - 1];
       currentId = lastDoc.id;
       titleText = lastDoc.title;
@@ -237,11 +228,12 @@ async function loadRecentDocuments() {
   }
 }
 
-function handleTitleChange(event) {
-  titleText = event.target.value;
+function handleTitleChange(event: Event): void {
+  const target = event.target as HTMLTextAreaElement;
+  titleText = target.value;
 }
 
-function handleKeydown(event) {
+function handleKeydown(event: KeyboardEvent): void {
   if (event.ctrlKey && event.key === 'd') {
     event.preventDefault();
     deleteDocument();
@@ -254,7 +246,6 @@ function handleKeydown(event) {
     event.preventDefault();
     toggleToolbar();
   }
-  // Handle Ctrl + Tab (cycle through tabs)
   if (event.ctrlKey && event.key === 'Tab') {
     event.preventDefault();
     cycleTabs();
@@ -282,35 +273,31 @@ function toggleToolbar() {
   }
 }
 
-async function deleteDocument() {
+async function deleteDocument(): Promise<void> {
   try {
-      // Delete the document and its tab
-      await invoke('delete_document', { id: currentId });
-      
-      // Get reordered tabs from Rust
-      const reorderedTabs = await invoke('reorder_tabs');
-      tabs = reorderedTabs;
-      
-      if (tabs.length > 0) {
-          // Switch to the last remaining tab
-          const lastTab = tabs[tabs.length - 1];
-          currentId = lastTab.id;
-          const docResult = await invoke('get_document_content', { id: currentId });
-          titleText = docResult.title;
-          quill?.setContents(JSON.parse(docResult.content));
-      } else {
-          // If no tabs remain, create a new one
-          await invoke('reset_tab_order_count')
-          await newDocument();
-      }
-    } catch (error) {
-      console.error('Failed to delete document:', error);
+    await invoke('delete_document', { id: currentId });
+    
+    const reorderedTabs: Tab[] = await invoke('reorder_tabs');
+    tabs = reorderedTabs;
+    
+    if (tabs.length > 0) {
+      const lastTab = tabs[tabs.length - 1];
+      currentId = lastTab.id;
+      const docResult: Document = await invoke('get_document_content', { id: currentId });
+      titleText = docResult.title;
+      quill?.setContents(JSON.parse(docResult.content));
+    } else {
+      await invoke('reset_tab_order_count')
+      await newDocument();
+    }
+  } catch (error) {
+    console.error('Failed to delete document:', error);
   }
 }
 
-async function newDocument() {
+async function newDocument(): Promise<void> {
   try {
-    const newTab = await invoke('new_tab');
+    const newTab: Tab = await invoke('new_tab');
     tabs = [...tabs, newTab];
     currentId = newTab.id;
     titleText = newTab.title;

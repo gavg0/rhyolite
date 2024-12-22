@@ -20,15 +20,23 @@ I decided to redo the whole project and continue developement on it cause I real
 
 Run the `Rhyolite_[version]_x64_en-US.msi` msi installer or run the `Rhyolite_[version]_x64-setup.exe` installer included in the [releases section](https://github.com/RedddFoxxyy/Rhyolite/releases).
 
+## Mac-OS
+
+Run the `Rhyolite_[version]_x64.dmg` or run the `Rhyolite_[version]_aarch64.dmg` for M series Macbooks, included in the [releases section](https://github.com/RedddFoxxyy/Rhyolite/releases).
+
 ## GNU/Linux
 
-### Debian and/or Ubuntu
+### Debian and/or Ubuntu:
 
 Install the `.deb` version of the package from the [releases section](https://github.com/RedddFoxxyy/Rhyolite/releases).
 
-### AppImage and raw linux
+### RHEL and/or FEDORA based linux distros:
 
-For any other GNU/Linux distribution you can use the ~~.AppImage~~(AppImage is not yet available) or run the `raw linux(linux_binary)` version from the [the releases section/](https://github.com/RedddFoxxyy/Rhyolite/releases).
+Install the `.rpm` version of the package from the [releases section](https://github.com/RedddFoxxyy/Rhyolite/releases).
+
+### AppImage and raw linux:
+
+For any other GNU/Linux distribution you can use the `.AppImage` or run the `raw linux(linux_binary)` version from the [the releases section/](https://github.com/RedddFoxxyy/Rhyolite/releases).
 
 Note: You might need to make them executable by running ~~chmod +x Rhyolite.AppImage~~ or `chmod +x Rhyolite_[version]_linux_binary`.
 
@@ -41,7 +49,7 @@ NOTE: if you run into any compilation error you can always debug the error with 
 # On first startup
 
 1. Run the `fextify.exe` included in this folder. (or run `npm run tauri build -- --target x86_64-pc-windows-msvc` to compile)
-2. Press `CTRL` + `P` to open the command pallet. It will give you a good idea of what's going on. Otherwise, explore!
+2. ~~Press `CTRL` + `P` to open the command pallet. It will give you a good idea of what's going on. Otherwise, explore!~~
 
 # ~~Themes~~(soon)
 

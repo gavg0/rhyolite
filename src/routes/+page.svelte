@@ -268,8 +268,6 @@ function handleKeydown(event: KeyboardEvent): void {
   }
 }
 
-//test
-
 function toggleToolbar(): void {
   isToolbarVisible = !isToolbarVisible;
   const toolbar = document.querySelector('.ql-toolbar');

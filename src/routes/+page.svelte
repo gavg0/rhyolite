@@ -381,19 +381,24 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-<main class="container">
-    <div class="title-container title-textarea">
-        <textarea
-            class="rounded-container"
-            placeholder="Enter Title here..."
-            value={titleText}
-            oninput={handleTitleChange}
-        ></textarea>
-    </div>
+<main>
+    <div class="container">
+        <div class="title-container title-textarea">
+            <textarea
+                class="rounded-container"
+                placeholder="Enter Title here..."
+                value={titleText}
+                oninput={handleTitleChange}
+            ></textarea>
+        </div>
 
-    <div id="editor" class="quillbox-container">
-        <div class="ql-toolbar ql-snow" class:visible={isToolbarVisible}></div>
-        <div class="ql-container ql-snow"></div>
+        <div id="editor" class="quillbox-container">
+            <div
+                class="ql-toolbar ql-snow"
+                class:visible={isToolbarVisible}
+            ></div>
+            <div class="ql-container ql-snow"></div>
+        </div>
     </div>
 
     <div class="word-char-counter">

@@ -52,8 +52,6 @@ border-radius: 4px;
 background-color: var(--ui-element-background);
 }
 
-
-
 /* Toolbar buttons */
 .ql-toolbar.ql-snow .ql-picker-label,
 .ql-toolbar.ql-snow .ql-picker-options {
@@ -127,7 +125,7 @@ color: var(--editor-accent);
 
 /* Selection highlight */
 .ql-editor ::selection {
-background: rgba(100, 108, 255, 0.3);
+background: var(--editor-selection-highlight);
 }
 
 /* Placeholder text */

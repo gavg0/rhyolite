@@ -206,7 +206,7 @@ height: 100%;
 .ql-toolbar.ql-snow .ql-picker-label:hover {
     background-color: var(--dropdown-hover-bg);
     border-color: var(--dropdown-hover-border);
-    shadow: var(--dropdown-hover-shadow);
+    box-shadow: var(--dropdown-hover-shadow);
     transform: translateY(-1px);
 }
 

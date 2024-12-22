@@ -19,8 +19,8 @@ chmod +x /tmp/$APP_NAME
 sudo mv /tmp/$APP_NAME $INSTALL_DIR/$APP_NAME
 
 # Download and install the icon
-mkdir -p $ICON_DIR
-curl -L $ICON_URL -o $ICON_DIR/$APP_NAME.png
+sudo mkdir -p $ICON_DIR
+sudo curl -L $ICON_URL -o $ICON_DIR/$APP_NAME.png
 
 # Create a .desktop file
 mkdir -p $DESKTOP_FILE_DIR

@@ -1,0 +1,50 @@
+#!/bin/bash
+
+set -e
+
+APP_NAME="Rhyolite"   # Replace with your app's name
+BINARY_URL="https://github.com/RedddFoxxyy/Rhyolite/releases/download/v0.1.1/Rhyolite_0.1.1_linux_binary"  # Update with your binary's URL
+ICON_URL="https://github.com/RedddFoxxyy/Rhyolite/blob/master/src-tauri/icons/icon.png"  # Update with your app's icon URL
+INSTALL_DIR="/usr/local/bin"
+DESKTOP_FILE_DIR="$HOME/.local/share/applications" # For a user-specific install
+ICON_DIR="/usr/share/icons/hicolor/1080x1080/apps/"
+
+echo "Installing $APP_NAME..."
+
+# Download the binary
+curl -L $BINARY_URL -o /tmp/$APP_NAME
+chmod +x /tmp/$APP_NAME
+
+# Move the binary to the installation directory
+sudo mv /tmp/$APP_NAME $INSTALL_DIR/$APP_NAME
+
+# Download and install the icon
+mkdir -p $ICON_DIR
+curl -L $ICON_URL -o $ICON_DIR/$APP_NAME.png
+
+# Create a .desktop file
+mkdir -p $DESKTOP_FILE_DIR
+DESKTOP_FILE=$DESKTOP_FILE_DIR/$APP_NAME.desktop
+
+cat <<EOF > $DESKTOP_FILE
+[Desktop Entry]
+Type=Application
+Name=$APP_NAME
+Comment=A simple text editor written in Rust using Tauri.
+Exec=$INSTALL_DIR/$APP_NAME
+Icon=$ICON_DIR/$APP_NAME.png
+Terminal=false
+Categories=Utility;TextEditor;
+Author=Suyog Tandel
+EOF
+
+chmod +x $DESKTOP_FILE
+
+echo "$APP_NAME installed successfully!"
+
+# Refresh desktop database
+if command -v update-desktop-database >/dev/null 2>&1; then
+  update-desktop-database "$HOME/.local/share/applications"
+fi
+
+echo "You can now find $APP_NAME in your application menu."

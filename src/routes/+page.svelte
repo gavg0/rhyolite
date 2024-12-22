@@ -287,7 +287,10 @@
             event.preventDefault();
             toggleToolbar();
         }
-        if (event.ctrlKey && event.key === "Tab") {
+        if (
+            (event.ctrlKey && event.key === "Tab") ||
+            (event.ctrlKey && event.key === "PageDown")
+        ) {
             event.preventDefault();
             cycleTabs();
         }

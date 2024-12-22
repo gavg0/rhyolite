@@ -23,8 +23,8 @@ sudo mkdir -p $ICON_DIR
 sudo curl -L $ICON_URL -o $ICON_DIR/$APP_NAME.png
 
 # Create a .desktop file
-mkdir -p $DESKTOP_FILE_DIR
-DESKTOP_FILE=$DESKTOP_FILE_DIR/$APP_NAME.desktop
+sudo mkdir -p $DESKTOP_FILE_DIR
+sudo DESKTOP_FILE=$DESKTOP_FILE_DIR/$APP_NAME.desktop
 
 cat <<EOF > $DESKTOP_FILE
 [Desktop Entry]

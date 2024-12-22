@@ -16,6 +16,7 @@ curl -L $BINARY_URL -o /tmp/$APP_NAME
 chmod +x /tmp/$APP_NAME
 
 # Move the binary to the installation directory
+mkdir -p $INSTALL_DIR
 mv /tmp/$APP_NAME $INSTALL_DIR/$APP_NAME
 
 # Download and install the icon

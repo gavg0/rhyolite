@@ -21,8 +21,8 @@ mv /tmp/$APP_NAME $INSTALL_DIR/$APP_NAME
 
 # Download and install the icon
 mkdir -p $ICON_DIR
-curl -L $ICON_URL -o /tmp/$APP_NAME.png
-mv /tmp/$APP_NAME.png $ICON_DIR/$APP_NAME.png
+curl -L $ICON_URL -o $ICON_DIR/$APP_NAME.png
+# mv /tmp/$APP_NAME.png $ICON_DIR/$APP_NAME.png
 
 # Create a .desktop file
 mkdir -p $DESKTOP_FILE_DIR

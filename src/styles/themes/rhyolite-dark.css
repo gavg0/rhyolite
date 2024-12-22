@@ -20,4 +20,44 @@
     --editor-placeholder: #666;
     --editor-blockquote: #c0c0c0;
     --editor-code-bg: #1a1a1a;
+    
+    /* Button Variables */
+    --button-bg: #2b2b2b00;
+    --button-border: #3a3a3a00;
+    --button-shadow: #a75eff00;
+    --button-hover-bg: #3a3a3a87;
+    --button-hover-border: #4a4a4a;
+    --button-hover-shadow: rgba(154, 60, 255, 0.3);
+    --button-active-bg: #4a4a4a;
+    --button-active-border: #5a5a5a;
+    --button-active-shadow: rgba(0, 0, 0, 0.4);
+    --button-disabled-bg: #1a1a1a;
+    --button-disabled-border: #2a2a2a;
+    --button-focus-border: #6a6a6a;
+    --button-focus-shadow: rgba(100, 100, 100, 0.3);
+    
+    /* Button Icon Colors */
+    --button-icon-color: #ffffff;
+    --button-icon-hover-color: #ffffff;
+    --button-icon-active-color: #ffffff;
+    
+    /* Dropdown Variables */
+    --dropdown-bg: #2a2a2a61;
+    --dropdown-text-color: #ffffff;
+    --dropdown-border: #3a3a3a00;
+    --dropdown-shadow: rgba(0, 0, 0, 0.2);
+    --dropdown-hover-bg: #3a3a3a3d;
+    --dropdown-hover-border: #4a4a4a;
+    --dropdown-hover-shadow: rgba(154, 60, 255, 0.3);
+    --dropdown-options-bg: #2a2a2a;
+    --dropdown-options-border: #3a3a3a;
+    --dropdown-options-shadow: rgba(0, 0, 0, 0.3);
+    --dropdown-item-color: #ffffff;
+    --dropdown-item-hover-bg: #3a3a3a;
+    --dropdown-item-hover-color: #ffffff;
+    
+    /* Color Picker Variables */
+    --color-picker-border: #3a3a3a00;
+    --color-picker-hover-border: #4a4a4a;
+    --color-picker-hover-shadow: rgba(0, 0, 0, 0.3);
   }

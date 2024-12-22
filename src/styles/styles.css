@@ -116,12 +116,14 @@ button {
   width: 70%;
   height: 10%;
   display: flex;
+  margin-top: 0.5%;
   padding: 0.5%;
   justify-content: center;
   /* max-width: 700px; */
   min-height: 100px;
   max-height: 200px;
   z-index: 60;
+  overflow: hidden;
 }
 
 .quillbox-container {

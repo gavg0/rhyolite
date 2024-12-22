@@ -7,7 +7,7 @@ BINARY_URL="https://github.com/RedddFoxxyy/Rhyolite/releases/download/v0.1.1/Rhy
 ICON_URL="https://github.com/RedddFoxxyy/Rhyolite/blob/master/src-tauri/icons/icon.png"  # Update with your app's icon URL
 INSTALL_DIR="/usr/local/bin"
 DESKTOP_FILE_DIR="$HOME/.local/share/applications" # For a user-specific install
-ICON_DIR="$HOME/.local/share/icons"
+ICON_DIR="/usr/share/icons/hicolor/1080x1080/apps/"
 
 echo "Installing $APP_NAME..."
 

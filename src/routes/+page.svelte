@@ -215,6 +215,13 @@
         }
     }
 
+    async function gotoLastTab(): Promise<void> {
+        if (tabs.length > 0) {
+            const lastTabIndex = tabs.length - 1;
+            await switchTab(tabs[lastTabIndex].id);
+        }
+    }
+
     async function autoSave(): Promise<void> {
         if (!titleText && !quill?.getText().trim()) return;
 
@@ -287,6 +294,10 @@
         if (event.ctrlKey && event.key === "1") {
             event.preventDefault();
             gotoTab1();
+        }
+        if (event.ctrlKey && event.key === "9") {
+            event.preventDefault();
+            gotoLastTab();
         }
     }
 

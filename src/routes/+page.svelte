@@ -43,7 +43,7 @@
     let tabs: Tab[] = $state([]);
 
     //setcontext for the editor to pass to the child components:
-    setContext('editor', { addnewtab, switchTab, gotoLastTab, gotoTab1, cycleTabs, deleteDocument, toggleToolbar, return_isCommandPalettevisible: () => isCommandPalettevisible });
+    setContext('editor', { addnewtab, switchTab, gotoLastTab, gotoTab1, cycleTabs, deleteDocument, toggleToolbar, return_isCommandPalettevisible: () => isCommandPalettevisible, toggleCommandPalette });
 
     // Initialize Quill
     let quill: Quill;

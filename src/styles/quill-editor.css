@@ -4,7 +4,7 @@ font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
 color: var(--editor-text);
 background-color: var(--editor-bg);
 border: none !important;
-font-size: 16px;
+font-size: 18px;
 height: 100%;
 }
 
@@ -155,6 +155,8 @@ height: 100%;
     border-radius: 4px;
     padding: 6px;
     margin: 2px;
+    height: 32px;
+    width: 32px;
     box-shadow: 0 1px 3px var(--button-shadow);
     transition: all 0.2s ease;
 }

@@ -132,7 +132,7 @@
             onclick={() => editor.toggleCommandPalette()}
             >
         </div>
-        <div class="commandPalatte" onwheel={handleWheel}>
+        <div class="commandPalette" onwheel={handleWheel}>
             <textarea
                 class="command-search"
                 placeholder="Select a Command"

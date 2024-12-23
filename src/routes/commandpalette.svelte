@@ -133,11 +133,19 @@
             >
         </div>
         <div class="commandPalette" onwheel={handleWheel}>
-            <textarea
-                class="command-search"
-                placeholder="Select a Command"
-                bind:value={searchText}
-            ></textarea>
+            <div class="search-container">
+                <textarea
+                    class="command-search"
+                    placeholder="Select a Command"
+                    bind:value={searchText}
+                ></textarea>
+                <button 
+                    class="close-button"
+                    onclick={() => editor.toggleCommandPalette()}
+                >
+                    ✕
+                </button>
+            </div>
             {#each commands as command, index}
                 <button
                     type="button"

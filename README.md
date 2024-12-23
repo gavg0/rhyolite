@@ -27,6 +27,10 @@ Run the `Rhyolite_[version]_x64.dmg` or run the `Rhyolite_[version]_aarch64.dmg`
 
 ## GNU/Linux
 
+### All Linux Distros:-
+
+Run this command on your terminal: `curl -f https://raw.githubusercontent.com/RedddFoxxyy/Rhyolite/master/packaging/linux/install.sh | sh`, it will install the app for you.
+
 ### Debian and/or Ubuntu:
 
 Install the `.deb` version of the package from the [releases section](https://github.com/RedddFoxxyy/Rhyolite/releases).

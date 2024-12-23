@@ -4,9 +4,8 @@
     import { getContext } from "svelte";
     import { setContext } from "svelte";
 
-    // let isvisible: boolean = $state(false);
-    // let { isvisible: boolean = false} = $props();
-    let selectedindex: number = $state(0);
+    let selectedindex: number = $state(-1);
+    let searchText: string = $state("");
 
     const editor: any = getContext('editor');
 
@@ -20,35 +19,109 @@
       {
         name: 'Delete Tab',
         shortcut: 'Ctrl + D',
-        action: () => editor.deleteDocument()
+        action: () => {
+            editor.deleteDocument();
+            editor.toggleCommandPalette();
+        }
       },
       {
         name: 'New Tab',
         shortcut: 'Ctrl + N',
-        action: () => editor.newDocument()
+        action: () => {
+            editor.newDocument();
+            editor.toggleCommandPalette();
+        }
       },
       {
         name: 'Next Tab',
         shortcut: 'Ctrl + Tab or Ctrl + pgDown',
-        action: () => editor.cycleTabs()
+        action: () => {
+            editor.cycleTabs();
+            editor.toggleCommandPalette();
+        }
       },
       {
         name: 'Go to First Tab',
         shortcut: 'Ctrl + 1',
-        action: () => editor.gotoTab1()
+        action: () => {
+            editor.gotoTab1();
+            editor.toggleCommandPalette();
+        }
       },
       {
         name: 'Go to Last Tab',
         shortcut: 'Ctrl + 9',
-        action: () => editor.gotoLastTab()
+        action: () => {
+            editor.gotoLastTab();
+            editor.toggleCommandPalette();
+        }
       },
       {
         name: 'Toggle ToolBar',
         shortcut: 'Ctrl + T',
-        action: () => editor.toggleToolbar()
+        action: () => {
+            editor.toggleToolbar();
+            editor.toggleCommandPalette();
+        }
       }
     ];
+
+    function handleKeydown(event: KeyboardEvent) {
+        if (!editor.return_isCommandPalettevisible()) return;
+
+        switch (event.key) {
+            case 'ArrowDown':
+                event.preventDefault();
+                if (selectedindex === -1) {
+                    selectedindex = 0;
+                } else {
+                    selectedindex = (selectedindex + 1) % commands.length;
+                }
+                break;
+            case 'ArrowUp':
+                event.preventDefault();
+                if (selectedindex === -1) {
+                    selectedindex = commands.length - 1;
+                } else {
+                    selectedindex = (selectedindex - 1 + commands.length) % commands.length;
+                }
+                break;
+            case 'Enter':
+                event.preventDefault();
+                if (selectedindex >= 0 && selectedindex < commands.length) {
+                    commands[selectedindex].action();
+                }
+                break;
+            case 'Escape':
+                event.preventDefault();
+                editor.toggleCommandPalette();
+                break;
+        }
+    }
+
+    function handleWheel(event: WheelEvent) {
+        if (!editor.return_isCommandPalettevisible()) return;
+        
+        event.preventDefault();
+        if (event.deltaY > 0) {
+            // Scrolling down
+            selectedindex = (selectedindex + 1) % commands.length;
+        } else {
+            // Scrolling up
+            selectedindex = (selectedindex - 1 + commands.length) % commands.length;
+        }
+    }
+
+    // Reset selected index when command palette is closed
+    $effect(() => {
+        if (!editor.return_isCommandPalettevisible()) {
+            selectedindex = -1;
+            searchText = "";
+        }
+    });
 </script>
+
+<svelte:window on:keydown={handleKeydown} />
 
 <main>
     {#if editor.return_isCommandPalettevisible()}
@@ -59,18 +132,21 @@
             onclick={() => editor.toggleCommandPalette()}
             >
         </div>
-        <div class="commandPalatte">
+        <div class="commandPalatte" onwheel={handleWheel}>
             <textarea
                 class="command-search"
                 placeholder="Select a Command"
-                
+                bind:value={searchText}
             ></textarea>
             {#each commands as command, index}
                 <button
                     type="button"
                     class="command-item"
                     class:active={selectedindex === index}
-                    onclick={() => command.action()}
+                    onclick={() => {
+                        command.action();
+                    }}
+                    onmouseenter={() => selectedindex = index}
                 >
                     <span>{command.name}</span>
                     <span class="shortcut">{command.shortcut}</span>

@@ -1,21 +1,75 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { invoke } from "@tauri-apps/api/core";
+    import { getContext } from "svelte";
+    import { setContext } from "svelte";
 
     let isvisible: boolean = $state(false);
     let selectedindex: number = $state(0);
 
+    const editor: any = getContext('editor');
+
+    setContext('commandPalette', {togglecommandPalette});
+
     interface Command {
-        name: String;
-        shortcut: String;
+        name: string;
+        shortcut: string;
         action: () => void;
     }
 
-    // let commands: Command[] = [
-    //   {
-    //     name: 'Delete Tab',
-    //     shortcut: 'Ctrl + D',
-    //     action: () => deleteDocument
-    //   }
-    // ];
+    let commands: Command[] = [
+      {
+        name: 'Delete Tab',
+        shortcut: 'Ctrl + D',
+        action: () => editor.deleteDocument()
+      },
+      {
+        name: 'New Tab',
+        shortcut: 'Ctrl + N',
+        action: () => editor.addnewtab()
+      },
+      {
+        name: 'Next Tab',
+        shortcut: 'Ctrl + Tab or Ctrl + pgDown',
+        action: () => editor.cycleTabs()
+      },
+      {
+        name: 'Go to First Tab',
+        shortcut: 'Ctrl + 1',
+        action: () => editor.gotoTab1()
+      },
+      {
+        name: 'Go to Last Tab',
+        shortcut: 'Ctrl + 9',
+        action: () => editor.gotoLastTab()
+      },
+      {
+        name: 'Toggle ToolBar',
+        shortcut: 'Ctrl + T',
+        action: () => editor.gotoTab1()
+      }
+    ];
+
+    function togglecommandPalette(): void {
+        isvisible = !isvisible;
+    }
+
 </script>
+
+<main>
+    {#if isvisible}
+        <div class="commandPalatte">
+            {#each commands as command, index}
+                <button
+                    type="button"
+                    class="command-item"
+                    class:active={selectedindex === index}
+                    onclick={() => command.action()}
+                >
+                    <span>{command.name}</span>
+                    <span class="shortcut">{command.shortcut}</span>
+                </button>
+            {/each}
+        </div>
+    {/if}
+</main>

@@ -4,6 +4,14 @@
     import "../styles/styles.css";
     import { v4 as uuidv4 } from "uuid";
     import Quill from "quill";
+    import { setContext } from 'svelte';
+    import { getContext } from 'svelte';
+    import Commandpalette from "./commandpalette.svelte";
+
+    //setcontext for the editor to pass to the child components:
+    setContext('editor', { addnewtab, switchTab, gotoLastTab, gotoTab1, cycleTabs, deleteDocument, toggleToolbar });
+
+    const commandPalette: any = getContext('commandPalette');
 
     interface Tab {
         id: string;
@@ -302,6 +310,10 @@
             event.preventDefault();
             gotoLastTab();
         }
+        if (event.ctrlKey && event.key === "p") {
+            event.preventDefault();
+            commandPalette.togglecommandPalette();
+        }
     }
 
     function toggleToolbar(): void {
@@ -420,4 +432,5 @@
             </button>
         {/each}
     </div>
+    <Commandpalette />
 </main>

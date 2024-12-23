@@ -195,6 +195,7 @@
         tabs = [newTab];
         currentId = newTab.id;
         titleText = newTab.title;
+        quill?.setContents([]);
     }
 
     async function switchTab(tabId: string): Promise<void> {

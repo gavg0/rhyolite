@@ -62,7 +62,8 @@
     --color-picker-hover-shadow: rgba(0, 0, 0, 0.3);
 
     /* commandpalette variables */
-    --commandpalette_bg: #2b2b2b;
+    --commandpalette_bg: #222222;
+    --commandpalette_hover_bg:#c4c4c450;
     --commandpalette_border: #ababab;
 
   }

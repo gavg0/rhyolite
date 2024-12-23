@@ -5,7 +5,8 @@ A simple text editor written in Tauri, inspired by Obsidian.
 
 <br>
 
-This is a **prototype**, not a fully polished version and is a fork of [fextify](https://github.com/face-hh/fextify) since the original repo was not being updated or maintained anymore. !!CAUTION!! The project is going under a lot of improvements, migrations and upgrades, it is advised to wait till a new binary is released and then test the project! 
+
+This is a **prototype**, not a fully polished version and is a fork of [fextify](https://github.com/face-hh/fextify) since the original repo was not being updated or maintained anymore. **!!CAUTION!!** The project is going under a lot of improvements, migrations and upgrades, it is advised to wait till a new binary is released and then test the project! 
 
 # Changes include but are not limited too:-
 - Rewriting the backend and frontend using Tauri and Svelte.
@@ -55,15 +56,15 @@ NOTE: if you run into any compilation error you can always debug the error with 
 
 ### Premade
 
-You can press `CTRL` + `ALT` + `S` to open the Theme Selector.
+~~You can press `CTRL` + `ALT` + `S` to open the Theme Selector.~~
 
 ### Creating
 
-You can duplicate the `src/themes/default.css` and modify its colors. We recommend you import the theme automatically on restart by adding `<link rel="stylesheet" href="themes/my_theme.css" />` in `src/index.html` and use `npm run tauri dev` to have the application reset on save.
+~~You can duplicate the `src/themes/default.css` and modify its colors. We recommend you import the theme automatically on restart by adding `<link rel="stylesheet" href="themes/my_theme.css" />` in `src/index.html` and use `npm run tauri dev` to have the application reset on save.~~
 
 ### Publishing
 
-You can open a pull request to add your theme in `/src/themes`. We will add it if it's good.
+You can open a pull request to add your theme in `/src/styles/themes`. We will add it if it's good. The app does not yet support multiple theme choosing, will implement that soon.
 
 ~~Alternatively, you can join our [Discord server](https://discord.gg/K6FAd8FTma) and post it on the `fextify-themes` forum!~~
 
@@ -71,4 +72,4 @@ You can open a pull request to add your theme in `/src/themes`. We will add it i
 
 1. The themeing is not good, so some stuff might be hard to see.
 2. Tab icon can sometimes glitch out.
-3. The command Pallete has not bene implemented yet.
+3. Opening a lot of tabs can sometimes glitch the title.

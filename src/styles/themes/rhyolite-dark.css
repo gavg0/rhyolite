@@ -9,6 +9,8 @@
   
     --container-color: #1b1b1b;
     --container-text-color: #e0e0e0;
+    --container-box-shadow:#00000011;
+    --container-box-shadow-focused: #0000001f;
   
     --ui-element-background: #c7c7c731;
   

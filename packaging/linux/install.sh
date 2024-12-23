@@ -33,7 +33,7 @@ cat <<EOF > $DESKTOP_FILE
 Type=Application
 Name=$APP_NAME
 Comment=A simple text editor written in Rust using Tauri.
-Exec=$INSTALL_DIR/$APP_NAME
+Exec=$INSTALL_DIR/Rhyolite/$APP_NAME
 Icon=$ICON_DIR/$APP_NAME.png
 Terminal=false
 Categories=Utility;TextEditor;

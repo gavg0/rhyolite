@@ -45,7 +45,9 @@
     //setcontext for the editor to pass to the child components:
     setContext(
         'editor', 
-        { addnewtab, 
+        {   
+            addnewtab, 
+            newDocument,
             switchTab, 
             gotoLastTab, 
             gotoTab1, 

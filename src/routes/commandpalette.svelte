@@ -25,7 +25,7 @@
       {
         name: 'New Tab',
         shortcut: 'Ctrl + N',
-        action: () => editor.addnewtab()
+        action: () => editor.newDocument()
       },
       {
         name: 'Next Tab',
@@ -45,7 +45,7 @@
       {
         name: 'Toggle ToolBar',
         shortcut: 'Ctrl + T',
-        action: () => editor.gotoTab1()
+        action: () => editor.toggleToolbar()
       }
     ];
 </script>

@@ -125,7 +125,7 @@ button {
   width: 70%;
   height: 100%;
   /* max-width: 700px; */
-  border-radius: 15px;
+  border-radius: 10px;
   border-color: transparent;
   overflow: hidden;
 }
@@ -133,12 +133,12 @@ button {
 .rounded-container {
   width: 100%;
   padding: 1em;
-  border-radius: 15px;
+  border-radius: 10px;
   /* border: 2px solid #396cd8; */
   font-size: 1.1em;
   box-shadow: 0 4px 6px var(--container-box-shadow);
   color: var(--container-text-color);
-  background-color: var(--container-color);
+  background-color: var(--container-title-color);
   transition: all 0.3s ease;
 }
 

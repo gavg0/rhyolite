@@ -7,14 +7,16 @@
     color: #e0e0e0;
     background-color: #0f0f0f;
   
+    --container-title-color: #1b1b1b;
     --container-color: #1b1b1b;
+    --container-editor-color: #0f0f0f;
     --container-text-color: #e0e0e0;
     --container-box-shadow:#00000011;
     --container-box-shadow-focused: #0000001f;
   
     --ui-element-background: #c7c7c731;
   
-    --editor-bg: var(--container-color);
+    --editor-bg: var(--container-editor-color);
     --editor-text: #e0e0e0;
     --editor-selection-highlight: #9853ff47;
     --editor-border: #333;

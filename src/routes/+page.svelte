@@ -8,11 +8,6 @@
     import { getContext } from 'svelte';
     import Commandpalette from "./commandpalette.svelte";
 
-    //setcontext for the editor to pass to the child components:
-    setContext('editor', { addnewtab, switchTab, gotoLastTab, gotoTab1, cycleTabs, deleteDocument, toggleToolbar });
-
-    const commandPalette: any = getContext('commandPalette');
-
     interface Tab {
         id: string;
         title: string;
@@ -43,8 +38,12 @@
     let wordCount: number = $state(0);
     let charCount: number = $state(0);
     let isToolbarVisible: boolean = $state(false);
+    let isCommandPalettevisible: boolean = $state(false);
     let tabCount: number = $state(1);
     let tabs: Tab[] = $state([]);
+
+    //setcontext for the editor to pass to the child components:
+    setContext('editor', { addnewtab, switchTab, gotoLastTab, gotoTab1, cycleTabs, deleteDocument, toggleToolbar, return_isCommandPalettevisible: () => isCommandPalettevisible });
 
     // Initialize Quill
     let quill: Quill;
@@ -312,8 +311,12 @@
         }
         if (event.ctrlKey && event.key === "p") {
             event.preventDefault();
-            commandPalette.togglecommandPalette();
+            toggleCommandPalette();
         }
+    }
+
+    function toggleCommandPalette(): void {
+        isCommandPalettevisible = !isCommandPalettevisible;
     }
 
     function toggleToolbar(): void {

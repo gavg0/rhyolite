@@ -4,12 +4,11 @@
     import { getContext } from "svelte";
     import { setContext } from "svelte";
 
-    let isvisible: boolean = $state(false);
+    // let isvisible: boolean = $state(false);
+    // let { isvisible: boolean = false} = $props();
     let selectedindex: number = $state(0);
 
     const editor: any = getContext('editor');
-
-    setContext('commandPalette', {togglecommandPalette});
 
     interface Command {
         name: string;
@@ -49,16 +48,16 @@
         action: () => editor.gotoTab1()
       }
     ];
-
-    function togglecommandPalette(): void {
-        isvisible = !isvisible;
-    }
-
 </script>
 
 <main>
-    {#if isvisible}
+    {#if editor.return_isCommandPalettevisible()}
         <div class="commandPalatte">
+            <textarea
+                class="command-search"
+                placeholder="Select a Command"
+                
+            ></textarea>
             {#each commands as command, index}
                 <button
                     type="button"

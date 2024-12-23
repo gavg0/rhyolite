@@ -68,12 +68,6 @@ html, body {
   justify-content: center;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
 a:hover {
   color: #ffffff;
 }
@@ -106,10 +100,6 @@ button:active {
 input,
 button {
   outline: none;
-}
-
-#greet-input {
-  margin-right: 5px;
 }
 
 .title-container {
@@ -146,7 +136,7 @@ button {
   border-radius: 15px;
   /* border: 2px solid #396cd8; */
   font-size: 1.1em;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--container-box-shadow);
   color: var(--container-text-color);
   background-color: var(--container-color);
   transition: all 0.3s ease;
@@ -155,7 +145,7 @@ button {
 .rounded-container:focus {
   outline: none;
   /* border-color: #24c8db; */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px var(--container-box-shadow-focused);
 }
 
 textarea.rounded-container {

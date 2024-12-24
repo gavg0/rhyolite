@@ -276,13 +276,25 @@
             if (recentDocuments.length > 0) {
                 await invoke("reset_tab_order_count");
                 
-                // Load the last document
+                // Load each document as a tab
+                for (const doc of recentDocuments) {
+                    await invoke("load_tab", {
+                        idIn: doc.id,
+                        title: doc.title,
+                    });
+                }
+
+                // Update the tabs in UI
+                await updateTabs();
+
+                // Load the last document into the editor
                 const lastDoc = recentDocuments[recentDocuments.length - 1];
                 currentId = lastDoc.id;
                 titleText = lastDoc.title;
                 quill?.setContents(JSON.parse(lastDoc.content));
             } else {
-                addnewtab();
+                // If no documents exist, create a new tab
+                await addnewtab();
             }
         } catch (error) {
             console.error("Failed to load documents:", error);

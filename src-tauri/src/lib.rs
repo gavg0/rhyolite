@@ -7,35 +7,36 @@ use std::sync::Mutex;
 use once_cell::sync::Lazy;
 use dirs;
 use sanitize_filename;
-use uuid::Uuid;
+// use uuid::Uuid;
 use tauri::WindowEvent;
+mod tabs;
 //use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, TagEnd};
 
 //A struct for DocumentData datatype that stores id, title and content of the document
 #[derive(Serialize, Deserialize, Clone)]
-struct DocumentData {
+pub struct DocumentData {
     id: String,  
     title: String,
     content: String,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-struct Tab {
+pub struct Tab {
     order: u64,
     id: String,
     title: String
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-struct UserData {
+pub struct UserData {
     tabs: Vec<Tab>,  // Store complete Tab structs instead of just IDs
     last_open_tab: String //store the id of the last open tab before the app closed.
 }
 
 
-static TABS: Lazy<Mutex<Vec<Tab>>> = Lazy::new(|| Mutex::new(Vec::new()));
-static TOTAL_TABS: Lazy<Mutex<u64>> = Lazy::new(|| Mutex::new(0));
-static CURRENT_OPEN_TAB: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(("").to_string()));
+pub static TABS: Lazy<Mutex<Vec<Tab>>> = Lazy::new(|| Mutex::new(Vec::new()));
+pub static TOTAL_TABS: Lazy<Mutex<u64>> = Lazy::new(|| Mutex::new(0));
+pub static CURRENT_OPEN_TAB: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(("").to_string()));
 
 fn on_app_close() {
     // Save the complete tabs information
@@ -65,102 +66,6 @@ fn get_documents_dir() -> PathBuf {
     fs::create_dir_all(&path).expect("Could not create FextifyPlus directory");
     
     path
-}
-
-#[tauri::command]
-fn send_current_open_tab(id: String) {
-    let mut current_open_tab = CURRENT_OPEN_TAB.lock().map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e)).unwrap();
-    *current_open_tab = id.clone();
-}
-
-#[tauri::command]
-fn get_current_open_tab() -> Result<String, String> {
-    let current_open_tab = CURRENT_OPEN_TAB.lock().map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e)).unwrap();
-    Ok(current_open_tab.clone())
-}
-
-#[tauri::command]
-fn get_tabs() -> Result<Vec<Tab>, String> {
-    let tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
-    Ok(tabs.clone())
-}
-
-#[tauri::command]
-fn new_tab() -> Result<Tab, String> {
-    // Lock TOTAL_TABS to update the total count
-    let mut total_tabs = TOTAL_TABS.lock().map_err(|e| format!("Failed to lock TOTAL_TABS: {}", e))?;
-    *total_tabs += 1;
-
-    // Lock TABS to add a new tab
-    let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
-
-    // Generate a new unique ID using UUID
-    let new_id = Uuid::new_v4().to_string();
-
-    // Create a new tab
-    let new_tab = Tab {
-        order: *total_tabs,
-        id: new_id.clone(),
-        title: ("Untitled").to_string(),
-    };
-
-    // Add the tab to TABS
-    tabs.push(new_tab.clone());
-
-    Ok(new_tab)
-}
-
-#[tauri::command]
-fn load_tab(id_in: String, title: String) -> Result<Tab, String> {
-    // Lock TOTAL_TABS to update the total count
-    let mut total_tabs = TOTAL_TABS.lock().map_err(|e| format!("Failed to lock TOTAL_TABS: {}", e))?;
-    *total_tabs += 1;
-
-    // Lock TABS to add a new tab
-    let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
-
-    // Create a new tab
-    let new_tab = Tab {
-        order: *total_tabs,
-        id: id_in,
-        title: title,
-    };
-
-    // Add the tab to TABS
-    tabs.push(new_tab.clone());
-
-    Ok(new_tab)
-}
-
-#[tauri::command]
-fn reset_tab_order_count() -> Result<(), String> {
-    let mut total_tabs = TOTAL_TABS.lock().map_err(|e| format!("Failed to lock TOTAL_TABS: {}", e))?;
-    *total_tabs = 0;
-    Ok(())
-}
-
-#[tauri::command]
-fn reorder_tabs() -> Result<Vec<Tab>, String> {
-    let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
-    
-    // Create new tabs with sequential ordering starting from 1
-    let ordered_tabs: Vec<Tab> = tabs.iter()
-        .enumerate()
-        .map(|(index, tab)| Tab {
-            order: (index + 1) as u64,
-            id: tab.id.clone(),
-            title: tab.title.clone()
-        })
-        .collect();
-    
-    // Update the stored tabs
-    *tabs = ordered_tabs.clone();
-    
-    // Update TOTAL_TABS to match the actual number of tabs
-    let mut total_tabs = TOTAL_TABS.lock().map_err(|e| format!("Failed to lock TOTAL_TABS: {}", e))?;
-    *total_tabs = tabs.len() as u64;
-    
-    Ok(ordered_tabs)
 }
 
 #[tauri::command]
@@ -320,14 +225,14 @@ pub fn run() {
             save_document,
             load_recent_files,
             delete_document,
-            new_tab,
-            load_tab,
             get_document_content,
-            reset_tab_order_count,
-            reorder_tabs,
-            get_tabs,
-            send_current_open_tab,
-            get_current_open_tab
+            tabs::new_tab,
+            tabs::load_tab,
+            tabs::reset_tab_order_count,
+            tabs::reorder_tabs,
+            tabs::get_tabs,
+            tabs::send_current_open_tab,
+            tabs::get_current_open_tab
             ]
         )
         .run(tauri::generate_context!())

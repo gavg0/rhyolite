@@ -11,9 +11,10 @@ use uuid::Uuid;
 use tauri::WindowEvent;
 //use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, TagEnd};
 
+//A struct for DocumentData datatype that stores id, title and content of the document
 #[derive(Serialize, Deserialize, Clone)]
 struct DocumentData {
-    id: String,  // Add this line
+    id: String,  
     title: String,
     content: String,
 }
@@ -28,16 +29,19 @@ struct Tab {
 #[derive(Serialize, Deserialize, Clone)]
 struct UserData {
     tabs: Vec<Tab>,  // Store complete Tab structs instead of just IDs
+    last_open_tab: String //store the id of the last open tab before the app closed.
 }
 
-// static RECENT_FILES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
+
 static TABS: Lazy<Mutex<Vec<Tab>>> = Lazy::new(|| Mutex::new(Vec::new()));
 static TOTAL_TABS: Lazy<Mutex<u64>> = Lazy::new(|| Mutex::new(0));
+static CURRENT_OPEN_TAB: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(("").to_string()));
 
 fn on_app_close() {
     // Save the complete tabs information
     let tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e)).unwrap();
-    let user_data = UserData { tabs: tabs.clone() };
+    let current_open_tab = CURRENT_OPEN_TAB.lock().map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e)).unwrap();
+    let user_data = UserData { tabs: tabs.clone(), last_open_tab: current_open_tab.clone() };
 
     let appdata_dir = get_documents_dir().join("appdata");
     fs::create_dir_all(&appdata_dir).expect("Could not create appdata directory");
@@ -61,6 +65,18 @@ fn get_documents_dir() -> PathBuf {
     fs::create_dir_all(&path).expect("Could not create FextifyPlus directory");
     
     path
+}
+
+#[tauri::command]
+fn send_current_open_tab(id: String) {
+    let mut current_open_tab = CURRENT_OPEN_TAB.lock().map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e)).unwrap();
+    *current_open_tab = id.clone();
+}
+
+#[tauri::command]
+fn get_current_open_tab() -> Result<String, String> {
+    let current_open_tab = CURRENT_OPEN_TAB.lock().map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e)).unwrap();
+    Ok(current_open_tab.clone())
 }
 
 #[tauri::command]
@@ -213,6 +229,8 @@ fn load_recent_files() -> Result<Vec<DocumentData>, String> {
                 match serde_json::from_str::<UserData>(&content) {
                     Ok(user_data) => {
                         let mut recent_files = Vec::new();
+                        let mut current_open_tab = CURRENT_OPEN_TAB.lock().map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e)).unwrap();
+                        *current_open_tab = user_data.last_open_tab.clone();
                         
                         // Sort tabs by order
                         let mut tabs = user_data.tabs;
@@ -307,7 +325,9 @@ pub fn run() {
             get_document_content,
             reset_tab_order_count,
             reorder_tabs,
-            get_tabs
+            get_tabs,
+            send_current_open_tab,
+            get_current_open_tab
             ]
         )
         .run(tauri::generate_context!())

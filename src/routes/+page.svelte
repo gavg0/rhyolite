@@ -205,6 +205,7 @@
         titleText = newTab.title;
         quill?.setContents([]);
         await updateTabs();
+        await invoke("send_current_open_tab", { id: newTab.id });
     }
 
     async function switchTab(tabId: string): Promise<void> {
@@ -223,6 +224,7 @@
                 titleText = "";
                 quill?.setContents([]);
             }
+            await invoke("send_current_open_tab", { id: tabId });
         } catch (error) {
             console.error("Failed to switch tab:", error);
         }
@@ -235,6 +237,7 @@
             const nextTabIndex = (currentTabIndex + 1) % tabs.length;
             const nextTab = tabs[nextTabIndex];
             await switchTab(nextTab.id);
+            await invoke("send_current_open_tab", { id: nextTab.id });
         }
     }
 
@@ -286,11 +289,9 @@
                 // Update the tabs in UI
                 await updateTabs();
 
-                // Load the last document into the editor
-                const lastDoc = recentDocuments[recentDocuments.length - 1];
-                currentId = lastDoc.id;
-                titleText = lastDoc.title;
-                quill?.setContents(JSON.parse(lastDoc.content));
+                // Load the last open document into the editor
+                const open_tab: string = await invoke("get_current_open_tab");
+                switchTab(open_tab);
             } else {
                 // If no documents exist, create a new tab
                 await addnewtab();

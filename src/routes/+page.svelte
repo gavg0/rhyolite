@@ -39,8 +39,9 @@
     let charCount: number = $state(0);
     let isToolbarVisible: boolean = $state(false);
     let isCommandPalettevisible: boolean = $state(false);
-    let tabCount: number = $state(1);
-    let tabs: Tab[] = $state([]);
+    let currentTabs: Tab[] = $state([])
+    // let tabCount: number = $state(1);
+    // let tabs: Tab[] = $state([]);
 
     //setcontext for the editor to pass to the child components:
     setContext(
@@ -170,9 +171,10 @@
             toolbar.classList.remove("visible");
         }
 
-        loadRecentDocuments().then(() => {
-            if (tabs.length === 0) {
-                addnewtab();
+        loadRecentDocuments().then(async () => {
+            await updateTabs();
+            if (currentTabs.length === 0) {
+                await addnewtab();
             }
         });
 
@@ -190,12 +192,20 @@
         return text.split(/\s+/).filter((word) => word.length > 0).length;
     }
 
+    async function getTabs(): Promise<Tab[]> {
+        return await invoke("get_tabs"); // New Rust function needed
+    }
+
+    async function updateTabs(): Promise<void> {
+        currentTabs = await getTabs();
+    }
+
     async function addnewtab(): Promise<void> {
         const newTab: Tab = await invoke("new_tab");
-        tabs = [newTab];
         currentId = newTab.id;
         titleText = newTab.title;
         quill?.setContents([]);
+        await updateTabs();
     }
 
     async function switchTab(tabId: string): Promise<void> {
@@ -220,10 +230,9 @@
     }
 
     async function cycleTabs(): Promise<void> {
+        const tabs = await getTabs();
         if (tabs.length > 0) {
-            const currentTabIndex = tabs.findIndex(
-                (tab) => tab.id === currentId,
-            );
+            const currentTabIndex = tabs.findIndex(tab => tab.id === currentId);
             const nextTabIndex = (currentTabIndex + 1) % tabs.length;
             const nextTab = tabs[nextTabIndex];
             await switchTab(nextTab.id);
@@ -231,12 +240,14 @@
     }
 
     async function gotoTab1(): Promise<void> {
+        const tabs = await getTabs();
         if (tabs.length > 0) {
             await switchTab(tabs[0].id);
         }
     }
 
     async function gotoLastTab(): Promise<void> {
+        const tabs = await getTabs();
         if (tabs.length > 0) {
             const lastTabIndex = tabs.length - 1;
             await switchTab(tabs[lastTabIndex].id);
@@ -264,26 +275,26 @@
 
             if (recentDocuments.length > 0) {
                 await invoke("reset_tab_order_count");
-                tabs = []; // Clear existing tabs
-
+                
+                // Load each document as a tab
                 for (const doc of recentDocuments) {
-                    const newTab: Tab = await invoke("load_tab", {
+                    await invoke("load_tab", {
                         idIn: doc.id,
                         title: doc.title,
                     });
-                    tabs = [...tabs, newTab];
                 }
 
-                // Ensure correct ordering
-                const reorderedTabs: Tab[] = await invoke("reorder_tabs");
-                tabs = reorderedTabs;
+                // Update the tabs in UI
+                await updateTabs();
 
+                // Load the last document into the editor
                 const lastDoc = recentDocuments[recentDocuments.length - 1];
                 currentId = lastDoc.id;
                 titleText = lastDoc.title;
                 quill?.setContents(JSON.parse(lastDoc.content));
             } else {
-                addnewtab();
+                // If no documents exist, create a new tab
+                await addnewtab();
             }
         } catch (error) {
             console.error("Failed to load documents:", error);
@@ -354,20 +365,15 @@
     async function deleteDocument(): Promise<void> {
         try {
             await invoke("delete_document", { id: currentId });
-
-            // Remove the deleted tab from local state
-            tabs = tabs.filter((tab) => tab.id !== currentId);
-
-            const reorderedTabs: Tab[] = await invoke("reorder_tabs");
-            tabs = reorderedTabs;
-
+            await updateTabs();
+            
+            // Get updated tabs from Rust
+            const tabs = await getTabs();
+            
             if (tabs.length > 0) {
                 const lastTab = tabs[tabs.length - 1];
                 currentId = lastTab.id;
-                const docResult: Document = await invoke(
-                    "get_document_content",
-                    { id: currentId },
-                );
+                const docResult: Document = await invoke("get_document_content", { id: currentId });
                 titleText = docResult.title;
                 quill?.setContents(JSON.parse(docResult.content));
             } else {
@@ -381,18 +387,11 @@
 
     async function newDocument(): Promise<void> {
         try {
-            const currentTabCount = tabs.length;
             const newTab: Tab = await invoke("new_tab");
-
-            // Update local state with the new tab
-            tabs = [...tabs, newTab];
             currentId = newTab.id;
             titleText = newTab.title;
             quill?.setContents([]);
-
-            // Ensure tab order is correct
-            const reorderedTabs: Tab[] = await invoke("reorder_tabs");
-            tabs = reorderedTabs;
+            await updateTabs();
         } catch (error) {
             console.error("Failed to create new document:", error);
         }
@@ -433,9 +432,9 @@
     <div class="word-char-counter">
         {wordCount} Words {charCount} Characters
     </div>
-
+    
     <div class="tab-counter" role="tablist" aria-label="Document tabs">
-        {#each tabs as tab}
+        {#each currentTabs as tab}
             <button
                 type="button"
                 class="tab-square"

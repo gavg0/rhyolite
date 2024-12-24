@@ -64,6 +64,12 @@ fn get_documents_dir() -> PathBuf {
 }
 
 #[tauri::command]
+fn get_tabs() -> Result<Vec<Tab>, String> {
+    let tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
+    Ok(tabs.clone())
+}
+
+#[tauri::command]
 fn new_tab() -> Result<Tab, String> {
     // Lock TOTAL_TABS to update the total count
     let mut total_tabs = TOTAL_TABS.lock().map_err(|e| format!("Failed to lock TOTAL_TABS: {}", e))?;
@@ -300,7 +306,8 @@ pub fn run() {
             load_tab,
             get_document_content,
             reset_tab_order_count,
-            reorder_tabs
+            reorder_tabs,
+            get_tabs
             ]
         )
         .run(tauri::generate_context!())

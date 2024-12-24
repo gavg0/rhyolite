@@ -5,7 +5,6 @@
     import { v4 as uuidv4 } from "uuid";
     import Quill from "quill";
     import { setContext } from 'svelte';
-    import { getContext } from 'svelte';
     import Commandpalette from "./commandpalette.svelte";
 
     interface Tab {

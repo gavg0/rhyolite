@@ -1,19 +1,12 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use serde::{Deserialize, Serialize};
-// use std::fs;
-// use std::path::PathBuf;
-// use serde_json::{json, Value};
 use std::sync::Mutex;
 use once_cell::sync::Lazy;
-// use dirs;
-// use sanitize_filename;
-// use uuid::Uuid;
 use tauri::WindowEvent;
 mod tabs;
 mod io;
-//use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, TagEnd};
 
-//A struct for DocumentData datatype that stores id, title and content of the document
+///A struct for DocumentData datatype that stores id, title and content of the document
 #[derive(Serialize, Deserialize, Clone)]
 pub struct DocumentData {
     id: String,  
@@ -21,6 +14,7 @@ pub struct DocumentData {
     content: String,
 }
 
+///A Tab struct, that sotores order(index of the tab), id of the document and title of the document.
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Tab {
     order: u64,
@@ -28,17 +22,22 @@ pub struct Tab {
     title: String
 }
 
+///Userdata Struct, used to store the userdata, like last ope tab and all the open tabs.
 #[derive(Serialize, Deserialize, Clone)]
 pub struct UserData {
-    tabs: Vec<Tab>,  // Store complete Tab structs instead of just IDs
-    last_open_tab: String //store the id of the last open tab before the app closed.
+    tabs: Vec<Tab>,  
+    last_open_tab: String 
 }
 
-
-pub static TABS: Lazy<Mutex<Vec<Tab>>> = Lazy::new(|| Mutex::new(Vec::new()));
+//Mutex Variable declarations:-
+///A Vector data type to store all the tabs in an assending order(depending upon the order value of the Tab):
+pub static TABS: Lazy<Mutex<Vec<Tab>>> = Lazy::new(|| Mutex::new(Vec::new())); 
+///An unsigned 64 bit integer that stores the integer value of total number of open tabs in the editor:
 pub static TOTAL_TABS: Lazy<Mutex<u64>> = Lazy::new(|| Mutex::new(0));
+///A String that stores the id of the current open tab in the editor:
 pub static CURRENT_OPEN_TAB: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(("").to_string()));
 
+//Main tauri function.
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()

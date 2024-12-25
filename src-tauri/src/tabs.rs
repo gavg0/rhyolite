@@ -1,3 +1,4 @@
+//! This module provides document tabs related functions for the app.
 use uuid::Uuid;
 
 use super::TABS; 

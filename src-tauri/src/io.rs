@@ -1,11 +1,9 @@
-
+//! This module provides IO related functions for the app.
 use std::fs;
 use std::path::PathBuf;
-// use serde_json::{json, Value};
 
 use dirs;
 use sanitize_filename;
-// use uuid::Uuid;
 
 
 use super::TABS;
@@ -15,9 +13,21 @@ use super::TOTAL_TABS;
 use super::CURRENT_OPEN_TAB;
 
 
+/// This function finds the path to the 'documents'
+/// directory for different 'os' and returns the PathBuf(a mutable path string)
+/// 
+/// First we define a mutable variable path of datatype PathBuf,
+/// then we store the path in the variable, returned by the document_dir function that
+/// finds the path of the documents dir.
+/// 
+/// Then we append the dir 'Rhyolite' to the documents path.
+/// If this newly created path directory does not exist then create it using create_dir_all
+/// function.
+/// 
+/// Then return the variable path, that holds the path to the FextifyPlus directory.
 pub fn get_documents_dir() -> PathBuf {
     let mut path = dirs::document_dir().expect("Could not find Documents directory");
-    path.push("FextifyPlus");
+    path.push("Rhyolite");
     
     // Create the directory if it doesn't exist
     fs::create_dir_all(&path).expect("Could not create FextifyPlus directory");

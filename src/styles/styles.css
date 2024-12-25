@@ -191,7 +191,8 @@ textarea.rounded-container {
   display: flex;
   gap: 4px;
   padding-left: 60px;
-  padding-top: 10px;
+  padding-right: 40px;
+  padding-top: 6px;
   padding-bottom: 0px;
   background-color: var(--container-color);
   box-shadow: none;
@@ -201,7 +202,9 @@ textarea.rounded-container {
 .tab-square {
   width: auto;
   height: 30px;
-  background-color: #0f0f0f;
+  width: 200px;
+  flex-shrink: 1;
+  background-color: var(--container-editor-color);
   color: var(--container-text-color);
   border-color: transparent;
   display: flex;
@@ -211,6 +214,7 @@ textarea.rounded-container {
   border-top-right-radius: 4px;
   border-bottom-right-radius: 0px;
   border-bottom-left-radius: 0px;
+  box-shadow: none;
   font-size: 0.9em;
   font-weight: 500;
   transition: all 0.1s ease;

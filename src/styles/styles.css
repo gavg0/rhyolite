@@ -1,3 +1,5 @@
+@import "./addons/tailwind-addon.css";
+
 @import "quill-editor.css";
 @import "themes/rhyolite-dark.css";
 @import "commandPalette.css";
@@ -154,7 +156,7 @@ button {
 
 textarea.rounded-container {
   resize: none; /* Prevent user from resizing textarea */
-  border-color: Transparent; 
+  border-color: Transparent;
 }
 
 .title-textarea {
@@ -162,8 +164,8 @@ textarea.rounded-container {
   font-size: 1.6em;
   font-weight: bold;
   overflow: hidden; /* Hide scrollbars */
-  scrollbar-width: none; 
-  -ms-overflow-style: none; 
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .title-textarea::-webkit-scrollbar {

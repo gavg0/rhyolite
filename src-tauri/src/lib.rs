@@ -1,6 +1,6 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use serde::{Deserialize, Serialize};
-use std::sync::Mutex;
+use std::{collections::HashMap, sync::Mutex};
 use once_cell::sync::Lazy;
 use tauri::WindowEvent;
 mod tabs;
@@ -17,7 +17,6 @@ pub struct DocumentData {
 ///A Tab struct, that sotores order(index of the tab), id of the document and title of the document.
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Tab {
-    order: u64,
     id: String,
     title: String
 }
@@ -31,9 +30,7 @@ pub struct UserData {
 
 //Mutex Variable declarations:-
 ///A Vector data type to store all the tabs in an assending order(depending upon the order value of the Tab):
-pub static TABS: Lazy<Mutex<Vec<Tab>>> = Lazy::new(|| Mutex::new(Vec::new())); 
-///An unsigned 64 bit integer that stores the integer value of total number of open tabs in the editor:
-pub static TOTAL_TABS: Lazy<Mutex<u64>> = Lazy::new(|| Mutex::new(0));
+pub static TABS: Lazy<Mutex<HashMap<String, Tab>>> = Lazy::new(|| Mutex::new(HashMap::new())); 
 ///A String that stores the id of the current open tab in the editor:
 pub static CURRENT_OPEN_TAB: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(("").to_string()));
 
@@ -61,11 +58,11 @@ pub fn run() {
             io::get_document_content,
             tabs::new_tab,
             tabs::load_tab,
-            tabs::reset_tab_order_count,
-            tabs::reorder_tabs,
+            tabs::delete_tab,
             tabs::get_tabs,
             tabs::send_current_open_tab,
-            tabs::get_current_open_tab
+            tabs::get_current_open_tab,
+            tabs::update_tab_title
             ]
         )
         .run(tauri::generate_context!())

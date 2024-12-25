@@ -10,7 +10,6 @@
     interface Tab {
         id: string;
         title: string;
-        order: number;
     }
 
     interface Document {
@@ -234,6 +233,7 @@
         const tabs = await getTabs();
         if (tabs.length > 0) {
             const currentTabIndex = tabs.findIndex(tab => tab.id === currentId);
+            // Still maintaining visual order based on array order from getTabs()
             const nextTabIndex = (currentTabIndex + 1) % tabs.length;
             const nextTab = tabs[nextTabIndex];
             await switchTab(nextTab.id);
@@ -251,8 +251,7 @@
     async function gotoLastTab(): Promise<void> {
         const tabs = await getTabs();
         if (tabs.length > 0) {
-            const lastTabIndex = tabs.length - 1;
-            await switchTab(tabs[lastTabIndex].id);
+            await switchTab(tabs[tabs.length - 1].id);
         }
     }
 
@@ -260,6 +259,11 @@
         if (!titleText && !quill?.getText().trim()) return;
 
         try {
+            await invoke("update_tab_title", {
+                id: currentId,
+                title: titleText,
+            });
+            await updateTabs();
             await invoke("save_document", {
                 id: currentId,
                 title: titleText,
@@ -276,8 +280,6 @@
             recentDocuments = docs;
 
             if (recentDocuments.length > 0) {
-                await invoke("reset_tab_order_count");
-                
                 // Load each document as a tab
                 for (const doc of recentDocuments) {
                     await invoke("load_tab", {
@@ -367,17 +369,18 @@
             await invoke("delete_document", { id: currentId });
             await updateTabs();
             
-            // Get updated tabs from Rust
+            // Get updated tabs
             const tabs = await getTabs();
             
             if (tabs.length > 0) {
+                // Switch to any remaining tab
                 const lastTab = tabs[tabs.length - 1];
                 currentId = lastTab.id;
                 const docResult: Document = await invoke("get_document_content", { id: currentId });
                 titleText = docResult.title;
                 quill?.setContents(JSON.parse(docResult.content));
             } else {
-                await invoke("reset_tab_order_count");
+                // If no tabs left, create a new one
                 await addnewtab();
             }
         } catch (error) {
@@ -444,7 +447,7 @@
                 aria-controls="editor"
                 onclick={() => switchTab(tab.id)}
             >
-                {tab.order}
+                {tab.title.length > 10 ? tab.title.slice(0, 10) + '...' : tab.title || 'Untitled'}
             </button>
         {/each}
     </div>

@@ -9,7 +9,6 @@ use sanitize_filename;
 use super::TABS;
 use super:: UserData;
 use super:: DocumentData;
-use super::TOTAL_TABS;
 use super::CURRENT_OPEN_TAB;
 
 
@@ -39,7 +38,13 @@ pub fn on_app_close() {
     // Save the complete tabs information
     let tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e)).unwrap();
     let current_open_tab = CURRENT_OPEN_TAB.lock().map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e)).unwrap();
-    let user_data = UserData { tabs: tabs.clone(), last_open_tab: current_open_tab.clone() };
+    
+    // Convert HashMap values to Vec for storage
+    let tabs_vec: Vec<_> = tabs.values().cloned().collect();
+    let user_data = UserData { 
+        tabs: tabs_vec, 
+        last_open_tab: current_open_tab.clone() 
+    };
 
     let appdata_dir = get_documents_dir().join("appdata");
     fs::create_dir_all(&appdata_dir).expect("Could not create appdata directory");
@@ -89,13 +94,9 @@ pub fn delete_document(id: String) -> Result<(), String> {
     let filename = sanitize_filename::sanitize(&format!("{}.json", id));
     let file_path = documents_dir.join(&filename);
     
-    // Remove the tab from TABS
+    // Remove the tab from TABS HashMap
     let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
-    tabs.retain(|tab| tab.id != id);
-    
-    // Update TOTAL_TABS to match the actual number of tabs
-    let mut total_tabs = TOTAL_TABS.lock().map_err(|e| format!("Failed to lock TOTAL_TABS: {}", e))?;
-    *total_tabs = tabs.len() as u64;
+    tabs.remove(&id);
     
     // Delete the file if it exists
     if file_path.exists() {
@@ -143,18 +144,22 @@ pub fn load_recent_files() -> Result<Vec<DocumentData>, String> {
                 match serde_json::from_str::<UserData>(&content) {
                     Ok(user_data) => {
                         let mut recent_files = Vec::new();
-                        let mut current_open_tab = CURRENT_OPEN_TAB.lock().map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e)).unwrap();
+                        let mut current_open_tab = CURRENT_OPEN_TAB.lock()
+                            .map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
                         *current_open_tab = user_data.last_open_tab.clone();
                         
-                        // Sort tabs by order
-                        let mut tabs = user_data.tabs;
-                        tabs.sort_by_key(|tab| tab.order);
+                        let mut tabs = TABS.lock()
+                            .map_err(|e| format!("Failed to lock TABS: {}", e))?;
                         
-                        // Load tabs in the correct order
-                        for tab in tabs {
+                        // Clear existing tabs and load from user_data
+                        tabs.clear();
+                        for tab in user_data.tabs {
                             // Try to load each document by ID
                             match get_document_content(tab.id.clone()) {
-                                Ok(Some(doc)) => recent_files.push(doc),
+                                Ok(Some(doc)) => {
+                                    recent_files.push(doc);
+                                    tabs.insert(tab.id.clone(), tab.clone());
+                                }
                                 _ => continue,
                             }
                         }

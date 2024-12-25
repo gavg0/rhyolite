@@ -107,7 +107,7 @@ button {
   width: 70%;
   height: 10%;
   display: flex;
-  margin-top: 0.5%;
+  margin-top: 46px;
   padding: 0.5%;
   justify-content: center;
   /* max-width: 700px; */
@@ -185,25 +185,32 @@ textarea.rounded-container {
 
 .tab-counter {
   position: fixed;
-  left: 2px;
-  bottom: 2px;
+  /* left: 60px; */
+  top: 0px;
+  width: 100%;
   display: flex;
   gap: 4px;
-  padding: 10px;
-  background-color: transparent;
-  border-radius: 10px;
+  padding-left: 60px;
+  padding-top: 10px;
+  padding-bottom: 0px;
+  background-color: var(--container-color);
+  box-shadow: none;
   z-index: 10;
 }
 
 .tab-square {
-  width: 25px;
-  height: 25px;
-  background-color: var(--container-color);
+  width: auto;
+  height: 30px;
+  background-color: #0f0f0f;
   color: var(--container-text-color);
+  border-color: transparent;
   display: flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 4px;
+  justify-content: left;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
   font-size: 0.9em;
   font-weight: 500;
   transition: all 0.1s ease;

@@ -4,12 +4,12 @@
     line-height: 24px;
     font-weight: 400;
   
-    color: #e5e5e5;
-    background-color: #1a1a1a;
+    color: #ffffff;
+    background-color: #202325;
 
-    --container-title-color: #2a2a2a;
-    --container-color: #2a2a2a;
-    --container-editor-color: #1a1a1a;
+    --container-title-color: #33373b;
+    --container-color: #464c51;
+    --container-editor-color: #202325;
     --container-text-color: #e5e5e5;
     --container-box-shadow: #00000033;
     --container-box-shadow-focused: #00000055;
@@ -62,8 +62,8 @@
     --color-picker-hover-shadow: #00000040;
 
     --commandpalette_background_blur: #00000080;
-    --commandpalette_bg: #2a2a2a;
-    --commandpalette_hover_bg: #ffffff20;
+    --commandpalette_bg: #33373b;
+    --commandpalette_hover_bg: #acb2b8b8;
     --commandpalette_border: #404040;
 
   }

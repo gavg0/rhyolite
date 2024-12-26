@@ -433,7 +433,8 @@
     </div>
 
     <div class="word-char-counter">
-        {wordCount} Words {charCount} Characters
+        <div>{wordCount} Words</div>
+        <div>{charCount} Characters</div>
     </div>
     
     <div class="tab-counter" role="tablist" aria-label="Document tabs">

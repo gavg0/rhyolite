@@ -5,11 +5,13 @@
     import { v4 as uuidv4 } from "uuid";
     import Quill from "quill";
     import { setContext } from 'svelte';
+    import { getContext } from 'svelte';
     import Commandpalette from "./commandpalette.svelte";
 
     interface Tab {
         id: string;
         title: string;
+        order: number;
     }
 
     interface Document {
@@ -37,9 +39,8 @@
     let charCount: number = $state(0);
     let isToolbarVisible: boolean = $state(false);
     let isCommandPalettevisible: boolean = $state(false);
-    let currentTabs: Tab[] = $state([])
-    // let tabCount: number = $state(1);
-    // let tabs: Tab[] = $state([]);
+    let tabCount: number = $state(1);
+    let tabs: Tab[] = $state([]);
 
     //setcontext for the editor to pass to the child components:
     setContext(
@@ -169,10 +170,9 @@
             toolbar.classList.remove("visible");
         }
 
-        loadRecentDocuments().then(async () => {
-            await updateTabs();
-            if (currentTabs.length === 0) {
-                await addnewtab();
+        loadRecentDocuments().then(() => {
+            if (tabs.length === 0) {
+                addnewtab();
             }
         });
 
@@ -190,21 +190,12 @@
         return text.split(/\s+/).filter((word) => word.length > 0).length;
     }
 
-    async function getTabs(): Promise<Tab[]> {
-        return await invoke("get_tabs"); // New Rust function needed
-    }
-
-    async function updateTabs(): Promise<void> {
-        currentTabs = await getTabs();
-    }
-
     async function addnewtab(): Promise<void> {
         const newTab: Tab = await invoke("new_tab");
+        tabs = [newTab];
         currentId = newTab.id;
         titleText = newTab.title;
         quill?.setContents([]);
-        await updateTabs();
-        await invoke("send_current_open_tab", { id: newTab.id });
     }
 
     async function switchTab(tabId: string): Promise<void> {
@@ -223,35 +214,32 @@
                 titleText = "";
                 quill?.setContents([]);
             }
-            await invoke("send_current_open_tab", { id: tabId });
         } catch (error) {
             console.error("Failed to switch tab:", error);
         }
     }
 
     async function cycleTabs(): Promise<void> {
-        const tabs = await getTabs();
         if (tabs.length > 0) {
-            const currentTabIndex = tabs.findIndex(tab => tab.id === currentId);
-            // Still maintaining visual order based on array order from getTabs()
+            const currentTabIndex = tabs.findIndex(
+                (tab) => tab.id === currentId,
+            );
             const nextTabIndex = (currentTabIndex + 1) % tabs.length;
             const nextTab = tabs[nextTabIndex];
             await switchTab(nextTab.id);
-            await invoke("send_current_open_tab", { id: nextTab.id });
         }
     }
 
     async function gotoTab1(): Promise<void> {
-        const tabs = await getTabs();
         if (tabs.length > 0) {
             await switchTab(tabs[0].id);
         }
     }
 
     async function gotoLastTab(): Promise<void> {
-        const tabs = await getTabs();
         if (tabs.length > 0) {
-            await switchTab(tabs[tabs.length - 1].id);
+            const lastTabIndex = tabs.length - 1;
+            await switchTab(tabs[lastTabIndex].id);
         }
     }
 
@@ -259,11 +247,6 @@
         if (!titleText && !quill?.getText().trim()) return;
 
         try {
-            await invoke("update_tab_title", {
-                id: currentId,
-                title: titleText,
-            });
-            await updateTabs();
             await invoke("save_document", {
                 id: currentId,
                 title: titleText,
@@ -280,23 +263,27 @@
             recentDocuments = docs;
 
             if (recentDocuments.length > 0) {
-                // Load each document as a tab
+                await invoke("reset_tab_order_count");
+                tabs = []; // Clear existing tabs
+
                 for (const doc of recentDocuments) {
-                    await invoke("load_tab", {
+                    const newTab: Tab = await invoke("load_tab", {
                         idIn: doc.id,
                         title: doc.title,
                     });
+                    tabs = [...tabs, newTab];
                 }
 
-                // Update the tabs in UI
-                await updateTabs();
+                // Ensure correct ordering
+                const reorderedTabs: Tab[] = await invoke("reorder_tabs");
+                tabs = reorderedTabs;
 
-                // Load the last open document into the editor
-                const open_tab: string = await invoke("get_current_open_tab");
-                switchTab(open_tab);
+                const lastDoc = recentDocuments[recentDocuments.length - 1];
+                currentId = lastDoc.id;
+                titleText = lastDoc.title;
+                quill?.setContents(JSON.parse(lastDoc.content));
             } else {
-                // If no documents exist, create a new tab
-                await addnewtab();
+                addnewtab();
             }
         } catch (error) {
             console.error("Failed to load documents:", error);
@@ -367,20 +354,24 @@
     async function deleteDocument(): Promise<void> {
         try {
             await invoke("delete_document", { id: currentId });
-            await updateTabs();
-            
-            // Get updated tabs
-            const tabs = await getTabs();
-            
+
+            // Remove the deleted tab from local state
+            tabs = tabs.filter((tab) => tab.id !== currentId);
+
+            const reorderedTabs: Tab[] = await invoke("reorder_tabs");
+            tabs = reorderedTabs;
+
             if (tabs.length > 0) {
-                // Switch to any remaining tab
                 const lastTab = tabs[tabs.length - 1];
                 currentId = lastTab.id;
-                const docResult: Document = await invoke("get_document_content", { id: currentId });
+                const docResult: Document = await invoke(
+                    "get_document_content",
+                    { id: currentId },
+                );
                 titleText = docResult.title;
                 quill?.setContents(JSON.parse(docResult.content));
             } else {
-                // If no tabs left, create a new one
+                await invoke("reset_tab_order_count");
                 await addnewtab();
             }
         } catch (error) {
@@ -390,11 +381,18 @@
 
     async function newDocument(): Promise<void> {
         try {
+            const currentTabCount = tabs.length;
             const newTab: Tab = await invoke("new_tab");
+
+            // Update local state with the new tab
+            tabs = [...tabs, newTab];
             currentId = newTab.id;
             titleText = newTab.title;
             quill?.setContents([]);
-            await updateTabs();
+
+            // Ensure tab order is correct
+            const reorderedTabs: Tab[] = await invoke("reorder_tabs");
+            tabs = reorderedTabs;
         } catch (error) {
             console.error("Failed to create new document:", error);
         }
@@ -433,12 +431,11 @@
     </div>
 
     <div class="word-char-counter">
-        <div>{wordCount} Words</div>
-        <div>{charCount} Characters</div>
+        {wordCount} Words {charCount} Characters
     </div>
-    
+
     <div class="tab-counter" role="tablist" aria-label="Document tabs">
-        {#each currentTabs as tab}
+        {#each tabs as tab}
             <button
                 type="button"
                 class="tab-square"
@@ -448,7 +445,7 @@
                 aria-controls="editor"
                 onclick={() => switchTab(tab.id)}
             >
-                {tab.title.length > 10 ? tab.title.slice(0, 10) + '...' : tab.title || 'Untitled'}
+                {tab.order}
             </button>
         {/each}
     </div>

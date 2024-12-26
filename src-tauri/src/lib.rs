@@ -3,8 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, sync::Mutex};
 use once_cell::sync::Lazy;
 use tauri::WindowEvent;
-mod tabs;
-mod io;
+mod editor;
 
 ///A struct for DocumentData datatype that stores id, title and content of the document
 #[derive(Serialize, Deserialize, Clone)]
@@ -42,7 +41,7 @@ pub fn run() {
             match event {
                 WindowEvent::CloseRequested { .. } => {
                     // Call the function to save UserData when the app is closing
-                    io::on_app_close();
+                    editor::io::on_app_close();
 
                     // Prevent the window from closing immediately
                     window.close().unwrap();
@@ -52,17 +51,17 @@ pub fn run() {
         })
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            io::save_document,
-            io::load_recent_files,
-            io::delete_document,
-            io::get_document_content,
-            tabs::new_tab,
-            tabs::load_tab,
-            tabs::delete_tab,
-            tabs::get_tabs,
-            tabs::send_current_open_tab,
-            tabs::get_current_open_tab,
-            tabs::update_tab_title
+            editor::io::save_document,
+            editor::io::load_recent_files,
+            editor::io::delete_document,
+            editor::io::get_document_content,
+            editor::tabs::new_tab,
+            editor::tabs::load_tab,
+            editor::tabs::delete_tab,
+            editor::tabs::get_tabs,
+            editor::tabs::send_current_open_tab,
+            editor::tabs::get_current_open_tab,
+            editor::tabs::update_tab_title
             ]
         )
         .run(tauri::generate_context!())

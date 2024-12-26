@@ -6,10 +6,10 @@ use dirs;
 use sanitize_filename;
 
 
-use super::TABS;
-use super:: UserData;
-use super:: DocumentData;
-use super::CURRENT_OPEN_TAB;
+use crate::TABS;
+use crate:: UserData;
+use crate:: DocumentData;
+use crate::CURRENT_OPEN_TAB;
 
 
 /// This function finds the path to the 'documents'

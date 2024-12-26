@@ -1,10 +1,10 @@
 //! This module provides document tabs related functions for the app.
 use uuid::Uuid;
 
-use super::TABS; 
+use crate::TABS; 
 
-use super::CURRENT_OPEN_TAB;
-use super:: Tab;
+use crate::CURRENT_OPEN_TAB;
+use crate:: Tab;
 
 #[tauri::command]
 pub fn send_current_open_tab(id: String) {

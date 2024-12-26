@@ -2,7 +2,6 @@
     import { onMount } from "svelte";
     import { invoke } from "@tauri-apps/api/core";
     import { getContext } from "svelte";
-    import { setContext } from "svelte";
 
     let selectedindex: number = $state(-1);
     let searchText: string = $state("");

@@ -59,15 +59,15 @@ pub fn update_tab_title(id: String, title: String) -> Result<Tab, String> {
 }
 
 #[tauri::command]
-pub fn load_tab(id_in: String, title: String) -> Result<Tab, String> {
+pub fn load_tab(id: String, title: String) -> Result<Tab, String> {
     let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
     
     let new_tab = Tab {
-        id: id_in.clone(),
-        title: title,
+        id: id.clone(),
+        title
     };
     
-    tabs.insert(id_in, new_tab.clone());
+    tabs.insert(id, new_tab.clone());
     
     Ok(new_tab)
 }

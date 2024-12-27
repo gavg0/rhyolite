@@ -38,15 +38,13 @@ pub static CURRENT_OPEN_TAB: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(("").
 pub fn run() {
     tauri::Builder::default()
         .on_window_event(|window, event| {
-            match event {
-                WindowEvent::CloseRequested { .. } => {
-                    // Call the function to save UserData when the app is closing
-                    editor::io::on_app_close();
 
-                    // Prevent the window from closing immediately
-                    window.close().unwrap();
-                }
-                _ => {}
+            if let WindowEvent::CloseRequested { .. } = event {
+                // Call the function to save UserData when the app is closing
+                editor::io::on_app_close();
+
+                // Prevent the window from closing immediately
+                window.close().unwrap();
             }
         })
         .plugin(tauri_plugin_opener::init())

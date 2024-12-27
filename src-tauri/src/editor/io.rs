@@ -65,7 +65,7 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
     let documents_dir = get_documents_dir();
     
     // Use the id as the filename
-    let safe_filename = sanitize_filename::sanitize(&format!("{}.json", id));
+    let safe_filename = sanitize_filename::sanitize(format!("{}.json", id));
     let file_path = documents_dir.join(&safe_filename);
     
     let document_data = DocumentData {
@@ -91,7 +91,7 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
 #[tauri::command]
 pub fn delete_document(id: String) -> Result<(), String> {
     let documents_dir = get_documents_dir();
-    let filename = sanitize_filename::sanitize(&format!("{}.json", id));
+    let filename = sanitize_filename::sanitize(format!("{}.json", id));
     let file_path = documents_dir.join(&filename);
     
     // Remove the tab from TABS HashMap

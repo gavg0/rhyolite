@@ -448,7 +448,7 @@
                 aria-controls="editor"
                 onclick={() => switchTab(tab.id)}
             >
-                {tab.title.length > 10 ? tab.title.slice(0, 10) + '...' : tab.title || 'Untitled'}
+                {tab.title.length > 10 ? tab.title.slice(0, 15) + '...' : tab.title || 'Untitled'}
             </button>
         {/each}
     </div>

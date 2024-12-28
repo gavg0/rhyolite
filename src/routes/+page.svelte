@@ -280,14 +280,6 @@
             recentDocuments = docs;
 
             if (recentDocuments.length > 0) {
-                // Load each document as a tab
-                for (const doc of recentDocuments) {
-                    await invoke("load_tab", {
-                        idIn: doc.id,
-                        title: doc.title,
-                    });
-                }
-
                 // Update the tabs in UI
                 await updateTabs();
 

@@ -21,9 +21,10 @@ pub fn get_current_open_tab() -> Result<String, String> {
 #[tauri::command]
 pub fn get_tabs() -> Result<Vec<Tab>, String> {
     let tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
-    // Convert HashMap values to Vec for frontend
+    // Convert IndexMap values to Vec, maintaining order
     Ok(tabs.values().cloned().collect())
 }
+
 
 #[tauri::command]
 pub fn new_tab() -> Result<Tab, String> {
@@ -38,8 +39,13 @@ pub fn new_tab() -> Result<Tab, String> {
         title: "Untitled".to_string(),
     };
     
-    // Insert into HashMap
+    // Insert into IndexMap
     tabs.insert(new_id.clone(), new_tab.clone());
+    
+    // Update current open tab
+    let mut current_open_tab = CURRENT_OPEN_TAB.lock()
+        .map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
+    *current_open_tab = new_id;
     
     Ok(new_tab)
 }
@@ -72,11 +78,34 @@ pub fn load_tab(id: String, title: String) -> Result<Tab, String> {
     Ok(new_tab)
 }
 
-
+#[tauri::command]
+pub fn cycle_tabs() -> Result<String, String> {
+    let tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
+    let mut current_open_tab = CURRENT_OPEN_TAB.lock()
+        .map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
+    
+    if tabs.is_empty() {
+        return Err("No tabs available".to_string());
+    }
+    
+    // Find current index
+    if let Some(current_index) = tabs.get_full(&*current_open_tab).map(|(i, _, _)| i) {
+        // Calculate next index
+        let next_index = (current_index + 1) % tabs.len();
+        
+        // Get the ID of the next tab
+        if let Some((next_id, _)) = tabs.get_index(next_index) {
+            *current_open_tab = next_id.clone();
+            return Ok(next_id.clone());
+        }
+    }
+    
+    Err("Failed to cycle tabs".to_string())
+}
 
 #[tauri::command]
 pub fn delete_tab(id: String) -> Result<(), String> {
     let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
-    tabs.remove(&id);
+    tabs.shift_remove(&id);
     Ok(())
 }

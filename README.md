@@ -43,7 +43,7 @@ Install the `.rpm` version of the package from the [releases section](https://gi
 
 For any other GNU/Linux distribution you can use the `.AppImage` or run the `raw linux(linux_binary)` version from the [the releases section/](https://github.com/RedddFoxxyy/Rhyolite/releases).
 
-Note: You might need to make them executable by running ~~chmod +x Rhyolite.AppImage~~ or `chmod +x Rhyolite_[version]_linux_binary`.
+Note: You might need to make them executable by running `chmod +x Rhyolite_[version]_.AppImage` or `chmod +x Rhyolite_[version]_linux_binary`.
 
 # Manual compilation
 

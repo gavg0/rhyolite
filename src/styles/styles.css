@@ -69,9 +69,7 @@ html, body {
   justify-content: center;
 }
 
-a:hover {
-  color: #ffffff;
-}
+
 
 input,
 button {
@@ -204,11 +202,8 @@ textarea.rounded-container {
 .tab-square {
   width: auto;
   height: 30px;
-  width: 200px;
   flex-shrink: 1;
-  background-color: transparent;
-  border-left: 1px solid #ffffff3c;
-  border-right: 1px solid #ffffff3c;
+  background-color: var(--container-color);
   color: var(--container-text-color);
   display: flex;
   align-items: center;
@@ -229,7 +224,6 @@ textarea.rounded-container {
 }
 
 .tab-square:hover {
-  transform: scale(1.1);
-  border-color: var(--container-text-color);
+  background-color: var(--container-title-color);
   cursor: pointer;
 }

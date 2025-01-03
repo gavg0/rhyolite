@@ -4,17 +4,33 @@
     import Editor from "../lib/components/editor.svelte"
     import { setContext } from 'svelte';
     
+    interface Document {
+        id: string;
+        title: string;
+        content: string;
+    }
 
     let currentId: string = $state("");
+    let isCommandPalettevisible: boolean = $state(false);
+    
     setContext(
         'workspace',
         {
-            updateCurrentID
+            updateCurrentID,
+            getCurrentID
         }
     );
 
     function updateCurrentID(id: string) {
         currentId = id;
+    }
+
+    function getCurrentID(): string {
+        return currentId;
+    }
+
+    function toggleCommandPalette(): void {
+        isCommandPalettevisible = !isCommandPalettevisible;
     }
 </script>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { getContext, onMount, setContext } from 'svelte';
   import { Editor } from '@tiptap/core';
   import StarterKit from '@tiptap/starter-kit';
   import Highlight from '@tiptap/extension-highlight';
@@ -15,6 +15,18 @@
   
   let editor: Editor;
   let element: Element;
+  let io: any = getContext('io');
+  let tabs: any = getContext('tabs');
+  let title: any = getContext('title');
+
+  setContext(
+        'editor',
+        {
+            setEditorContent,
+            getEditorContent,
+            getEditorContentasText
+        }
+    );
 
   const FontSizeTextStyle = TextStyle.extend({
     addAttributes() {
@@ -72,13 +84,25 @@
       content: `<p>Flowbite is an <strong>open-source library of UI components</strong>...</p>`,
       editorProps: {
         attributes: {
-          class: 'format lg:format-lg focus:outline-none format-blue max-w-none'
+          class: 'format lg:format-lg text-text focus:outline-none format-blue max-w-none'
         }
       }
     });
+
+    io.loadRecentDocuments().then(async () => {
+            await tabs.updateTabs();
+            let currentTabs = tabs.returnTabsArray();
+            if (currentTabs.length === 0) {
+                await tabs.addnewtab();
+            }
+        });
+    
+    // Set up auto-save
+    const autoSaveInterval = setInterval(io.autoSave, 500);
   
     return () => {
       editor.destroy();
+      clearInterval(autoSaveInterval);
     };
   });
   
@@ -90,8 +114,20 @@
       color: isHighlighted ? 'Transparent' : '#ffc078'
     }).run();
   }
+
+  function setEditorContent(Content: any) {
+    editor.commands.setContent(Content);
+  }
+
+  function getEditorContent(): any {
+   return editor.getHTML();
+  }
+
+  function getEditorContentasText(): string {
+    return editor.getText();
+  }
 </script>
 
-<div class="flex flex-col items-center w-full h-full rounded-lg mb-[45px] m-[0.5%] cursor-text">
+<div class="flex flex-col items-center rounded-lg mb-[45px] m-[0.5%] cursor-text">
   <div class="w-[70%] h-full" bind:this={element}></div>
 </div>

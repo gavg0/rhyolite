@@ -1,8 +1,10 @@
 <script lang="ts">
     import { invoke } from "@tauri-apps/api/core";
-    import { getContext } from 'svelte';
     import Workspace from "../../routes/workspace.svelte";
     import type { Context } from "quill/modules/keyboard";
+    import { setContext, getContext } from "svelte";
+
+    let editor: any = getContext('editor');
 
     interface Tab {
         id: string;
@@ -16,8 +18,44 @@
     }
 
     let currentTabs: Tab[] = $state([]);
+
+    setContext(
+        'tabs',
+        {
+            updateTabs,
+            addnewtab,
+            switchTab,
+            getTabs,
+            cycleTabs,
+            gotoLastTab,
+            gotoTab1,
+            returnTabsArray
+        }
+    );
     
-    let workspace: any =getContext('workspace');
+    let workspace: any = getContext('workspace');
+    let title: any = getContext('Title');
+
+    function returnTabsArray(): Tab[] {
+        return currentTabs;
+    }
+
+    async function getTabs(): Promise<Tab[]> {
+        return await invoke("get_tabs"); // New Rust function needed
+    }
+
+    async function updateTabs(): Promise<void> {
+        currentTabs = await getTabs();
+    }
+
+    async function addnewtab(): Promise<void> {
+        const newTab: Tab = await invoke("new_tab");
+        workspace.updateCurrentID(newTab.id);
+        title.updateTitleText(newTab.title);
+        editor.setEditorContent('');
+        await updateTabs();
+        await invoke("send_current_open_tab", { id: newTab.id });
+    }
 
     async function switchTab(tabId: string): Promise<void> {
         try {
@@ -28,18 +66,47 @@
 
             if (docResult) {
                 workspace.updateCurrentID(tabId);
-                titleText = docResult.title;
-                // quill?.setContents(JSON.parse(docResult.content));
+                title.updateTitleText(docResult.title);
+                editor.setEditorContent(docResult.content);
             } else {
                 workspace.updateCurrentID(tabId);
-                titleText = "";
-                // quill?.setContents([]);
+                title.updateTitleText("");
+                editor.setEditorContent("");
             }
             
             // Update the current open tab in the backend
             await invoke("send_current_open_tab", { id: tabId });
         } catch (error) {
             console.error("Failed to switch tab:", error);
+        }
+    }
+
+    async function cycleTabs(): Promise<void> {
+        try {
+            const nextTabId: string = await invoke("cycle_tabs");
+            const docResult: Document | null = await invoke("get_document_content", { id: nextTabId });
+            
+            if (docResult) {
+                workspace.updateCurrentID(nextTabId);
+                title.updateTitleText(docResult.title);
+                editor.setEditorContent(docResult.content);
+            }
+        } catch (error) {
+            console.error("Failed to cycle tabs:", error);
+        }
+    }
+
+    async function gotoTab1(): Promise<void> {
+        const tabs = await getTabs();
+        if (tabs.length > 0) {
+            await switchTab(tabs[0].id);
+        }
+    }
+
+    async function gotoLastTab(): Promise<void> {
+        const tabs = await getTabs();
+        if (tabs.length > 0) {
+            await switchTab(tabs[tabs.length - 1].id);
         }
     }
 
@@ -50,9 +117,9 @@
         <button
             type="button"
             class="tab-square"
-            class:active={currentId === tab.id}
+            
             role="tab"
-            aria-selected={currentId === tab.id}
+            
             aria-controls="editor"
             onclick={() => switchTab(tab.id)}
         >

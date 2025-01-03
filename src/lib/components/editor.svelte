@@ -92,20 +92,7 @@
   }
 </script>
 
-<div class="flex flex-grow w-[75%] h-[100%] rounded-lg mb-[45px] m-[0.5%]">
+<div class="flex flex-col flex-grow items-center w-[75%] h-full rounded-lg mb-[45px] m-[0.5%]">
   <div id="wysiwyg-example"></div>
-  <div class="p-2 border-t border-gray-200">
-      <button class="px-3 py-1 mr-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" 
-              on:click={toggleBold}>
-          Bold
-      </button>
-      <button class="px-3 py-1 mr-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              on:click={toggleItalic}>
-          Italic
-      </button>
-      <button class="px-3 py-1 mr-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              on:click={toggleHighlight}>
-          Highlight
-      </button>
-  </div>
+      
 </div>

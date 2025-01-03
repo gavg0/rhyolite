@@ -87,11 +87,11 @@
   function toggleHighlight() {
     const isHighlighted = editor.isActive('highlight');
     editor.chain().focus().toggleHighlight({
-      color: isHighlighted ? undefined : '#ffc078'
+      color: isHighlighted ? 'Transparent' : '#ffc078'
     }).run();
   }
 </script>
 
-<div class="flex flex-col flex-grow-0 items-center w-[75%] h-full rounded-lg mb-[45px] m-[0.5%]">
-  <div class="" bind:this={element}></div>
+<div class="flex flex-col items-center w-full h-full rounded-lg mb-[45px] m-[0.5%] cursor-text">
+  <div class="w-[70%] h-full" bind:this={element}></div>
 </div>

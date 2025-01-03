@@ -34,6 +34,10 @@ pub fn get_documents_dir() -> PathBuf {
     path
 }
 
+// pub fn create_vault_dir(name: String) -> PathBuf {
+//   path.push("Untitled");
+// }
+
 pub fn on_app_close() {
     // Save the complete tabs information
     let tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e)).unwrap();
@@ -63,6 +67,12 @@ pub fn on_app_close() {
 #[tauri::command]
 pub fn save_document(id: String, title: String, content: String) -> Result<String, String> {
     let documents_dir = get_documents_dir();
+
+    // Create an empty directory called untitled(which will be the vault) in the documents directory and then append 
+    // the filename to this path buf
+    // i.e. create an untitled folder in the same directory as the variable document_dir and store the path to this new directory
+    // in a new variable called vault_dir then in the file_path variable declaration append to this vault_dir variable instead
+    // of the documents_dir variable
     
     // Use the id as the filename
     let safe_filename = sanitize_filename::sanitize(format!("{}.json", id));

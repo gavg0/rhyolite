@@ -109,3 +109,8 @@ pub fn delete_tab(id: String) -> Result<(), String> {
     tabs.shift_remove(&id);
     Ok(())
 }
+
+// #[tauri::command]
+// pub fn close_tab()
+
+print!("Hello World");

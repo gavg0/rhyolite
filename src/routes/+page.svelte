@@ -202,7 +202,7 @@
         const newTab: Tab = await invoke("new_tab");
         currentId = newTab.id;
         titleText = newTab.title;
-        quill?.setContents([]);
+        quill.root.innerHTML = "";  // Changed from setContents([])
         await updateTabs();
         await invoke("send_current_open_tab", { id: newTab.id });
     }
@@ -217,14 +217,13 @@
             if (docResult) {
                 currentId = tabId;
                 titleText = docResult.title;
-                quill?.setContents(JSON.parse(docResult.content));
+                quill.root.innerHTML = docResult.content;  // Changed from JSON.parse(docResult.content)
             } else {
                 currentId = tabId;
                 titleText = "";
-                quill?.setContents([]);
+                quill.root.innerHTML = "";  // Changed from setContents([])
             }
             
-            // Update the current open tab in the backend
             await invoke("send_current_open_tab", { id: tabId });
         } catch (error) {
             console.error("Failed to switch tab:", error);
@@ -239,7 +238,7 @@
             if (docResult) {
                 currentId = nextTabId;
                 titleText = docResult.title;
-                quill?.setContents(JSON.parse(docResult.content));
+                quill.root.innerHTML = docResult.content;
             }
         } catch (error) {
             console.error("Failed to cycle tabs:", error);
@@ -272,7 +271,7 @@
             await invoke("save_document", {
                 id: currentId,
                 title: titleText,
-                content: JSON.stringify(quill.getContents()),
+                content: quill.root.innerHTML,
             });
         } catch (error) {
             console.error("Auto-save failed:", error);
@@ -284,15 +283,12 @@
             const docs: Document[] = await invoke("load_recent_files");
             recentDocuments = docs;
 
-            // Update the tabs in UI
             await updateTabs();
 
             if (recentDocuments.length > 0) {
-                // Load the last open tab from the backend
                 const openTabId: string = await invoke("get_current_open_tab");
                 await switchTab(openTabId);
             } else {
-                // If no documents exist, create a new tab
                 await addnewtab();
             }
         } catch (error) {
@@ -363,17 +359,14 @@
 
     async function deleteDocument(): Promise<void> {
         try {
-            // The Rust function returns the next document's content after deletion
             const nextDoc: Document | null = await invoke("delete_document", { id: currentId });
             await updateTabs();
             
             if (nextDoc) {
-                // If we have a next document, switch to it
                 currentId = nextDoc.id;
                 titleText = nextDoc.title;
-                quill?.setContents(JSON.parse(nextDoc.content));
+                quill.root.innerHTML = nextDoc.content;  // Changed from JSON.parse(nextDoc.content)
             } else {
-                // If no documents left, create a new one
                 await addnewtab();
             }
             
@@ -388,7 +381,7 @@
             const newTab: Tab = await invoke("new_tab");
             currentId = newTab.id;
             titleText = newTab.title;
-            quill?.setContents([]);
+            quill.root.innerHTML = "";  // Changed from setContents([])
             await updateTabs();
         } catch (error) {
             console.error("Failed to create new document:", error);

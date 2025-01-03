@@ -1,0 +1,111 @@
+<script lang="ts">
+  import { onMount } from 'svelte';
+  import { Editor } from '@tiptap/core';
+  import StarterKit from '@tiptap/starter-kit';
+  import Highlight from '@tiptap/extension-highlight';
+  import Underline from '@tiptap/extension-underline';
+  import Link from '@tiptap/extension-link';
+  import TextAlign from '@tiptap/extension-text-align';
+  import Image from '@tiptap/extension-image';
+  import YouTube from '@tiptap/extension-youtube';
+  import TextStyle from '@tiptap/extension-text-style';
+  import FontFamily from '@tiptap/extension-font-family';
+  import { Color } from '@tiptap/extension-color';
+  import Bold from '@tiptap/extension-bold';
+  
+  let editor: Editor;
+  
+  const FontSizeTextStyle = TextStyle.extend({
+    addAttributes() {
+      return {
+        fontSize: {
+          default: null,
+          parseHTML: element => element.style.fontSize,
+          renderHTML: attributes => !attributes.fontSize ? {} : { style: `font-size: ${attributes.fontSize}` }
+        }
+      };
+    }
+  });
+  
+  const CustomBold = Bold.extend({
+    renderHTML({ mark, HTMLAttributes }) {
+      const { style, ...rest } = HTMLAttributes;
+      const newStyle = `font-weight: bold;${style ? ' ' + style : ''}`;
+      return ['span', { ...rest, style: newStyle.trim() }, 0];
+    },
+    addOptions() {
+      return {
+        ...this.parent?.(),
+        HTMLAttributes: {}
+      };
+    }
+  });
+  
+  onMount(() => {
+    const element = document.querySelector('#wysiwyg-example');
+    if (!element) return;
+  
+    editor = new Editor({
+      element,
+      extensions: [
+        StarterKit.configure({
+          bold: false,
+        }),
+        CustomBold,
+        TextStyle,
+        Color,
+        FontSizeTextStyle,
+        FontFamily,
+        Highlight,
+        Underline,
+        Link.configure({
+          openOnClick: false,
+          autolink: true,
+          defaultProtocol: 'https'
+        }),
+        TextAlign.configure({
+          types: ['heading', 'paragraph']
+        }),
+        Image,
+        YouTube
+      ],
+      content: `<p>Flowbite is an <strong>open-source library of UI components</strong>...</p>`,
+      editorProps: {
+        attributes: {
+          class: 'format lg:format-lg dark:format-invert focus:outline-none format-blue max-w-none'
+        }
+      }
+    });
+  
+    return () => {
+      editor.destroy();
+    };
+  });
+  
+  function toggleBold() { editor.chain().focus().toggleBold().run(); }
+  function toggleItalic() { editor.chain().focus().toggleItalic().run(); }
+  function toggleHighlight() {
+    const isHighlighted = editor.isActive('highlight');
+    editor.chain().focus().toggleHighlight({
+      color: isHighlighted ? undefined : '#ffc078'
+    }).run();
+  }
+</script>
+
+<div class="flex flex-grow w-[75%] h-[100%] rounded-lg mb-[45px] m-[0.5%]">
+  <div id="wysiwyg-example"></div>
+  <div class="p-2 border-t border-gray-200">
+      <button class="px-3 py-1 mr-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" 
+              on:click={toggleBold}>
+          Bold
+      </button>
+      <button class="px-3 py-1 mr-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              on:click={toggleItalic}>
+          Italic
+      </button>
+      <button class="px-3 py-1 mr-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              on:click={toggleHighlight}>
+          Highlight
+      </button>
+  </div>
+</div>

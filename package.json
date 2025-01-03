@@ -16,11 +16,20 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@tauri-apps/api": "2.1.1",
+    "@tauri-apps/api": "2.2.0",
     "@tauri-apps/plugin-opener": "2.2.2",
     "@tiptap/core": "^2.11.0",
     "@tiptap/pm": "^2.11.0",
     "@tiptap/starter-kit": "^2.11.0",
+    "@tiptap/extension-highlight":"2.11.0",
+    "@tiptap/extension-underline":"2.11.0",
+    "@tiptap/extension-link":"2.11.0",
+    "@tiptap/extension-image":"2.11.0",
+    "@tiptap/extension-text-align":"2.11.0",
+    "@tiptap/extension-youtube":"2.11.0",
+    "@tiptap/extension-text-style":"2.11.0",
+    "@tiptap/extension-font-family":"2.11.0",
+    "@tiptap/extension-color":"2.11.0",
     "flowbite-typography": "^1.0.5",
     "quill": "2.0.3",
     "uuid": "11.0.3"
@@ -39,6 +48,6 @@
     "svelte-check": "4.1.1",
     "tailwindcss": "^3.4.17",
     "typescript": "5.7.2",
-    "vite": "6.0.6"
+    "vite": "6.0.7"
   }
 }

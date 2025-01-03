@@ -56,8 +56,21 @@ jobs:
       - name: Setup cross-compilation for ARM64 (Ubuntu only)
         if: matrix.platform == 'ubuntu-22.04' && contains(matrix.args, 'aarch64')
         run: |
+          # Add ARM64 architecture support
+          sudo dpkg --add-architecture arm64
+          sudo apt-get update
+          
+          # Install cross-compilation tools
           sudo apt-get install -y crossbuild-essential-arm64
-          sudo apt-get install -y libgtk-3-dev:arm64 libwebkit2gtk-4.0-dev:arm64 libwebkit2gtk-4.1-dev:arm64 libappindicator3-dev:arm64 librsvg2-dev:arm64
+          
+          # Install ARM64 versions of required libraries
+          sudo apt-get install -y \
+            libgtk-3-dev:arm64 \
+            libwebkit2gtk-4.0-dev:arm64 \
+            libwebkit2gtk-4.1-dev:arm64 \
+            libappindicator3-dev:arm64 \
+            librsvg2-dev:arm64
+          
           # Configure pkg-config for cross-compilation
           sudo ln -s /usr/bin/pkg-config /usr/bin/aarch64-linux-gnu-pkg-config
           echo "PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig" >> $GITHUB_ENV

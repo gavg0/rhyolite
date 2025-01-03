@@ -14,7 +14,8 @@
   import Bold from '@tiptap/extension-bold';
   
   let editor: Editor;
-  
+  let element: Element;
+
   const FontSizeTextStyle = TextStyle.extend({
     addAttributes() {
       return {
@@ -42,8 +43,7 @@
   });
   
   onMount(() => {
-    const element = document.querySelector('#wysiwyg-example');
-    if (!element) return;
+    
   
     editor = new Editor({
       element,
@@ -72,7 +72,7 @@
       content: `<p>Flowbite is an <strong>open-source library of UI components</strong>...</p>`,
       editorProps: {
         attributes: {
-          class: 'format lg:format-lg dark:format-invert focus:outline-none format-blue max-w-none'
+          class: 'format lg:format-lg focus:outline-none format-blue max-w-none'
         }
       }
     });
@@ -92,7 +92,6 @@
   }
 </script>
 
-<div class="flex flex-col flex-grow items-center w-[75%] h-full rounded-lg mb-[45px] m-[0.5%]">
-  <div id="wysiwyg-example"></div>
-      
+<div class="flex flex-col flex-grow-0 items-center w-[75%] h-full rounded-lg mb-[45px] m-[0.5%]">
+  <div class="" bind:this={element}></div>
 </div>

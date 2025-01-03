@@ -1,7 +1,9 @@
 <script lang="ts">
     import Tabsbar from "../lib/components/tabsbar.svelte";
+    import TitleBox from "../lib/components/titlebox.svelte";
     import Editor from "../lib/components/editor.svelte"
     import { setContext } from 'svelte';
+    
 
     let currentId: string = $state("");
     setContext(
@@ -19,6 +21,7 @@
 <main>
     <Tabsbar/>
     <div class="flex flex-col mt-[6%] w-full">
+        
         <Editor/>
     </div>
 </main>

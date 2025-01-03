@@ -18,6 +18,10 @@
   "dependencies": {
     "@tauri-apps/api": "2.1.1",
     "@tauri-apps/plugin-opener": "2.2.2",
+    "@tiptap/core": "^2.11.0",
+    "@tiptap/pm": "^2.11.0",
+    "@tiptap/starter-kit": "^2.11.0",
+    "flowbite-typography": "^1.0.5",
     "quill": "2.0.3",
     "uuid": "11.0.3"
   },
@@ -26,8 +30,14 @@
     "@sveltejs/kit": "2.15.1",
     "@sveltejs/vite-plugin-svelte": "5.0.3",
     "@tauri-apps/cli": "^2.1",
+    "autoprefixer": "^10.4.20",
+    "flowbite": "^2.5.2",
+    "flowbite-svelte": "^0.47.4",
+    "flowbite-svelte-icons": "^2.0.2",
+    "postcss": "^8.4.49",
     "svelte": "^5.16",
     "svelte-check": "4.1.1",
+    "tailwindcss": "^3.4.17",
     "typescript": "5.7.2",
     "vite": "6.0.6"
   }

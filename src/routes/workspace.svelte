@@ -151,14 +151,6 @@
         updateWordCount(wordsCount);
     }
 
-    export function updateCurrentID(id: string) {
-        currentId = id;
-    }
-
-    export function getCurrentID(): string {
-        return currentId;
-    }
-
     export function toggleCommandPalette(): void {
         isCommandPalettevisible = !isCommandPalettevisible;
     }
@@ -181,9 +173,9 @@
 
     export async function addnewtab(): Promise<void> {
         const newTab: Tab = await invoke("new_tab");
-        updateCurrentID(newTab.id);
-        updateTitleText(newTab.title);
-        editor!.commands.setContent('');
+        currentId = newTab.id;
+        titleText = newTab.title;
+        editor.commands.setContent('');
         await updateTabs();
         await invoke("send_current_open_tab", { id: newTab.id });
     }
@@ -196,15 +188,15 @@
             );
 
             if (docResult) {
-                updateCurrentID(tabId);
+                currentId = tabId;
                 currentTabID = tabId;
-                updateTitleText(docResult.title);
-                editor!.commands.setContent(docResult.content);
+                titleText = docResult.title;
+                editor.commands.setContent(docResult.content);
             } else {
-                updateCurrentID(tabId);
+                currentId = tabId;
                 currentTabID = tabId;
-                updateTitleText("");
-                editor!.commands.setContent("");
+                titleText = "";
+                editor.commands.setContent("");
             }
             
             // Update the current open tab in the backend
@@ -220,9 +212,9 @@
             const docResult: Document | null = await invoke("get_document_content", { id: nextTabId });
             
             if (docResult) {
-                updateCurrentID(nextTabId);
-                updateTitleText(docResult.title);
-                editor!.commands.setContent(docResult.content);
+                currentId = nextTabId;
+                titleText = docResult.title;
+                editor.commands.setContent(docResult.content);
             }
         } catch (error) {
             console.error("Failed to cycle tabs:", error);
@@ -252,9 +244,7 @@
     }
 
     export async function autoSave(): Promise<void> {
-        let titleText = returnTitleText();
         if (!titleText && !editor!.getText()) return;
-        let currentId = getCurrentID();
 
         try {
             await invoke("update_tab_title", {
@@ -265,7 +255,7 @@
             await invoke("save_document", {
                 id: currentId,
                 title: titleText,
-                content: editor!.getHTML(),
+                content: editor.getHTML(),
             });
         } catch (error) {
             console.error("Auto-save failed:", error);
@@ -295,22 +285,19 @@
 
     export async function deleteDocument(): Promise<void> {
         try {
-            currentId = getCurrentID();
             // The Rust function returns the next document's content after deletion
             const nextDoc: Document | null = await invoke("delete_document", { id: currentId });
             await updateTabs();
             
             if (nextDoc) {
                 // If we have a next document, switch to it
-                updateCurrentID(nextDoc.id);
-                updateTitleText(nextDoc.title);
+                currentId = nextDoc.id;
+                titleText = nextDoc.title;
                 editor!.commands.setContent(nextDoc.content);
             } else {
                 // If no documents left, create a new one
                 await addnewtab();
             }
-            
-            currentId = getCurrentID();
             await invoke("send_current_open_tab", { id: currentId });
         } catch (error) {
             console.error("Failed to delete document:", error);
@@ -320,8 +307,8 @@
     export async function newDocument(): Promise<void> {
         try {
             const newTab: Tab = await invoke("new_tab");
-            updateCurrentID(newTab.id);
-            updateTitleText(newTab.title);
+            currentId = newTab.id;
+            titleText = newTab.title;
             editor!.commands.setContent("");
             await updateTabs();
         } catch (error) {
@@ -361,13 +348,6 @@
             event.preventDefault();
             toggleCommandPalette();
         }
-    }
-
-    export function updateTitleText(Text: string) {
-        titleText = Text;
-    }
-    export function returnTitleText(): string {
-        return titleText;
     }
 
     export function handleTitleChange(event: Event): void {

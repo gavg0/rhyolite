@@ -105,7 +105,7 @@
       content: ``,
       editorProps: {
         attributes: {
-          class: 'format lg:format-lg text-text focus:outline-none format-blue max-w-none'
+          class: 'format lg:format-lg text-text text-sm focus:outline-none format-blue max-w-none leading-none'
         }
       },
       onUpdate: ({ editor }) => {
@@ -164,8 +164,8 @@
   }
 </script>
 
-<main>
-  <div class="flex rounded-lg mb-[45px] m-[0.5%] w-[70%] flex-grow cursor-text mx-auto">
+<main class="h-full overflow-hidden">
+  <div class="flex rounded-lg  m-[0.5%] w-[70%] h-full flex-grow cursor-text mx-auto">
     <div class="w-full h-full" bind:this={element}></div>
   </div>
 </main>

@@ -36,7 +36,7 @@
 
 <main>
     <Tabsbar/>
-    <div class="flex flex-col justify-center mt-[6%] w-full">
+    <div class="flex flex-col justify-start mt-[60px] h-[100vh] flex-grow">
         <TitleBox/>
         <Editor/>
     </div>

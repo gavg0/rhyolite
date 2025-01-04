@@ -116,12 +116,12 @@
 
 </script>
 
-<div class="fixed bg-base top-[0px] w-full h-[5%]" role="tablist" aria-label="Document tabs">
-    <div class="flex flex-row gap-1 ml-1">
+<div class="fixed bg-base top-[0px] w-full h-[45px]" role="tablist" aria-label="Document tabs">
+    <div class="flex flex-row ml-1">
         {#each currentTabs as tab}
             <button
                 type="button"
-                class="flex justify-left items-center p-[1%] h-[30px] w-auto rounded-t-lg flex-shrink active:bg-crust  text-text mt-[0.6%]"
+                class="flex justify-left items-center p-[1%] h-[30px] w-auto rounded-[18px] flex-shrink active:bg-crust  text-text m-[0.6%]"
                 class:active={currentTabID === tab.id}
                 role="tab"
                 aria-controls="editor"

@@ -29,7 +29,7 @@
     }
 
     let currentTabs: Tab[] = $state([]);
-    const editor: any = getContext('editor');
+    // const editor: any = getContext('editor');
 
     // setContext(
     //     'tabs',

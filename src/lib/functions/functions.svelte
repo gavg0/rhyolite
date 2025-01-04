@@ -40,7 +40,7 @@
     }
 
     
-    const editor: any = getContext('editor');
+    // const editor: any = getContext('editor');
     
 
     export async function autoSave(): Promise<void> {

@@ -23,7 +23,7 @@
 
     let selectedindex: number = $state(-1);
     let searchText: string = $state("");
-    const editor: any = getContext('editor');
+    // const editor: any = getContext('editor');
 
     interface Command {
         name: string;

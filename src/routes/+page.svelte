@@ -38,8 +38,6 @@
     let isToolbarVisible: boolean = $state(false);
     let isCommandPalettevisible: boolean = $state(false);
     let currentTabs: Tab[] = $state([])
-    // let tabCount: number = $state(1);
-    // let tabs: Tab[] = $state([]);
 
     //setcontext for the editor to pass to the child components:
     setContext(

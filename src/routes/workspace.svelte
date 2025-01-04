@@ -144,11 +144,8 @@
     }
 
     function updatecharwordcounts() {
-        let characterCount = editor.storage.characterCount.characters();
-        let wordsCount = editor.storage.characterCount.words();
-
-        updateCharCount(characterCount);
-        updateWordCount(wordsCount);
+        charCount = editor.storage.characterCount.characters();
+        wordCount = editor.storage.characterCount.words();
     }
 
     export function toggleCommandPalette(): void {
@@ -233,14 +230,6 @@
         if (tabs.length > 0) {
             await switchTab(tabs[tabs.length - 1].id);
         }
-    }
-
-    export function updateWordCount(count: number) {
-        wordCount = count;
-    }
-
-    export function updateCharCount(count: number) {
-        charCount = count;
     }
 
     export async function autoSave(): Promise<void> {

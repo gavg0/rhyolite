@@ -4,20 +4,20 @@
     line-height: 24px;
     font-weight: 400;
   
-    color: #ffffff;
-    background-color: #202325;
+    color: #191819;
+    background-color: #F5EFFF;
   
-    --container-title-color: #000204f1;
-    --container-color: #464c51;
-    --container-editor-color: #202325;
-    --container-text-color: #e0e0e0;
+    --container-title-color: #A594F9;
+    --container-color: #E5D9F2;
+    --container-editor-color: #dfb6e1;
+    --container-text-color: #111111;
     --container-box-shadow:#00000011;
     --container-box-shadow-focused: #0000001f;
   
     --ui-element-background: #c7c7c731;
   
     --editor-bg: var(--container-editor-color);
-    --editor-text: #e5e5e5;
+    --editor-text: #060606;
     --editor-selection-highlight: #ffffff33;
     --editor-border: #404040;
     --editor-accent: #808080;

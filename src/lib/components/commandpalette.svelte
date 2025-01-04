@@ -6,7 +6,8 @@
     import {
             updateCurrentID,
             getCurrentID,
-            toggleCommandPalette
+            toggleCommandPalette,
+            return_isCommandPalettevisible
         }
         from "../../routes/workspace.svelte";  
     import {
@@ -83,7 +84,7 @@
     ];
 
     function handleKeydown(event: KeyboardEvent) {
-        // if (!editor.return_isCommandPalettevisible()) return;
+        if (!return_isCommandPalettevisible()) return;
 
         switch (event.key) {
             case 'ArrowDown':
@@ -116,7 +117,7 @@
     }
 
     function handleWheel(event: WheelEvent) {
-        // if (!editor.return_isCommandPalettevisible()) return;
+        if (!return_isCommandPalettevisible()) return;
         
         event.preventDefault();
         if (event.deltaY > 0) {
@@ -129,18 +130,18 @@
     }
 
     // Reset selected index when command palette is closed
-    // $effect(() => {
-    //     if (!editor.return_isCommandPalettevisible()) {
-    //         selectedindex = -1;
-    //         searchText = "";
-    //     }
-    // });
+    $effect(() => {
+        if (!return_isCommandPalettevisible()) {
+            selectedindex = -1;
+            searchText = "";
+        }
+    });
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
 
 <main>
-    {#if editor.return_isCommandPalettevisible()}
+    {#if return_isCommandPalettevisible()}
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <!-- svelte-ignore a11y_click_events_have_key_events -->
         <div 

@@ -32,21 +32,7 @@
     }
 
     let currentTabs: Tab[] = $state([]);
-    // const editor: any = getContext('editor');
-
-    // setContext(
-    //     'tabs',
-    //     {
-    //         updateTabs,
-    //         addnewtab,
-    //         switchTab,
-    //         getTabs,
-    //         cycleTabs,
-    //         gotoLastTab,
-    //         gotoTab1,
-    //         returnTabsArray
-    //     }
-    // );
+    let currentTabID: string = $state("");
     
 
     export function returnTabsArray(): Tab[] {
@@ -81,10 +67,12 @@
 
             if (docResult) {
                 updateCurrentID(tabId);
+                currentTabID = tabId;
                 updateTitleText(docResult.title);
                 editor.commands.setContent(docResult.content);
             } else {
                 updateCurrentID(tabId);
+                currentTabID = tabId;
                 updateTitleText("");
                 editor.commands.setContent("");
             }
@@ -133,7 +121,8 @@
         {#each currentTabs as tab}
             <button
                 type="button"
-                class="flex justify-left items-center p-[1%] h-[30px] w-auto flex-shrink active:bg-crust focus:bg-crust text-text mt-[0.6%]"
+                class="flex justify-left items-center p-[1%] h-[30px] w-auto rounded-t-lg flex-shrink active:bg-crust  text-text mt-[0.6%]"
+                class:active={currentTabID === tab.id}
                 role="tab"
                 aria-controls="editor"
                 onclick={() => switchTab(tab.id)}

@@ -2,6 +2,7 @@
     import Tabsbar from "../lib/components/tabsbar.svelte";
     import TitleBox from "../lib/components/titlebox.svelte";
     import Editor from "../lib/components/editor.svelte"
+    import Counter from "../lib/components/word-char-counter.svelte"
     import CommandPalette from "../lib/components/commandpalette.svelte";
     import { setContext, getContext } from 'svelte';
     import { autoSave, loadRecentDocuments, handleKeydown } from '../lib/functions/functions.svelte';  
@@ -39,5 +40,6 @@
         <TitleBox/>
         <Editor/>
     </div>
+    <Counter/>
     <CommandPalette/>
 </main>

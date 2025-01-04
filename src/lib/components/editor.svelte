@@ -10,6 +10,7 @@
   import YouTube from '@tiptap/extension-youtube';
   import TextStyle from '@tiptap/extension-text-style';
   import FontFamily from '@tiptap/extension-font-family';
+  import CharacterCount from '@tiptap/extension-character-count'
   import { Color } from '@tiptap/extension-color';
   import Bold from '@tiptap/extension-bold';
   import { autoSave, loadRecentDocuments } from '../functions/functions.svelte';  
@@ -30,6 +31,8 @@
             returnTitleText
         }
         from "../components/titlebox.svelte";
+
+  import { updateWordCount, updateCharCount } from "../components/word-char-counter.svelte";
 
   let editor: Editor;
   let element: Element;
@@ -92,6 +95,10 @@
         TextAlign.configure({
           types: ['heading', 'paragraph']
         }),
+        CharacterCount.configure({
+          textCounter: (text) => [...new Intl.Segmenter().segment(text)].length,
+          wordCounter: (text) => text.split(/\s+/).filter((word) => word !== '').length
+        }),
         Image,
         YouTube
       ],
@@ -100,7 +107,10 @@
         attributes: {
           class: 'format lg:format-lg text-text focus:outline-none format-blue max-w-none'
         }
-      }
+      },
+      onUpdate: ({ editor }) => {
+      updatecharwordcounts();
+    }
     });
 
     editorStore.set(editor);
@@ -110,6 +120,7 @@
             let currentTabs = returnTabsArray();
             if (currentTabs.length === 0) {
                 await addnewtab();
+                updatecharwordcounts();
             }
         });
     
@@ -142,6 +153,14 @@
 
   function getEditorContentasText(): string {
     return editor.getText();
+  }
+
+  function updatecharwordcounts() {
+    let characterCount = editor.storage.characterCount.characters();
+    let wordsCount = editor.storage.characterCount.words();
+
+    updateCharCount(characterCount);
+    updateWordCount(wordsCount);
   }
 </script>
 

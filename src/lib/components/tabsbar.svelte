@@ -126,7 +126,7 @@
     {#each currentTabs as tab}
         <button
             type="button"
-            class="flex justify-left h-[30px] w-auto flex-shrink bg-crust"
+            class="flex justify-left items-center p-[1%] h-[30px] w-auto flex-shrink bg-crust text-text mt-[0.6%]"
             
             role="tab"
             

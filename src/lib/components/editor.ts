@@ -1,7 +1,4 @@
+import { writable } from 'svelte/store';
 import type { Editor } from '@tiptap/core';
 
-interface EditorStore {
-  instance: Editor | null;
-}
-
-export const editorStore = $state<EditorStore>({ instance: null });
+export const editorStore = writable<Editor | null>(null);

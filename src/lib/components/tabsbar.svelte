@@ -3,6 +3,9 @@
     import Workspace from "../../routes/workspace.svelte";
     import type { Context } from "quill/modules/keyboard";
     import { setContext, getContext, onMount } from "svelte";
+    import { get } from 'svelte/store';
+    import { editorStore } from '../components/editor';
+    import type { Editor } from '@tiptap/core';
     import {
             updateCurrentID,
             getCurrentID,
@@ -60,15 +63,17 @@
 
     export async function addnewtab(): Promise<void> {
         const newTab: Tab = await invoke("new_tab");
+        const editor: Editor | null = get(editorStore);
         updateCurrentID(newTab.id);
         updateTitleText(newTab.title);
-        editor.setEditorContent('');
+        editor.commands.setContent('');
         await updateTabs();
         await invoke("send_current_open_tab", { id: newTab.id });
     }
 
     export async function switchTab(tabId: string): Promise<void> {
         try {
+            const editor: Editor | null = get(editorStore);
             const docResult: Document | null = await invoke(
                 "get_document_content",
                 { id: tabId }
@@ -77,11 +82,11 @@
             if (docResult) {
                 updateCurrentID(tabId);
                 updateTitleText(docResult.title);
-                editor.setEditorContent(docResult.content);
+                editor.commands.setContent(docResult.content);
             } else {
                 updateCurrentID(tabId);
                 updateTitleText("");
-                editor.setEditorContent("");
+                editor.commands.setContent("");
             }
             
             // Update the current open tab in the backend
@@ -93,13 +98,14 @@
 
     export async function cycleTabs(): Promise<void> {
         try {
+            const editor: Editor | null = get(editorStore);
             const nextTabId: string = await invoke("cycle_tabs");
             const docResult: Document | null = await invoke("get_document_content", { id: nextTabId });
             
             if (docResult) {
                 updateCurrentID(nextTabId);
                 updateTitleText(docResult.title);
-                editor.setEditorContent(docResult.content);
+                editor.commands.setContent(docResult.content);
             }
         } catch (error) {
             console.error("Failed to cycle tabs:", error);
@@ -123,17 +129,18 @@
 </script>
 
 <div class="fixed bg-base top-[0px] w-full h-[5%]" role="tablist" aria-label="Document tabs">
-    {#each currentTabs as tab}
-        <button
-            type="button"
-            class="flex justify-left items-center p-[1%] h-[30px] w-auto flex-shrink bg-crust text-text mt-[0.6%]"
-            
-            role="tab"
-            
-            aria-controls="editor"
-            onclick={() => switchTab(tab.id)}
-        >
-            {tab.title.length > 10 ? tab.title.slice(0, 20) + '...' : tab.title || 'Untitled'}
-        </button>
-    {/each}
+    <div class="flex flex-row gap-1 ml-1">
+        {#each currentTabs as tab}
+            <button
+                type="button"
+                class="flex justify-left items-center p-[1%] h-[30px] w-auto flex-shrink active:bg-crust focus:bg-crust text-text mt-[0.6%]"
+                role="tab"
+                aria-controls="editor"
+                onclick={() => switchTab(tab.id)}
+            >
+                {tab.title.length > 10 ? tab.title.slice(0, 20) + '...' : tab.title || 'Untitled'}
+            </button>
+        {/each}
+    </div>
+    
 </div>

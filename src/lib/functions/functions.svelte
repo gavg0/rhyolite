@@ -1,6 +1,9 @@
 <script lang="ts" module>
     import { setContext, getContext } from "svelte";
     import { invoke } from "@tauri-apps/api/core";
+    import { get } from 'svelte/store';
+    import { editorStore } from '../components/editor';
+    import type { Editor } from '@tiptap/core';
     import {
             updateCurrentID,
             getCurrentID,
@@ -45,7 +48,8 @@
 
     export async function autoSave(): Promise<void> {
         let titleText = returnTitleText();
-        if (!titleText && !editor.getEditorContentasText()) return;
+        const editor: Editor | null = get(editorStore);
+        if (!titleText && !editor.getText()) return;
         let currentId = getCurrentID();
 
         try {
@@ -57,7 +61,7 @@
             await invoke("save_document", {
                 id: currentId,
                 title: titleText,
-                content: editor.getEditorContent(),
+                content: editor.getHTML(),
             });
         } catch (error) {
             console.error("Auto-save failed:", error);
@@ -90,13 +94,14 @@
             currentId = getCurrentID();
             // The Rust function returns the next document's content after deletion
             const nextDoc: Document | null = await invoke("delete_document", { id: currentId });
+            const editor: Editor | null = get(editorStore);
             await updateTabs();
             
             if (nextDoc) {
                 // If we have a next document, switch to it
                 updateCurrentID(nextDoc.id);
                 updateTitleText(nextDoc.title);
-                editor.setEditorContent(nextDoc.content);
+                editor.commands.setContent(nextDoc.content);
             } else {
                 // If no documents left, create a new one
                 await addnewtab();
@@ -112,9 +117,10 @@
     export async function newDocument(): Promise<void> {
         try {
             const newTab: Tab = await invoke("new_tab");
+            const editor: Editor | null = get(editorStore);
             updateCurrentID(newTab.id);
             updateTitleText(newTab.title);
-            editor.setEditorContent("");
+            editor.commands.setContent("");
             await updateTabs();
         } catch (error) {
             console.error("Failed to create new document:", error);

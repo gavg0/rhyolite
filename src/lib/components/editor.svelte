@@ -13,6 +13,7 @@
   import { Color } from '@tiptap/extension-color';
   import Bold from '@tiptap/extension-bold';
   import { autoSave, loadRecentDocuments } from '../functions/functions.svelte';  
+  import { editorStore } from '../components/editor';
   import {
             updateTabs,
             addnewtab,
@@ -70,8 +71,6 @@
   });
   
   onMount(() => {
-    
-  
     editor = new Editor({
       element,
       extensions: [
@@ -104,6 +103,8 @@
       }
     });
 
+    editorStore.set(editor);
+
     loadRecentDocuments().then(async () => {
             await updateTabs();
             let currentTabs = returnTabsArray();
@@ -118,6 +119,7 @@
     return () => {
       editor.destroy();
       clearInterval(autoSaveInterval);
+      editorStore.set(null);
     };
   });
   

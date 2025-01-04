@@ -49,7 +49,7 @@
     export async function autoSave(): Promise<void> {
         let titleText = returnTitleText();
         const editor: Editor | null = get(editorStore);
-        if (!titleText && !editor.getText()) return;
+        if (!titleText && !editor!.getText()) return;
         let currentId = getCurrentID();
 
         try {
@@ -61,7 +61,7 @@
             await invoke("save_document", {
                 id: currentId,
                 title: titleText,
-                content: editor.getHTML(),
+                content: editor!.getHTML(),
             });
         } catch (error) {
             console.error("Auto-save failed:", error);
@@ -101,7 +101,7 @@
                 // If we have a next document, switch to it
                 updateCurrentID(nextDoc.id);
                 updateTitleText(nextDoc.title);
-                editor.commands.setContent(nextDoc.content);
+                editor!.commands.setContent(nextDoc.content);
             } else {
                 // If no documents left, create a new one
                 await addnewtab();
@@ -120,7 +120,7 @@
             const editor: Editor | null = get(editorStore);
             updateCurrentID(newTab.id);
             updateTitleText(newTab.title);
-            editor.commands.setContent("");
+            editor!.commands.setContent("");
             await updateTabs();
         } catch (error) {
             console.error("Failed to create new document:", error);

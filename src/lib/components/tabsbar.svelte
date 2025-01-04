@@ -52,7 +52,7 @@
         const editor: Editor | null = get(editorStore);
         updateCurrentID(newTab.id);
         updateTitleText(newTab.title);
-        editor.commands.setContent('');
+        editor!.commands.setContent('');
         await updateTabs();
         await invoke("send_current_open_tab", { id: newTab.id });
     }
@@ -69,12 +69,12 @@
                 updateCurrentID(tabId);
                 currentTabID = tabId;
                 updateTitleText(docResult.title);
-                editor.commands.setContent(docResult.content);
+                editor!.commands.setContent(docResult.content);
             } else {
                 updateCurrentID(tabId);
                 currentTabID = tabId;
                 updateTitleText("");
-                editor.commands.setContent("");
+                editor!.commands.setContent("");
             }
             
             // Update the current open tab in the backend
@@ -93,7 +93,7 @@
             if (docResult) {
                 updateCurrentID(nextTabId);
                 updateTitleText(docResult.title);
-                editor.commands.setContent(docResult.content);
+                editor!.commands.setContent(docResult.content);
             }
         } catch (error) {
             console.error("Failed to cycle tabs:", error);

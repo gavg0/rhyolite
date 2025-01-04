@@ -2,10 +2,7 @@
     import { setContext, getContext } from "svelte";
     import { invoke } from "@tauri-apps/api/core";
 
-    let editor: any = getContext('editor');
-    let workspace: any = getContext('workspace')
-    let tabs: any = getContext('tabs');
-    let title: any = getContext('title');
+    
     let recentDocuments: Document[] = [];
     let currentId = $state("");
 
@@ -24,9 +21,15 @@
         'io',
         {
             autoSave,
-            loadRecentDocuments
+            loadRecentDocuments,
+            handleKeydown
         }
     );
+
+    const editor: any = getContext('editor');
+    const workspace: any = getContext('workspace');
+    const tabs: any = getContext('tabs');
+    const title: any = getContext('title');
 
     async function autoSave(): Promise<void> {
         let titleText = title.returnTitleText();
@@ -103,6 +106,40 @@
             await tabs.updateTabs();
         } catch (error) {
             console.error("Failed to create new document:", error);
+        }
+    }
+
+    function handleKeydown(event: KeyboardEvent): void {
+        if (event.ctrlKey && event.key === "d") {
+            event.preventDefault();
+            deleteDocument();
+        }
+        if (event.ctrlKey && event.key === "n") {
+            event.preventDefault();
+            newDocument();
+        }
+        // if (event.ctrlKey && event.key === "t") {
+        //     event.preventDefault();
+        //     toggleToolbar();
+        // }
+        if (
+            (event.ctrlKey && event.key === "Tab") ||
+            (event.ctrlKey && event.key === "PageDown")
+        ) {
+            event.preventDefault();
+            tabs.cycleTabs();
+        }
+        if (event.ctrlKey && event.key === "1") {
+            event.preventDefault();
+            tabs.gotoTab1();
+        }
+        if (event.ctrlKey && event.key === "9") {
+            event.preventDefault();
+            tabs.gotoLastTab();
+        }
+        if (event.ctrlKey && event.key === "p") {
+            event.preventDefault();
+            workspace.toggleCommandPalette();
         }
     }
 </script>

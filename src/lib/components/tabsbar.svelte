@@ -4,7 +4,7 @@
     import type { Context } from "quill/modules/keyboard";
     import { setContext, getContext } from "svelte";
 
-    let editor: any = getContext('editor');
+    
 
     interface Tab {
         id: string;
@@ -33,8 +33,9 @@
         }
     );
     
-    let workspace: any = getContext('workspace');
-    let title: any = getContext('Title');
+    const workspace: any = getContext('workspace');
+    const title: any = getContext('Title');
+    const editor: any = getContext('editor');
 
     function returnTabsArray(): Tab[] {
         return currentTabs;
@@ -116,14 +117,14 @@
     {#each currentTabs as tab}
         <button
             type="button"
-            class="tab-square"
+            class="flex justify-left h-[30px] w-auto flex-shrink bg-crust"
             
             role="tab"
             
             aria-controls="editor"
             onclick={() => switchTab(tab.id)}
         >
-            {tab.title.length > 10 ? tab.title.slice(0, 15) + '...' : tab.title || 'Untitled'}
+            {tab.title.length > 10 ? tab.title.slice(0, 20) + '...' : tab.title || 'Untitled'}
         </button>
     {/each}
 </div>

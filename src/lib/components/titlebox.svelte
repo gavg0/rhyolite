@@ -25,10 +25,10 @@
     }
 </script>
 
-<main>
-    <div class="flex w-[60%] h-[10%]">
+<main class="flex justify-center">
+    <div class="flex w-[60%] h-[10%] mx-auto">
         <textarea
-            class="w-full h-full"
+            class="w-full h-full resize-none border-none bg-base rounded-lg text-text"
             placeholder="Enter Title here..."
             value={titleText}
             oninput={handleTitleChange}

@@ -2,7 +2,7 @@
     import Tabsbar from "../lib/components/tabsbar.svelte";
     import TitleBox from "../lib/components/titlebox.svelte";
     import Editor from "../lib/components/editor.svelte"
-    import { setContext } from 'svelte';
+    import { setContext, getContext } from 'svelte';
     
     interface Document {
         id: string;
@@ -13,13 +13,17 @@
     let currentId: string = $state("");
     let isCommandPalettevisible: boolean = $state(false);
     
+    
     setContext(
         'workspace',
         {
             updateCurrentID,
-            getCurrentID
+            getCurrentID,
+            toggleCommandPalette
         }
     );
+
+    const io: any = getContext('io');
 
     function updateCurrentID(id: string) {
         currentId = id;
@@ -33,11 +37,12 @@
         isCommandPalettevisible = !isCommandPalettevisible;
     }
 </script>
+<svelte:window on:keydown={io.handleKeydown} />
 
 <main>
     <Tabsbar/>
-    <div class="flex flex-col mt-[6%] w-full">
-        
+    <div class="flex flex-col justify-center mt-[6%] w-full">
+        <TitleBox/>
         <Editor/>
     </div>
 </main>

@@ -7,6 +7,10 @@
     let searchText: string = $state("");
 
     const editor: any = getContext('editor');
+    const io: any = getContext('io');
+    const workspace: any = getContext('workspace');
+    const title: any = getContext('Title');
+    const tabs: any = getContext('tabs');
 
     interface Command {
         name: string;
@@ -19,50 +23,50 @@
         name: 'Delete Tab',
         shortcut: 'Ctrl + D',
         action: () => {
-            editor.deleteDocument();
-            editor.toggleCommandPalette();
+            io.deleteDocument();
+            workspace.toggleCommandPalette();
         }
       },
       {
         name: 'New Tab',
         shortcut: 'Ctrl + N',
         action: () => {
-            editor.newDocument();
-            editor.toggleCommandPalette();
+            io.newDocument();
+            workspace.toggleCommandPalette();
         }
       },
       {
         name: 'Next Tab',
         shortcut: 'Ctrl + Tab or Ctrl + pgDown',
         action: () => {
-            editor.cycleTabs();
-            editor.toggleCommandPalette();
+            tabs.cycleTabs();
+            workspace.toggleCommandPalette();
         }
       },
       {
         name: 'Go to First Tab',
         shortcut: 'Ctrl + 1',
         action: () => {
-            editor.gotoTab1();
-            editor.toggleCommandPalette();
+            tabs.gotoTab1();
+            workspace.toggleCommandPalette();
         }
       },
       {
         name: 'Go to Last Tab',
         shortcut: 'Ctrl + 9',
         action: () => {
-            editor.gotoLastTab();
-            editor.toggleCommandPalette();
+            tabs.gotoLastTab();
+            workspace.toggleCommandPalette();
         }
       },
-      {
-        name: 'Toggle ToolBar',
-        shortcut: 'Ctrl + T',
-        action: () => {
-            editor.toggleToolbar();
-            editor.toggleCommandPalette();
-        }
-      }
+    //   {
+    //     name: 'Toggle ToolBar',
+    //     shortcut: 'Ctrl + T',
+    //     action: () => {
+    //         editor.toggleToolbar();
+    //         editor.toggleCommandPalette();
+    //     }
+    //   }
     ];
 
     function handleKeydown(event: KeyboardEvent) {

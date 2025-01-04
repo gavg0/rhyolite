@@ -15,9 +15,7 @@
   
   let editor: Editor;
   let element: Element;
-  let io: any = getContext('io');
-  let tabs: any = getContext('tabs');
-  let title: any = getContext('title');
+  
 
   setContext(
         'editor',
@@ -27,6 +25,10 @@
             getEditorContentasText
         }
     );
+
+  const io: any = getContext('io');
+  const tabs: any = getContext('tabs');
+  const title: any = getContext('title');
 
   const FontSizeTextStyle = TextStyle.extend({
     addAttributes() {
@@ -81,7 +83,7 @@
         Image,
         YouTube
       ],
-      content: `<p>Flowbite is an <strong>open-source library of UI components</strong>...</p>`,
+      content: ``,
       editorProps: {
         attributes: {
           class: 'format lg:format-lg text-text focus:outline-none format-blue max-w-none'
@@ -128,6 +130,8 @@
   }
 </script>
 
-<div class="flex flex-col items-center rounded-lg mb-[45px] m-[0.5%] cursor-text">
-  <div class="w-[70%] h-full" bind:this={element}></div>
-</div>
+<main>
+  <div class="flex rounded-lg mb-[45px] m-[0.5%] w-[70%] flex-grow cursor-text mx-auto">
+    <div class="w-full h-full" bind:this={element}></div>
+  </div>
+</main>

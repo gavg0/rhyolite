@@ -41,11 +41,7 @@
     let isCommandPalettevisible: boolean = $state(false);
     let currentTabs: Tab[] = $state([]);
 
-    setContext(
-        'editor', 
-        {   
-            return_isCommandPalettevisible: () => isCommandPalettevisible, 
-    });
+    
 
     
 </script>

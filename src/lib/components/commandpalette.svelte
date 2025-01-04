@@ -2,15 +2,28 @@
     import { onMount } from "svelte";
     import { invoke } from "@tauri-apps/api/core";
     import { getContext } from "svelte";
+    import { autoSave, loadRecentDocuments, deleteDocument, newDocument } from '../functions/functions.svelte';
+    import {
+            updateCurrentID,
+            getCurrentID,
+            toggleCommandPalette
+        }
+        from "../../routes/workspace.svelte";  
+    import {
+            updateTabs,
+            addnewtab,
+            switchTab,
+            getTabs,
+            cycleTabs,
+            gotoLastTab,
+            gotoTab1,
+            returnTabsArray
+        }
+        from "../components/tabsbar.svelte";
 
     let selectedindex: number = $state(-1);
     let searchText: string = $state("");
-
     const editor: any = getContext('editor');
-    const io: any = getContext('io');
-    const workspace: any = getContext('workspace');
-    const title: any = getContext('Title');
-    const tabs: any = getContext('tabs');
 
     interface Command {
         name: string;
@@ -23,40 +36,40 @@
         name: 'Delete Tab',
         shortcut: 'Ctrl + D',
         action: () => {
-            io.deleteDocument();
-            workspace.toggleCommandPalette();
+            deleteDocument();
+            toggleCommandPalette();
         }
       },
       {
         name: 'New Tab',
         shortcut: 'Ctrl + N',
         action: () => {
-            io.newDocument();
-            workspace.toggleCommandPalette();
+            newDocument();
+            toggleCommandPalette();
         }
       },
       {
         name: 'Next Tab',
         shortcut: 'Ctrl + Tab or Ctrl + pgDown',
         action: () => {
-            tabs.cycleTabs();
-            workspace.toggleCommandPalette();
+            cycleTabs();
+            toggleCommandPalette();
         }
       },
       {
         name: 'Go to First Tab',
         shortcut: 'Ctrl + 1',
         action: () => {
-            tabs.gotoTab1();
-            workspace.toggleCommandPalette();
+            gotoTab1();
+            toggleCommandPalette();
         }
       },
       {
         name: 'Go to Last Tab',
         shortcut: 'Ctrl + 9',
         action: () => {
-            tabs.gotoLastTab();
-            workspace.toggleCommandPalette();
+            gotoLastTab();
+            toggleCommandPalette();
         }
       },
     //   {
@@ -70,7 +83,7 @@
     ];
 
     function handleKeydown(event: KeyboardEvent) {
-        if (!editor.return_isCommandPalettevisible()) return;
+        // if (!editor.return_isCommandPalettevisible()) return;
 
         switch (event.key) {
             case 'ArrowDown':
@@ -97,13 +110,13 @@
                 break;
             case 'Escape':
                 event.preventDefault();
-                editor.toggleCommandPalette();
+                toggleCommandPalette();
                 break;
         }
     }
 
     function handleWheel(event: WheelEvent) {
-        if (!editor.return_isCommandPalettevisible()) return;
+        // if (!editor.return_isCommandPalettevisible()) return;
         
         event.preventDefault();
         if (event.deltaY > 0) {
@@ -116,12 +129,12 @@
     }
 
     // Reset selected index when command palette is closed
-    $effect(() => {
-        if (!editor.return_isCommandPalettevisible()) {
-            selectedindex = -1;
-            searchText = "";
-        }
-    });
+    // $effect(() => {
+    //     if (!editor.return_isCommandPalettevisible()) {
+    //         selectedindex = -1;
+    //         searchText = "";
+    //     }
+    // });
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -132,7 +145,7 @@
         <!-- svelte-ignore a11y_click_events_have_key_events -->
         <div 
             class="background-blur" 
-            onclick={() => editor.toggleCommandPalette()}
+            onclick={() => toggleCommandPalette()}
             >
         </div>
         <div class="commandPalette" onwheel={handleWheel}>
@@ -144,7 +157,7 @@
                 ></textarea>
                 <button 
                     class="close-button"
-                    onclick={() => editor.toggleCommandPalette()}
+                    onclick={() => toggleCommandPalette()}
                 >
                     ✕
                 </button>

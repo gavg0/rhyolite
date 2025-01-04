@@ -1,6 +1,28 @@
-<script lang="ts">
+<script lang="ts" module>
     import { setContext, getContext } from "svelte";
     import { invoke } from "@tauri-apps/api/core";
+    import {
+            updateCurrentID,
+            getCurrentID,
+            toggleCommandPalette
+        }
+        from "../../routes/workspace.svelte"; 
+    import {
+            updateTabs,
+            addnewtab,
+            switchTab,
+            getTabs,
+            cycleTabs,
+            gotoLastTab,
+            gotoTab1,
+            returnTabsArray
+        }
+        from "../components/tabsbar.svelte";
+    import {
+            updateTitleText,
+            returnTitleText
+        }
+        from "../components/titlebox.svelte";
 
     
     let recentDocuments: Document[] = [];
@@ -17,31 +39,21 @@
         content: string;
     }
 
-    setContext(
-        'io',
-        {
-            autoSave,
-            loadRecentDocuments,
-            handleKeydown
-        }
-    );
-
+    
     const editor: any = getContext('editor');
-    const workspace: any = getContext('workspace');
-    const tabs: any = getContext('tabs');
-    const title: any = getContext('title');
+    
 
-    async function autoSave(): Promise<void> {
-        let titleText = title.returnTitleText();
+    export async function autoSave(): Promise<void> {
+        let titleText = returnTitleText();
         if (!titleText && !editor.getEditorContentasText()) return;
-        let currentId = workspace.getCurrentID();
+        let currentId = getCurrentID();
 
         try {
             await invoke("update_tab_title", {
                 id: currentId,
                 title: titleText,
             });
-            await tabs.updateTabs();
+            await updateTabs();
             await invoke("save_document", {
                 id: currentId,
                 title: titleText,
@@ -52,64 +64,64 @@
         }
     }
 
-    async function loadRecentDocuments(): Promise<void> {
+    export async function loadRecentDocuments(): Promise<void> {
         try {
             const docs: Document[] = await invoke("load_recent_files");
             recentDocuments = docs;
 
             // Update the tabs in UI
-            await tabs.updateTabs();
+            await updateTabs();
 
             if (recentDocuments.length > 0) {
                 // Load the last open tab from the backend
                 const openTabId: string = await invoke("get_current_open_tab");
-                await tabs.switchTab(openTabId);
+                await switchTab(openTabId);
             } else {
                 // If no documents exist, create a new tab
-                await tabs.addnewtab();
+                await addnewtab();
             }
         } catch (error) {
             console.error("Failed to load documents:", error);
         }
     }
 
-    async function deleteDocument(): Promise<void> {
+    export async function deleteDocument(): Promise<void> {
         try {
-            currentId = workspace.getCurrentID();
+            currentId = getCurrentID();
             // The Rust function returns the next document's content after deletion
             const nextDoc: Document | null = await invoke("delete_document", { id: currentId });
-            await tabs.updateTabs();
+            await updateTabs();
             
             if (nextDoc) {
                 // If we have a next document, switch to it
-                workspace.updateCurrentID(nextDoc.id);
-                title.updateTitleText(nextDoc.title);
+                updateCurrentID(nextDoc.id);
+                updateTitleText(nextDoc.title);
                 editor.setEditorContent(nextDoc.content);
             } else {
                 // If no documents left, create a new one
-                await tabs.addnewtab();
+                await addnewtab();
             }
             
-            currentId = workspace.getCurrentID();
+            currentId = getCurrentID();
             await invoke("send_current_open_tab", { id: currentId });
         } catch (error) {
             console.error("Failed to delete document:", error);
         }
     }
 
-    async function newDocument(): Promise<void> {
+    export async function newDocument(): Promise<void> {
         try {
             const newTab: Tab = await invoke("new_tab");
-            workspace.updateCurrentID(newTab.id);
-            title.updateTitleText(newTab.title);
+            updateCurrentID(newTab.id);
+            updateTitleText(newTab.title);
             editor.setEditorContent("");
-            await tabs.updateTabs();
+            await updateTabs();
         } catch (error) {
             console.error("Failed to create new document:", error);
         }
     }
 
-    function handleKeydown(event: KeyboardEvent): void {
+    export function handleKeydown(event: KeyboardEvent): void {
         if (event.ctrlKey && event.key === "d") {
             event.preventDefault();
             deleteDocument();
@@ -127,19 +139,19 @@
             (event.ctrlKey && event.key === "PageDown")
         ) {
             event.preventDefault();
-            tabs.cycleTabs();
+            cycleTabs();
         }
         if (event.ctrlKey && event.key === "1") {
             event.preventDefault();
-            tabs.gotoTab1();
+            gotoTab1();
         }
         if (event.ctrlKey && event.key === "9") {
             event.preventDefault();
-            tabs.gotoLastTab();
+            gotoLastTab();
         }
         if (event.ctrlKey && event.key === "p") {
             event.preventDefault();
-            workspace.toggleCommandPalette();
+            toggleCommandPalette();
         }
     }
 </script>

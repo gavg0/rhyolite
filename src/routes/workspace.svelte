@@ -1,8 +1,9 @@
-<script lang="ts">
+<script lang="ts" module>
     import Tabsbar from "../lib/components/tabsbar.svelte";
     import TitleBox from "../lib/components/titlebox.svelte";
     import Editor from "../lib/components/editor.svelte"
     import { setContext, getContext } from 'svelte';
+    import { autoSave, loadRecentDocuments, handleKeydown } from '../lib/functions/functions.svelte';  
     
     interface Document {
         id: string;
@@ -14,30 +15,30 @@
     let isCommandPalettevisible: boolean = $state(false);
     
     
-    setContext(
-        'workspace',
-        {
-            updateCurrentID,
-            getCurrentID,
-            toggleCommandPalette
-        }
-    );
+    // setContext(
+    //     'workspace',
+    //     {
+    //         updateCurrentID,
+    //         getCurrentID,
+    //         toggleCommandPalette
+    //     }
+    // );
 
-    const io: any = getContext('io');
+    // const io: any = getContext('io');
 
-    function updateCurrentID(id: string) {
+    export function updateCurrentID(id: string) {
         currentId = id;
     }
 
-    function getCurrentID(): string {
+    export function getCurrentID(): string {
         return currentId;
     }
 
-    function toggleCommandPalette(): void {
+    export function toggleCommandPalette(): void {
         isCommandPalettevisible = !isCommandPalettevisible;
     }
 </script>
-<svelte:window on:keydown={io.handleKeydown} />
+<svelte:window on:keydown={handleKeydown} />
 
 <main>
     <Tabsbar/>

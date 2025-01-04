@@ -12,7 +12,24 @@
   import FontFamily from '@tiptap/extension-font-family';
   import { Color } from '@tiptap/extension-color';
   import Bold from '@tiptap/extension-bold';
-  
+  import { autoSave, loadRecentDocuments } from '../functions/functions.svelte';  
+  import {
+            updateTabs,
+            addnewtab,
+            switchTab,
+            getTabs,
+            cycleTabs,
+            gotoLastTab,
+            gotoTab1,
+            returnTabsArray
+        }
+        from "../components/tabsbar.svelte";
+  import {
+            updateTitleText,
+            returnTitleText
+        }
+        from "../components/titlebox.svelte";
+
   let editor: Editor;
   let element: Element;
   
@@ -25,10 +42,6 @@
             getEditorContentasText
         }
     );
-
-  const io: any = getContext('io');
-  const tabs: any = getContext('tabs');
-  const title: any = getContext('title');
 
   const FontSizeTextStyle = TextStyle.extend({
     addAttributes() {
@@ -91,16 +104,16 @@
       }
     });
 
-    io.loadRecentDocuments().then(async () => {
-            await tabs.updateTabs();
-            let currentTabs = tabs.returnTabsArray();
+    loadRecentDocuments().then(async () => {
+            await updateTabs();
+            let currentTabs = returnTabsArray();
             if (currentTabs.length === 0) {
-                await tabs.addnewtab();
+                await addnewtab();
             }
         });
     
     // Set up auto-save
-    const autoSaveInterval = setInterval(io.autoSave, 500);
+    const autoSaveInterval = setInterval(autoSave, 500);
   
     return () => {
       editor.destroy();

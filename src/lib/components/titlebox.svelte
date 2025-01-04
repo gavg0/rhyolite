@@ -1,25 +1,26 @@
-<script lang="ts">
+<script lang="ts" module>
     import { invoke } from "@tauri-apps/api/core";
     import { setContext, getContext } from "svelte";
     import Workspace from "../../routes/workspace.svelte";
     import type { Context } from "quill/modules/keyboard";
+    
 
     let titleText: string = $state("");
-    setContext(
-        'title',
-        {
-            updateTitleText,
-            returnTitleText
-        }
-    );
-    function updateTitleText(Text: string) {
+    // setContext(
+    //     'title',
+    //     {
+    //         updateTitleText,
+    //         returnTitleText
+    //     }
+    // );
+    export function updateTitleText(Text: string) {
         titleText = Text;
     }
-    function returnTitleText(): string {
+    export function returnTitleText(): string {
         return titleText;
     }
 
-    function handleTitleChange(event: Event): void {
+    export function handleTitleChange(event: Event): void {
         const target = event.target as HTMLTextAreaElement;
         titleText = target.value;
     }

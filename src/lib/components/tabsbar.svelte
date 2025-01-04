@@ -1,8 +1,19 @@
-<script lang="ts">
+<script lang="ts" module>
     import { invoke } from "@tauri-apps/api/core";
     import Workspace from "../../routes/workspace.svelte";
     import type { Context } from "quill/modules/keyboard";
-    import { setContext, getContext } from "svelte";
+    import { setContext, getContext, onMount } from "svelte";
+    import {
+            updateCurrentID,
+            getCurrentID,
+            toggleCommandPalette
+        }
+        from "../../routes/workspace.svelte";
+    import {
+            updateTitleText,
+            returnTitleText
+        }
+        from "../components/titlebox.svelte";
 
     
 
@@ -18,47 +29,45 @@
     }
 
     let currentTabs: Tab[] = $state([]);
-
-    setContext(
-        'tabs',
-        {
-            updateTabs,
-            addnewtab,
-            switchTab,
-            getTabs,
-            cycleTabs,
-            gotoLastTab,
-            gotoTab1,
-            returnTabsArray
-        }
-    );
-    
-    const workspace: any = getContext('workspace');
-    const title: any = getContext('Title');
     const editor: any = getContext('editor');
 
-    function returnTabsArray(): Tab[] {
+    // setContext(
+    //     'tabs',
+    //     {
+    //         updateTabs,
+    //         addnewtab,
+    //         switchTab,
+    //         getTabs,
+    //         cycleTabs,
+    //         gotoLastTab,
+    //         gotoTab1,
+    //         returnTabsArray
+    //     }
+    // );
+    
+
+    export function returnTabsArray(): Tab[] {
         return currentTabs;
     }
 
-    async function getTabs(): Promise<Tab[]> {
+    export async function getTabs(): Promise<Tab[]> {
         return await invoke("get_tabs"); // New Rust function needed
     }
 
-    async function updateTabs(): Promise<void> {
+    export async function updateTabs(): Promise<void> {
         currentTabs = await getTabs();
     }
 
-    async function addnewtab(): Promise<void> {
+    export async function addnewtab(): Promise<void> {
         const newTab: Tab = await invoke("new_tab");
-        workspace.updateCurrentID(newTab.id);
-        title.updateTitleText(newTab.title);
+        updateCurrentID(newTab.id);
+        updateTitleText(newTab.title);
         editor.setEditorContent('');
         await updateTabs();
         await invoke("send_current_open_tab", { id: newTab.id });
     }
 
-    async function switchTab(tabId: string): Promise<void> {
+    export async function switchTab(tabId: string): Promise<void> {
         try {
             const docResult: Document | null = await invoke(
                 "get_document_content",
@@ -66,12 +75,12 @@
             );
 
             if (docResult) {
-                workspace.updateCurrentID(tabId);
-                title.updateTitleText(docResult.title);
+                updateCurrentID(tabId);
+                updateTitleText(docResult.title);
                 editor.setEditorContent(docResult.content);
             } else {
-                workspace.updateCurrentID(tabId);
-                title.updateTitleText("");
+                updateCurrentID(tabId);
+                updateTitleText("");
                 editor.setEditorContent("");
             }
             
@@ -82,14 +91,14 @@
         }
     }
 
-    async function cycleTabs(): Promise<void> {
+    export async function cycleTabs(): Promise<void> {
         try {
             const nextTabId: string = await invoke("cycle_tabs");
             const docResult: Document | null = await invoke("get_document_content", { id: nextTabId });
             
             if (docResult) {
-                workspace.updateCurrentID(nextTabId);
-                title.updateTitleText(docResult.title);
+                updateCurrentID(nextTabId);
+                updateTitleText(docResult.title);
                 editor.setEditorContent(docResult.content);
             }
         } catch (error) {
@@ -97,14 +106,14 @@
         }
     }
 
-    async function gotoTab1(): Promise<void> {
+    export async function gotoTab1(): Promise<void> {
         const tabs = await getTabs();
         if (tabs.length > 0) {
             await switchTab(tabs[0].id);
         }
     }
 
-    async function gotoLastTab(): Promise<void> {
+    export async function gotoLastTab(): Promise<void> {
         const tabs = await getTabs();
         if (tabs.length > 0) {
             await switchTab(tabs[tabs.length - 1].id);

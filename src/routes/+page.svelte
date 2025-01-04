@@ -1,12 +1,4 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { invoke } from "@tauri-apps/api/core";
-
-    import { v4 as uuidv4 } from "uuid";
-    import Quill from "quill";
-    import { setContext } from 'svelte';
-    import Commandpalette from "../lib/components/commandpalette.svelte";
-    import Editor from "../lib/components/editor.svelte"
     import Workspace from "../routes/workspace.svelte"
 
     interface Tab {

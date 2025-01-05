@@ -2,6 +2,7 @@
     import { invoke } from "@tauri-apps/api/core";
     import CommandPalette from "../lib/components/commandpalette.svelte";
     import { getContext, onMount, setContext } from 'svelte';
+    import { X, Minus, Square } from 'lucide-react';
     import { Editor } from '@tiptap/core';
     import StarterKit from '@tiptap/starter-kit';
     import Highlight from '@tiptap/extension-highlight';
@@ -176,19 +177,19 @@
         isCommandPalettevisible = !isCommandPalettevisible;
     }
     
-    export function return_isCommandPalettevisible(): boolean {
+    function return_isCommandPalettevisible(): boolean {
         return isCommandPalettevisible;
     }
 
-    export async function getTabs(): Promise<Tab[]> {
+    async function getTabs(): Promise<Tab[]> {
         return await invoke("get_tabs"); // New Rust function needed
     }
 
-    export async function updateTabs(): Promise<void> {
+    async function updateTabs(): Promise<void> {
         currentTabs = await getTabs();
     }
 
-    export async function addnewtab(): Promise<void> {
+    async function addnewtab(): Promise<void> {
         const newTab: Tab = await invoke("new_tab");
         currentId = newTab.id;
         titleText = newTab.title;
@@ -197,7 +198,7 @@
         await invoke("send_current_open_tab", { id: newTab.id });
     }
 
-    export async function switchTab(tabId: string): Promise<void> {
+    async function switchTab(tabId: string): Promise<void> {
         try {
             const docResult: Document | null = await invoke(
                 "get_document_content",
@@ -223,7 +224,7 @@
         }
     }
 
-    export async function cycleTabs(): Promise<void> {
+    async function cycleTabs(): Promise<void> {
         try {
             const nextTabId: string = await invoke("cycle_tabs");
             const docResult: Document | null = await invoke("get_document_content", { id: nextTabId });
@@ -238,21 +239,21 @@
         }
     }
 
-    export async function gotoTab1(): Promise<void> {
+    async function gotoTab1(): Promise<void> {
         const tabs = await getTabs();
         if (tabs.length > 0) {
             await switchTab(tabs[0].id);
         }
     }
 
-    export async function gotoLastTab(): Promise<void> {
+    async function gotoLastTab(): Promise<void> {
         const tabs = await getTabs();
         if (tabs.length > 0) {
             await switchTab(tabs[tabs.length - 1].id);
         }
     }
 
-    export async function autoSave(): Promise<void> {
+    async function autoSave(): Promise<void> {
         if (!titleText && !editor!.getText()) return;
 
         try {
@@ -271,7 +272,7 @@
         }
     }
 
-    export async function loadRecentDocuments(): Promise<void> {
+    async function loadRecentDocuments(): Promise<void> {
         try {
             const docs: Document[] = await invoke("load_recent_files");
             recentDocuments = docs;
@@ -292,7 +293,7 @@
         }
     }
 
-    export async function deleteDocument(): Promise<void> {
+    async function deleteDocument(): Promise<void> {
         try {
             // The Rust function returns the next document's content after deletion
             const nextDoc: Document | null = await invoke("delete_document", { id: currentId });
@@ -313,7 +314,7 @@
         }
     }
 
-    export async function newDocument(): Promise<void> {
+    async function newDocument(): Promise<void> {
         try {
             const newTab: Tab = await invoke("new_tab");
             currentId = newTab.id;
@@ -325,7 +326,7 @@
         }
     }
 
-    export function handleKeydown(event: KeyboardEvent): void {
+    function handleKeydown(event: KeyboardEvent): void {
         if (event.ctrlKey && event.key === "d") {
             event.preventDefault();
             deleteDocument();
@@ -359,7 +360,7 @@
         }
     }
 
-    export function handleTitleChange(event: Event): void {
+    function handleTitleChange(event: Event): void {
         const target = event.target as HTMLTextAreaElement;
         titleText = target.value;
     }
@@ -386,7 +387,7 @@
     <main class="flex h-[80px] mb-5">
         <div class="flex w-[50%] h-full mx-auto">
             <textarea
-                class="w-full h-full resize-none border-none bg-base rounded-lg py-7 text-text text-[2.5rem] focus:outline-none focus:ring-0"
+                class="w-full h-full resize-none border-none bg-base rounded-lg py-7 text-text text-[2rem] focus:outline-none focus:ring-0"
                 placeholder="Enter Title here..."
                 value={titleText}
                 oninput={handleTitleChange}
@@ -410,37 +411,8 @@
 </main>
 
 <style>
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 8px;
-    }
-  
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: transparent;
-    }
-  
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background-color: #6c7086;
-      border-radius: 999px;
-    }
-  
-    .custom-scrollbar {
-      scrollbar-width: thin;
-      scrollbar-color: #6c7086 transparent;
-    }
-  
-    /* Ensure the scrollbar container has full height and proper spacing */
     .custom-scrollbar {
       height: 100%;
-      padding-bottom: 8px; /* Add padding to prevent cut-off */
-    }
-
-    :global(body) {
-        overscroll-behavior: none;
-        -ms-scroll-chaining: none;
-    }
-    
-    :global(*) {
-        overscroll-behavior: none;
-        -ms-scroll-chaining: none;
+      padding-bottom: 8px;
     }
 </style>

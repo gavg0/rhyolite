@@ -1,0 +1,38 @@
+name: Rust CI Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Build project
+        run: cargo build --verbose
+        working-directory: src-tauri
+
+      - name: Run tests
+        run: cargo test
+        working-directory: src-tauri
+
+      - name: Run linter
+        run: cargo clippy -- -D warnings
+        working-directory: src-tauri
+
+      - name: Generate documentation
+        run: cargo doc --no-deps --document-private-items
+        working-directory: src-tauri

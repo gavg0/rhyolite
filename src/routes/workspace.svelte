@@ -393,16 +393,16 @@
             ></textarea>
         </div>
     </main>
-    <main class="flex-1 min-h-0 overflow-hidden mb-20">
+    <main class="flex-1 min-h-0 overflow-hidden mb-20 p-2">
         <div class="h-full w-[70%] rounded-lg m-[0.5%] mx-auto cursor-text">
             <div 
-                class="h-full w-full overflow-auto custom-scrollbar"
+                class="h-full w-full overflow-auto custom-scrollbar p-2"
                 bind:this={element}
             ></div>
         </div>
     </main>
 </div>
-    <div class="fixed flex flex-row gap-[20px] self-end bottom-[10px] right-[10px] bg-base px-[10px] py-[5px] rounded-[18px] z-10 text-text text-[0.85em]">
+    <div class="fixed flex flex-row gap-[20px] self-end bottom-[10px] right-[10px] bg-base px-[10px] py-[5px] rounded-[18px] z-10 text-text text-[0.85em] select-none">
         <div>{wordCount} Words</div>
         <div>{charCount} Characters</div>
     </div>
@@ -432,5 +432,15 @@
     .custom-scrollbar {
       height: 100%;
       padding-bottom: 8px; /* Add padding to prevent cut-off */
+    }
+
+    :global(body) {
+        overscroll-behavior: none;
+        -ms-scroll-chaining: none;
+    }
+    
+    :global(*) {
+        overscroll-behavior: none;
+        -ms-scroll-chaining: none;
     }
 </style>

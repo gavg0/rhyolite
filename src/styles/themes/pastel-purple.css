@@ -1,0 +1,69 @@
+:root {
+    font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+  
+    color: #191819;
+    background-color: #F5EFFF;
+  
+    --container-title-color: #A594F9;
+    --container-color: #E5D9F2;
+    --container-editor-color: #dfb6e1;
+    --container-text-color: #111111;
+    --container-box-shadow:#00000011;
+    --container-box-shadow-focused: #0000001f;
+  
+    --ui-element-background: #c7c7c731;
+  
+    --editor-bg: var(--container-editor-color);
+    --editor-text: #060606;
+    --editor-selection-highlight: #ffffff33;
+    --editor-border: #404040;
+    --editor-accent: #808080;
+    --editor-placeholder: #808080;
+    --editor-blockquote: #c0c0c0;
+    --editor-code-bg: #232323;
+
+    --button-bg: #2a2a2a00;
+    --button-border: #40404000;
+    --button-shadow: #00000000;
+    --button-hover-bg: #ffffff20;
+    --button-hover-border: #505050;
+    --button-hover-shadow: #00000033;
+    --button-active-bg: #505050;
+    --button-active-border: #606060;
+    --button-active-shadow: #00000040;
+    --button-disabled-bg: #232323;
+    --button-disabled-border: #333333;
+    --button-focus-border: #707070;
+    --button-focus-shadow: #00000033;
+
+    --button-icon-color: #e5e5e5;
+    --button-icon-hover-color: #ffffff;
+    --button-icon-active-color: #ffffff;
+
+    --dropdown-bg: #2a2a2a61;
+    --dropdown-text-color: #e5e5e5;
+    --dropdown-border: #40404000;
+    --dropdown-shadow: #00000033;
+    --dropdown-hover-bg: #40404040;
+    --dropdown-hover-border: #505050;
+    --dropdown-hover-shadow: #00000033;
+    --dropdown-options-bg: #2a2a2a;
+    --dropdown-options-border: #404040;
+    --dropdown-options-shadow: #00000040;
+    --dropdown-item-color: #e5e5e5;
+    --dropdown-item-hover-bg: #404040;
+    --dropdown-item-hover-color: #ffffff;
+
+    --color-picker-border: #40404000;
+    --color-picker-hover-border: #505050;
+    --color-picker-hover-shadow: #00000040;
+
+    --commandpalette_background_blur: #00000080;
+    --commandpalette_bg: #33373b;
+    --commandpalette_hover_bg: #acb2b8b8;
+    --commandpalette_border: #404040;
+
+  }

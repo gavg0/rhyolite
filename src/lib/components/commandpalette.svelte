@@ -124,22 +124,24 @@
 
 <main>
     {#if editor.return_isCommandPalettevisible()}
-        <!-- svelte-ignore a11y_no_static_element_interactions -->
         <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div 
-            class="background-blur" 
+            class="fixed top-0 left-0 w-full h-full bg-black/60 z-50"
             onclick={() => editor.toggleCommandPalette()}
-            >
-        </div>
-        <div class="commandPalette" onwheel={handleWheel}>
-            <div class="search-container">
+        ></div>
+        <div 
+            class="fixed top-[40%] left-1/2 flex flex-col bg-crust border-2 border-subtext0 rounded-lg p-3 z-[60] w-[40%] h-[40%] gap-2 -translate-x-1/2 -translate-y-1/2"
+            onwheel={handleWheel}
+        >
+            <div class="relative w-full h-[16%] mb-2">
                 <textarea
-                    class="command-search"
+                    class="flex w-full h-full overflow-hidden resize-none pr-8 p-2 cursor-text text-text bg-surface0 text-left box-border border-2 border-subtext0 outline-none rounded transition-all duration-200 hover:border-overlay0 focus:border-overlay0 focus:outline-none focus:ring-0"
                     placeholder="Select a Command"
                     bind:value={searchText}
                 ></textarea>
                 <button 
-                    class="close-button"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 bg-transparent text-text opacity-70 hover:opacity-100 transition-opacity duration-200"
                     onclick={() => editor.toggleCommandPalette()}
                 >
                     ✕
@@ -148,15 +150,13 @@
             {#each commands as command, index}
                 <button
                     type="button"
-                    class="command-item"
-                    class:active={selectedindex === index}
-                    onclick={() => {
-                        command.action();
-                    }}
+                    class="flex justify-between items-center p-1 bg-transparent hover:bg-surface0 cursor-pointer w-full h-[14%] text-left text-text border-none shadow-none rounded transition-colors duration-200
+                           ${selectedindex === index ? 'bg-surface0' : ''}"
+                    onclick={() => command.action()}
                     onmouseenter={() => selectedindex = index}
                 >
                     <span>{command.name}</span>
-                    <span class="shortcut">{command.shortcut}</span>
+                    <span class="opacity-100 text-subtext0">{command.shortcut}</span>
                 </button>
             {/each}
         </div>

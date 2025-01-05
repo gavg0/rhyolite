@@ -408,3 +408,29 @@
     </div>
     <CommandPalette/>
 </main>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 8px;
+    }
+  
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #6c7086;
+      border-radius: 999px;
+    }
+  
+    .custom-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: #6c7086 transparent;
+    }
+  
+    /* Ensure the scrollbar container has full height and proper spacing */
+    .custom-scrollbar {
+      height: 100%;
+      padding-bottom: 8px; /* Add padding to prevent cut-off */
+    }
+</style>

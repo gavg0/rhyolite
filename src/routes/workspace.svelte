@@ -84,6 +84,17 @@
         extensions: [
             StarterKit.configure({
             bold: false,
+            heading: {
+                levels: [1, 2, 3],
+                HTMLAttributes: {
+                class: 'text-text'
+                }
+            },
+            blockquote: {
+                HTMLAttributes: {
+                class: 'text-text'
+                }
+            }
             }),
             CustomBold,
             TextStyle,
@@ -110,7 +121,7 @@
         content: ``,
         editorProps: {
             attributes: {
-            class: 'format lg:format-lg text-text text-sm focus:outline-none format-blue max-w-none leading-none'
+            class: 'format  text-text text-sm focus:outline-none format-blue max-w-none leading-none'
             }
         },
         onUpdate: ({ editor }) => {
@@ -357,22 +368,21 @@
 
 <main>
     <div class="fixed bg-base top-[0px] w-full h-[40px]" role="tablist" aria-label="Document tabs">
-        <div class="flex flex-row ml-1">
+        <div class="flex flex-row items-center h-full">
             {#each currentTabs as tab}
                 <button
                     type="button"
-                    class="flex justify-left items-center p-[1%] h-[30px] w-auto min-w-[10px] rounded-[18px] flex-shrink active:bg-crust  text-text m-[0.6%]"
-                    class:active={currentId === tab.id}
+                    class={`flex justify-left items-center p-[1%] h-[30px] min-w-[120px] rounded-[18px] flex-shrink text-text m-[0.6%] hover:bg-surface0 ${currentId === tab.id ? 'bg-crust' : ''}`}
                     role="tab"
                     aria-controls="editor"
                     onclick={() => switchTab(tab.id)}
                 >
-                    {tab.title.length > 10 ? tab.title.slice(0, 20) + '...' : tab.title || 'Untitled'}
+                    {tab.title.length > 20 ? tab.title.slice(0, 20) + '...' : tab.title || 'Untitled'}
                 </button>
             {/each}
         </div>
     </div>
-    <div class="flex flex-col justify-start mt-[60px] h-[100vh] flex-grow">
+    <div class="flex flex-col justify-start mt-[60px] h-[calc(100vh-60px)] flex-grow">
         <main class="flex h-[80px] mb-5">
             <div class="flex w-[50%] h-full mx-auto">
                 <textarea

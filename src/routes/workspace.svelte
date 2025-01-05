@@ -1,6 +1,6 @@
 <script lang="ts">
     import { invoke } from "@tauri-apps/api/core";
-    // import CommandPalette from "../lib/components/commandpalette.svelte";
+    import CommandPalette from "../lib/components/commandpalette.svelte";
     import { getContext, onMount, setContext } from 'svelte';
     import { Editor } from '@tiptap/core';
     import StarterKit from '@tiptap/starter-kit';
@@ -37,6 +37,20 @@
     let currentId: string = $state("");
     let recentDocuments: Document[] = [];
     let isCommandPalettevisible: boolean = $state(false);
+
+    setContext(
+        'editor', 
+        {   
+            addnewtab, 
+            newDocument,
+            switchTab, 
+            gotoLastTab, 
+            gotoTab1, 
+            cycleTabs, 
+            deleteDocument,
+            return_isCommandPalettevisible: () => isCommandPalettevisible, 
+            toggleCommandPalette 
+    });
 
     const FontSizeTextStyle = TextStyle.extend({
         addAttributes() {
@@ -106,7 +120,6 @@
 
         loadRecentDocuments().then(async () => {
                 await updateTabs();
-                let currentTabs = returnTabsArray();
                 if (currentTabs.length === 0) {
                     await addnewtab();
                     updatecharwordcounts();
@@ -154,10 +167,6 @@
     
     export function return_isCommandPalettevisible(): boolean {
         return isCommandPalettevisible;
-    }
-
-    export function returnTabsArray(): Tab[] {
-        return currentTabs;
     }
 
     export async function getTabs(): Promise<Tab[]> {
@@ -347,13 +356,13 @@
 <svelte:window on:keydown={handleKeydown} />
 
 <main>
-    <div class="fixed bg-base top-[0px] w-full h-[45px]" role="tablist" aria-label="Document tabs">
+    <div class="fixed bg-base top-[0px] w-full h-[40px]" role="tablist" aria-label="Document tabs">
         <div class="flex flex-row ml-1">
             {#each currentTabs as tab}
                 <button
                     type="button"
-                    class="flex justify-left items-center p-[1%] h-[30px] w-auto rounded-[18px] flex-shrink active:bg-crust  text-text m-[0.6%]"
-                    class:active={currentTabID === tab.id}
+                    class="flex justify-left items-center p-[1%] h-[30px] w-auto min-w-[10px] rounded-[18px] flex-shrink active:bg-crust  text-text m-[0.6%]"
+                    class:active={currentId === tab.id}
                     role="tab"
                     aria-controls="editor"
                     onclick={() => switchTab(tab.id)}
@@ -384,5 +393,5 @@
         <div>{wordCount} Words</div>
         <div>{charCount} Characters</div>
     </div>
-    
+    <CommandPalette/>
 </main>

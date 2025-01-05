@@ -382,23 +382,26 @@
             {/each}
         </div>
     </div>
-    <div class="flex flex-col justify-start mt-[60px] h-[calc(100vh-60px)] flex-grow">
-        <main class="flex h-[80px] mb-5">
-            <div class="flex w-[50%] h-full mx-auto">
-                <textarea
-                    class="w-full h-full resize-none border-none bg-base rounded-lg py-7 text-text text-[2.5rem] focus:outline-none focus:ring-0"
-                    placeholder="Enter Title here..."
-                    value={titleText}
-                    oninput={handleTitleChange}
-                ></textarea>
-            </div>
-        </main>
-        <main class="h-full overflow-hidden">
-            <div class="flex rounded-lg  m-[0.5%] w-[70%] h-full flex-grow cursor-text mx-auto">
-              <div class="w-full h-full" bind:this={element}></div>
-            </div>
-        </main>
-    </div>
+    <div class="flex flex-col justify-start mt-[60px] h-[calc(100vh-60px)] overflow-hidden">
+    <main class="flex h-[80px] mb-5">
+        <div class="flex w-[50%] h-full mx-auto">
+            <textarea
+                class="w-full h-full resize-none border-none bg-base rounded-lg py-7 text-text text-[2.5rem] focus:outline-none focus:ring-0"
+                placeholder="Enter Title here..."
+                value={titleText}
+                oninput={handleTitleChange}
+            ></textarea>
+        </div>
+    </main>
+    <main class="flex-1 min-h-0 overflow-hidden mb-20">
+        <div class="h-full w-[70%] rounded-lg m-[0.5%] mx-auto cursor-text">
+            <div 
+                class="h-full w-full overflow-auto custom-scrollbar"
+                bind:this={element}
+            ></div>
+        </div>
+    </main>
+</div>
     <div class="fixed flex flex-row gap-[20px] self-end bottom-[10px] right-[10px] bg-base px-[10px] py-[5px] rounded-[18px] z-10 text-text text-[0.85em]">
         <div>{wordCount} Words</div>
         <div>{charCount} Characters</div>

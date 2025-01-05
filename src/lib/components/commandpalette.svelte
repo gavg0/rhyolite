@@ -150,8 +150,7 @@
             {#each commands as command, index}
                 <button
                     type="button"
-                    class="flex justify-between items-center p-1 bg-transparent hover:bg-surface0 cursor-pointer w-full h-[14%] text-left text-text border-none shadow-none rounded transition-colors duration-200
-                           ${selectedindex === index ? 'bg-surface0' : ''}"
+                    class={`flex justify-between items-center p-1 bg-transparent hover:bg-surface1 cursor-pointer w-full h-[14%] text-left text-text border-none shadow-none rounded transition-colors duration-200 ${selectedindex === index ? 'bg-surface1' : ''}`}
                     onclick={() => command.action()}
                     onmouseenter={() => selectedindex = index}
                 >

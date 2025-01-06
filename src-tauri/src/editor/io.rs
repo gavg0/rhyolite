@@ -31,9 +31,18 @@ pub fn get_documents_dir() -> PathBuf {
     path.push("Rhyolite");
     
     // Create the directory if it doesn't exist
-    fs::create_dir_all(&path).expect("Could not create FextifyPlus directory");
+    fs::create_dir_all(&path).expect("Could not create Rhyolite directory");
     
     path
+}
+
+pub fn get_trove_dir(trove_name: &str) -> PathBuf {
+    let documents_dir = get_documents_dir();
+
+    let trove_dir = documents_dir.join(trove_name);
+    fs::create_dir_all(&trove_dir).expect("Could not create Trove directory");
+    
+    return trove_dir
 }
 
 pub fn on_app_close() {
@@ -65,11 +74,8 @@ pub fn on_app_close() {
 // Save files as markdown instead of json 
 #[tauri::command]
 pub fn save_document(id: String, title: String, content: String) -> Result<String, String> {
-    let documents_dir = get_documents_dir();
-
     // Create a vault directory within documents_dir
-    let vault_dir = documents_dir.join("untitled");
-    fs::create_dir_all(&vault_dir).map_err(|e| format!("Failed to create a vault directory: {}", e))?;
+    let trove_dir = get_trove_dir("Untitled_Trove");
     
     // Convert HTML to Markdown
     let markdown_content = parse_html(&content);
@@ -79,36 +85,13 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
 
     // Use .md extension instead of .json
     let safe_filename = sanitize_filename::sanitize(format!("{}.md", id));
-    let file_path = vault_dir.join(&safe_filename);
+    let file_path = trove_dir.join(&safe_filename);
 
     // Write markdown content directly to file
     match fs::write(&file_path, full_markdown) {
         Ok(_) => Ok(file_path.to_string_lossy().to_string()),
         Err(e) => Err(format!("Failed to write file: {}", e))
     }
-
-    // // Use the id as the filename
-    // let safe_filename = sanitize_filename::sanitize(format!("{}.json", id));
-    // let file_path = documents_dir.join(&safe_filename);
-    
-    // let document_data = DocumentData {
-    //     id: id.clone(),  // Keep the original ID
-    //     title: title.clone(),
-    //     content: content.clone(),
-    // };
-    
-    // // Serialize the document data
-    // match serde_json::to_string_pretty(&document_data) {
-    //     Ok(json_content) => {
-    //         // If a file with the same ID already exists, we can simply overwrite it
-    //         // Write the new file
-    //         match fs::write(&file_path, json_content) {
-    //             Ok(_) => Ok(file_path.to_string_lossy().to_string()),
-    //             Err(e) => Err(format!("Failed to write file: {}", e)),
-    //         }
-    //     },
-    //     Err(e) => Err(format!("Failed to serialize document: {}", e)),
-    // }
 }
 
 #[tauri::command]

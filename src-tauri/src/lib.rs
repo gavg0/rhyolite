@@ -6,7 +6,7 @@ use once_cell::sync::Lazy;
 use tauri::WindowEvent;
 mod editor;
 
-///A struct for DocumentData datatype that stores id, title and content of the document
+///DocumentData struct, datatype that stores id, title and content of the document.
 #[derive(Serialize, Deserialize, Clone)]
 pub struct DocumentData {
     id: String,  
@@ -14,14 +14,14 @@ pub struct DocumentData {
     content: String,
 }
 
-///A Tab struct, that sotores order(index of the tab), id of the document and title of the document.
+///Tab struct, used to store order(index of the tab), id of the document and title of the document.
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Tab {
     id: String,
     title: String
 }
 
-///Userdata Struct, used to store the userdata, like last ope tab and all the open tabs.
+///Userdata Struct, used to store the userdata, like last open tab and all the open tabs.
 #[derive(Serialize, Deserialize, Clone)]
 pub struct UserData {
     tabs: Vec<Tab>,  

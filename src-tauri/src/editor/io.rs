@@ -42,7 +42,7 @@ pub fn get_trove_dir(trove_name: &str) -> PathBuf {
     let trove_dir = documents_dir.join(trove_name);
     fs::create_dir_all(&trove_dir).expect("Could not create Trove directory");
     
-    return trove_dir
+    trove_dir
 }
 
 pub fn on_app_close() {
@@ -96,9 +96,9 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
 
 #[tauri::command]
 pub fn delete_document(id: String) -> Result<Option<DocumentData>, String> {
-    let documents_dir = get_documents_dir();
-    let filename = sanitize_filename::sanitize(format!("{}.json", id));
-    let file_path = documents_dir.join(&filename);
+    let trove_dir = get_trove_dir("Untitled_trove");
+    let filename = sanitize_filename::sanitize(format!("{}.md", id));
+    let file_path = trove_dir.join(&filename);
     
     // Remove the tab and get its index
     let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
@@ -132,10 +132,10 @@ pub fn delete_document(id: String) -> Result<Option<DocumentData>, String> {
 
 #[tauri::command]
 pub fn get_document_content(id: String) -> Result<Option<DocumentData>, String> {
-    let documents_dir = get_documents_dir();
+    let trove_dir = get_trove_dir("Untitled_Trove");
     
     // Try to find the file with the name matching the ID
-    let file_path = documents_dir.join(format!("{}.json", id));
+    let file_path = trove_dir.join(format!("{}.md", id));
     
     // Check if the file exists
     if !file_path.exists() {
@@ -145,10 +145,28 @@ pub fn get_document_content(id: String) -> Result<Option<DocumentData>, String> 
     // Read the content of the file
     match fs::read_to_string(&file_path) {
         Ok(content) => {
-            match serde_json::from_str::<DocumentData>(&content) {
-                Ok(doc) => Ok(Some(doc)),
-                Err(e) => Err(format!("Failed to parse JSON from file: {}", e)),
-            }
+            // Parse markdown content
+            let lines: Vec<&str> = content.lines().collect();
+            
+            // Extract title from first line (assumes "# Title" format)
+            let title = if !lines.is_empty() && lines[0].starts_with("# ") {
+                lines[0][2..].to_string()
+            } else {
+                "Untitled".to_string()
+            };
+            
+            // Get content without the title
+            let content = if !lines.is_empty() {
+                lines[2..].join("\n")
+            } else {
+                String::new()
+            };
+
+            Ok(Some(DocumentData {
+                id: id.clone(),
+                title,
+                content,
+            }))
         },
         Err(e) => Err(format!("Failed to read file: {}", e)),
     }
@@ -196,21 +214,24 @@ pub fn load_recent_files() -> Result<Vec<DocumentData>, String> {
         }
     }
 
-    // If userdata.json doesn't exist, load all available documents
-    let documents_dir = get_documents_dir();
-    
-    let files = match fs::read_dir(&documents_dir) {
+    // If userdata.json doesn't exist, load all markdown files from the trove directory
+    let trove_dir = get_trove_dir("Untitled_Trove");
+
+    let files = match fs::read_dir(&trove_dir) {
         Ok(entries) => entries
             .filter_map(|entry| entry.ok())
             .filter(|entry| {
                 entry.path().extension()
-                    .map_or(false, |ext| ext == "json")
+                    .map_or(false, |ext| ext == "md")
             })
             .filter_map(|entry| {
                 let path = entry.path();
-                fs::read_to_string(&path)
-                    .ok()
-                    .and_then(|content| serde_json::from_str::<DocumentData>(&content).ok())
+                let id = path.file_stem()
+                    .and_then(|s| s.to_str())
+                    .map(String::from)
+                    .unwrap_or_default();
+                
+                get_document_content(id).ok().flatten()
             })
             .collect(),
         Err(e) => return Err(format!("Failed to read directory: {}", e)),

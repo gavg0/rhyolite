@@ -69,7 +69,7 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
 
     // Create a vault directory within documents_dir
     let vault_dir = documents_dir.join("untitled");
-    fs::create_dir(&vault_dir).map_err(|e| format!("Failed to create a vault directory: {}", e))?;
+    fs::create_dir_all(&vault_dir).map_err(|e| format!("Failed to create a vault directory: {}", e))?;
     
     // Convert HTML to Markdown
     let markdown_content = parse_html(&content);

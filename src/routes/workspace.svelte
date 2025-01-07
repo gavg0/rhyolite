@@ -16,8 +16,22 @@
     import CharacterCount from '@tiptap/extension-character-count'
     import { Color } from '@tiptap/extension-color';
     import Bold from '@tiptap/extension-bold';
+    import Blockquote from '@tiptap/extension-blockquote';
+    import Typography from '@tiptap/extension-typography';
+    import Document from '@tiptap/extension-document'
+    import Paragraph from '@tiptap/extension-paragraph';
+    import Text from '@tiptap/extension-text';
+    import Heading from '@tiptap/extension-heading';
+    import Code from '@tiptap/extension-code';
+    import CodeBlock from '@tiptap/extension-code-block';
+    import Italic from '@tiptap/extension-italic';
+    import HorizontalRule from '@tiptap/extension-horizontal-rule';
+    // import OrderedList from '@tiptap/extension-ordered-list';
+    // import BulletList from '@tiptap/extension-bullet-list';
     
-    interface Document {
+    
+
+    interface DocumentData {
         id: string;
         title: string;
         content: string;
@@ -36,7 +50,7 @@
     let wordCount: number = $state(0);
     let charCount: number = $state(0);
     let currentId: string = $state("");
-    let recentDocuments: Document[] = [];
+    let recentDocuments:  DocumentData[] = [];
     let isCommandPalettevisible: boolean = $state(false);
 
     setContext(
@@ -65,44 +79,35 @@
         }
     });
     
-    const CustomBold = Bold.extend({
-        renderHTML({ mark, HTMLAttributes }) {
-        const { style, ...rest } = HTMLAttributes;
-        const newStyle = `font-weight: bold;${style ? ' ' + style : ''}`;
-        return ['span', { ...rest, style: newStyle.trim() }, 0];
-        },
-        addOptions() {
-        return {
-            ...this.parent?.(),
-            HTMLAttributes: {}
-        };
-        }
-    });
-    
     onMount(() => {
         editor = new Editor({
         element,
         extensions: [
-            StarterKit.configure({
-            bold: false,
-            heading: {
-                levels: [1, 2, 3],
+            StarterKit,
+            Heading.configure({
                 HTMLAttributes: {
-                class: 'text-text'
+                    class: 'text-text'
                 }
-            },
-            blockquote: {
-                HTMLAttributes: {
-                class: 'text-text'
-                }
-            }
             }),
-            CustomBold,
             TextStyle,
+            Blockquote.configure({
+                HTMLAttributes: {
+                    class: 'border-l-2 border-current pl-4 my-4 text-text text-sm bg-transparent font-normal leading-none before:content-none after:content-none'
+                }
+            }),
+            Document,
+            Bold.configure({
+                HTMLAttributes: {
+                    class: 'text-text font-bold'
+                }
+            }),
             Color,
             FontSizeTextStyle,
             FontFamily,
             Highlight,
+            Text,
+            HorizontalRule,
+            Paragraph,
             Underline,
             Link.configure({
             openOnClick: false,
@@ -117,7 +122,19 @@
             wordCounter: (text) => text.split(/\s+/).filter((word) => word !== '').length
             }),
             Image,
-            YouTube
+            YouTube,
+            Typography,
+            Code.configure({
+            HTMLAttributes: {
+                    class: 'bg-mantle text-text rounded px-1'  // Added bg-surface0
+                }
+            }),
+            CodeBlock.configure({
+                HTMLAttributes: {
+                    class: 'bg-mantle text-text rounded-lg p-4'  // Added bg-surface0
+                }
+            }),
+            Italic
         ],
         content: ``,
         editorProps: {
@@ -200,7 +217,7 @@
 
     async function switchTab(tabId: string): Promise<void> {
         try {
-            const docResult: Document | null = await invoke(
+            const docResult:  DocumentData | null = await invoke(
                 "get_document_content",
                 { id: tabId }
             );
@@ -227,7 +244,7 @@
     async function cycleTabs(): Promise<void> {
         try {
             const nextTabId: string = await invoke("cycle_tabs");
-            const docResult: Document | null = await invoke("get_document_content", { id: nextTabId });
+            const docResult:  DocumentData | null = await invoke("get_document_content", { id: nextTabId });
             
             if (docResult) {
                 currentId = nextTabId;
@@ -274,7 +291,7 @@
 
     async function loadRecentDocuments(): Promise<void> {
         try {
-            const docs: Document[] = await invoke("load_recent_files");
+            const docs:  DocumentData[] = await invoke("load_recent_files");
             recentDocuments = docs;
 
             // Update the tabs in UI
@@ -296,7 +313,7 @@
     async function deleteDocument(): Promise<void> {
         try {
             // The Rust function returns the next document's content after deletion
-            const nextDoc: Document | null = await invoke("delete_document", { id: currentId });
+            const nextDoc:  DocumentData | null = await invoke("delete_document", { id: currentId });
             await updateTabs();
             
             if (nextDoc) {
@@ -395,10 +412,13 @@
         </div>
     </main>
     <main class="flex-1 min-h-0 overflow-hidden mb-20 p-2">
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div class="h-full w-[70%] rounded-lg m-[0.5%] mx-auto cursor-text">
+            <!-- svelte-ignore a11y_click_events_have_key_events -->
             <div 
                 class="h-full w-full overflow-auto custom-scrollbar p-2"
                 bind:this={element}
+                onclick={() => editor.commands.focus()}
             ></div>
         </div>
     </main>

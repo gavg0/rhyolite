@@ -1,6 +1,6 @@
 {
   "name": "rhyolite",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A simple text editor written in Tauri, inspired by Obsidian.",
   "type": "module",
   "author": {

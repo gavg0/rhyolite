@@ -383,7 +383,7 @@
 
 <main>
     <div data-tauri-drag-region class="fixed flex bg-base top-[0px] w-full h-[40px] select-none justify-between px-1" role="tablist" aria-label="Document tabs" >
-        <div data-tauri-drag-region class="flex flex-row items-center h-full px-4">
+        <div data-tauri-drag-region class="flex flex-row items-center h-full px-4 flex-grow">
             {#each currentTabs as tab}
                 <button
                     type="button"

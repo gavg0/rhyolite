@@ -1,5 +1,6 @@
 <script lang="ts">
     import { invoke } from "@tauri-apps/api/core";
+    import { getCurrentWindow } from "@tauri-apps/api/window";
     import CommandPalette from "../lib/components/commandpalette.svelte";
     import { getContext, onMount, setContext } from 'svelte';
     import { X, Minus, Square } from 'lucide-react';
@@ -28,7 +29,9 @@
     import HorizontalRule from '@tiptap/extension-horizontal-rule';
     // import OrderedList from '@tiptap/extension-ordered-list';
     // import BulletList from '@tiptap/extension-bullet-list';
-    
+    import Close from '$lib/static/close.svg'
+    import Minimise from '$lib/static/minimise.svg'
+    import Maximise from '$lib/static/maximise.svg'
     
 
     interface DocumentData {
@@ -78,6 +81,8 @@
         };
         }
     });
+
+    const appWindow = getCurrentWindow();
     
     onMount(() => {
         editor = new Editor({
@@ -148,12 +153,12 @@
         });
 
         loadRecentDocuments().then(async () => {
-                await updateTabs();
-                if (currentTabs.length === 0) {
-                    await addnewtab();
-                    updatecharwordcounts();
-                }
-            });
+            currentTabs = await getTabs();
+            if (currentTabs.length === 0) {
+                await addnewtab();
+                updatecharwordcounts();
+            }
+        });
         
         // Set up auto-save
         const autoSaveInterval = setInterval(autoSave, 500);
@@ -181,10 +186,6 @@
     return editor.getHTML();
     }
 
-    function getEditorContentasText(): string {
-        return editor.getText();
-    }
-
     function updatecharwordcounts() {
         charCount = editor.storage.characterCount.characters();
         wordCount = editor.storage.characterCount.words();
@@ -193,17 +194,9 @@
     export function toggleCommandPalette(): void {
         isCommandPalettevisible = !isCommandPalettevisible;
     }
-    
-    function return_isCommandPalettevisible(): boolean {
-        return isCommandPalettevisible;
-    }
 
     async function getTabs(): Promise<Tab[]> {
-        return await invoke("get_tabs"); // New Rust function needed
-    }
-
-    async function updateTabs(): Promise<void> {
-        currentTabs = await getTabs();
+        return await invoke("get_tabs"); 
     }
 
     async function addnewtab(): Promise<void> {
@@ -211,7 +204,8 @@
         currentId = newTab.id;
         titleText = newTab.title;
         editor.commands.setContent('');
-        await updateTabs();
+        updatecharwordcounts();
+        currentTabs = await getTabs();
         await invoke("send_current_open_tab", { id: newTab.id });
     }
 
@@ -236,6 +230,7 @@
             
             // Update the current open tab in the backend
             await invoke("send_current_open_tab", { id: tabId });
+            updatecharwordcounts();
         } catch (error) {
             console.error("Failed to switch tab:", error);
         }
@@ -250,6 +245,7 @@
                 currentId = nextTabId;
                 titleText = docResult.title;
                 editor.commands.setContent(docResult.content);
+                updatecharwordcounts();
             }
         } catch (error) {
             console.error("Failed to cycle tabs:", error);
@@ -278,7 +274,7 @@
                 id: currentId,
                 title: titleText,
             });
-            await updateTabs();
+            currentTabs = await getTabs();
             await invoke("save_document", {
                 id: currentId,
                 title: titleText,
@@ -295,7 +291,7 @@
             recentDocuments = docs;
 
             // Update the tabs in UI
-            await updateTabs();
+            currentTabs = await getTabs();
 
             if (recentDocuments.length > 0) {
                 // Load the last open tab from the backend
@@ -314,7 +310,7 @@
         try {
             // The Rust function returns the next document's content after deletion
             const nextDoc:  DocumentData | null = await invoke("delete_document", { id: currentId });
-            await updateTabs();
+            currentTabs = await getTabs();
             
             if (nextDoc) {
                 // If we have a next document, switch to it
@@ -337,7 +333,8 @@
             currentId = newTab.id;
             titleText = newTab.title;
             editor!.commands.setContent("");
-            await updateTabs();
+            updatecharwordcounts();
+            currentTabs = await getTabs();
         } catch (error) {
             console.error("Failed to create new document:", error);
         }
@@ -385,12 +382,12 @@
 <svelte:window on:keydown={handleKeydown} />
 
 <main>
-    <div class="fixed bg-base top-[0px] w-full h-[40px]" role="tablist" aria-label="Document tabs">
-        <div class="flex flex-row items-center h-full">
+    <div data-tauri-drag-region class="fixed flex bg-base top-[0px] w-full h-[40px] select-none justify-between px-1" role="tablist" aria-label="Document tabs" >
+        <div data-tauri-drag-region class="flex flex-row items-center h-full px-4">
             {#each currentTabs as tab}
                 <button
                     type="button"
-                    class={`flex justify-left items-center p-[1%] h-[30px] min-w-[120px] rounded-[18px] flex-shrink text-text m-[0.6%] hover:bg-surface0 ${currentId === tab.id ? 'bg-crust' : ''}`}
+                    class={`flex justify-left items-center px-4 text-nowrap h-[30px] min-w-[120px] rounded-[18px] flex-shrink text-text m-[0.6%] hover:bg-surface1 ${currentId === tab.id ? 'bg-surface0' : ''}`}
                     role="tab"
                     aria-controls="editor"
                     onclick={() => switchTab(tab.id)}
@@ -399,12 +396,32 @@
                 </button>
             {/each}
         </div>
+        <div class="flex flex-row items-center h-full">
+            <button class="titlebar-button h-full px-3 cursor-pointer hover:bg-surface2" id="titlebar-minimize" onclick={() => appWindow.minimize()} aria-label="Minimize">
+                <img
+                    src={ Minimise }
+                    alt="minimize"
+                />
+            </button>
+            <button class="titlebar-button h-full px-3 cursor-pointer hover:bg-surface2" id="titlebar-maximize" onclick={() => appWindow.toggleMaximize()} aria-label="Maximise">
+                <img
+                    src={ Maximise }
+                    alt="maximize"
+                />
+            </button>
+            <button class="titlebar-button h-full px-3 cursor-pointer hover:bg-red-700" id="titlebar-close" onclick={() => appWindow.close()} aria-label="Close">
+                <img
+                    src={ Close }
+                    alt="close"
+                />
+            </button>
+        </div>
     </div>
     <div class="flex flex-col justify-start mt-[60px] h-[calc(100vh-60px)] overflow-hidden">
     <main class="flex h-[80px] mb-5">
         <div class="flex w-[50%] h-full mx-auto">
             <textarea
-                class="w-full h-full resize-none border-none bg-base rounded-lg py-7 text-text text-[2rem] focus:outline-none focus:ring-0"
+                class="w-full h-full resize-none border-none bg-base rounded-lg py-7 text-text text-[2rem] focus:outline-none focus:ring-0 shadow-lg"
                 placeholder="Enter Title here..."
                 value={titleText}
                 oninput={handleTitleChange}

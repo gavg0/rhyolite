@@ -131,7 +131,7 @@
             onclick={() => editor.toggleCommandPalette()}
         ></div>
         <div 
-            class="fixed top-[40%] left-1/2 flex flex-col bg-crust border-2 border-subtext0 rounded-lg p-3 z-[60] w-[40%] h-[40%] gap-2 -translate-x-1/2 -translate-y-1/2"
+            class="fixed top-[40%] left-1/2 flex flex-col bg-crust border-2 border-subtext0 rounded-lg p-3 z-[60] w-min-[200px] w-[50%] h-[40%] gap-2 -translate-x-1/2 -translate-y-1/2 overflow-y-scroll"
             onwheel={handleWheel}
         >
             <div class="relative w-full h-[16%] mb-2">
@@ -150,7 +150,7 @@
             {#each commands as command, index}
                 <button
                     type="button"
-                    class={`flex justify-between items-center p-1 bg-transparent hover:bg-gray-500 cursor-pointer w-full h-[14%] text-left text-text border-none shadow-none rounded transition-colors duration-200 ${selectedindex === index ? 'bg-gray-500' : ''}`}
+                    class={`flex justify-between items-center p-1 bg-transparent hover:bg-surface0 cursor-pointer w-full h-[14%] text-left text-text border-none shadow-none rounded transition-colors duration-200 ${selectedindex === index ? 'bg-surface0' : ''}`}
                     onclick={() => command.action()}
                     onmouseenter={() => selectedindex = index}
                 >

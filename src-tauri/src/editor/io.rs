@@ -10,6 +10,7 @@ use crate::TABS;
 use crate:: UserData;
 use crate:: DocumentData;
 use crate::CURRENT_OPEN_TAB;
+use crate::RECENT_FILES;
 
 use html2md::parse_html;
 use pulldown_cmark::{Parser, Options, html};
@@ -61,12 +62,14 @@ pub fn on_app_close() {
     // Save the complete tabs information
     let tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e)).unwrap();
     let current_open_tab = CURRENT_OPEN_TAB.lock().map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e)).unwrap();
+    let recent_files = RECENT_FILES.lock().map_err(|e| format!("Failed to lock RECENT_FILES: {}", e)).unwrap();
     
     // Convert HashMap values to Vec for storage
     let tabs_vec: Vec<_> = tabs.values().cloned().collect();
     let user_data = UserData { 
         tabs: tabs_vec, 
-        last_open_tab: current_open_tab.clone() 
+        last_open_tab: current_open_tab.clone(),
+        recent_files: recent_files.clone() 
     };
 
     let appdata_dir = get_documents_dir().join("appdata");
@@ -86,6 +89,10 @@ pub fn on_app_close() {
 // Save files as markdown instead of json 
 #[tauri::command]
 pub fn save_document(id: String, title: String, content: String) -> Result<String, String> {
+    let mut recent_files = RECENT_FILES.lock().map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
+    if !recent_files.contains(&id) {
+        recent_files.push(id.clone());
+    }
     // Create a vault directory within documents_dir
     let trove_dir = get_trove_dir("Untitled_Trove");
     
@@ -108,6 +115,8 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
 
 #[tauri::command]
 pub fn delete_document(id: String) -> Result<Option<DocumentData>, String> {
+    let mut recent_files = RECENT_FILES.lock().map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
+    recent_files.retain(|x| x != &id);
     let trove_dir = get_trove_dir("Untitled_trove");
     let filename = sanitize_filename::sanitize(format!("{}.md", id));
     let file_path = trove_dir.join(&filename);
@@ -204,7 +213,10 @@ pub fn load_recent_files() -> Result<Vec<DocumentData>, String> {
             Ok(content) => {
                 match serde_json::from_str::<UserData>(&content) {
                     Ok(user_data) => {
-                        let mut recent_files = Vec::new();
+                        let mut recent_files_lock = RECENT_FILES.lock()
+                            .map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
+                        *recent_files_lock = user_data.recent_files.clone();
+                        let mut last_open_files = Vec::new();
                         let mut current_open_tab = CURRENT_OPEN_TAB.lock()
                             .map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
                         *current_open_tab = user_data.last_open_tab.clone();
@@ -218,14 +230,14 @@ pub fn load_recent_files() -> Result<Vec<DocumentData>, String> {
                             // Try to load each document by ID
                             match get_document_content(tab.id.clone()) {
                                 Ok(Some(doc)) => {
-                                    recent_files.push(doc);
+                                    last_open_files.push(doc);
                                     tabs.insert(tab.id.clone(), tab.clone());
                                 }
                                 _ => continue,
                             }
                         }
                         
-                        return Ok(recent_files);
+                        return Ok(last_open_files);
                     },
                     Err(e) => return Err(format!("Failed to deserialize userdata: {}", e)),
                 }

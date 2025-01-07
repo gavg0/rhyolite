@@ -25,7 +25,8 @@ pub struct Tab {
 #[derive(Serialize, Deserialize, Clone)]
 pub struct UserData {
     tabs: Vec<Tab>,  
-    last_open_tab: String 
+    last_open_tab: String,
+    recent_files: Vec<String>
 }
 
 //Mutex Variable declarations:-
@@ -33,6 +34,7 @@ pub struct UserData {
 pub static TABS: Lazy<Mutex<IndexMap<String, Tab>>> = Lazy::new(|| Mutex::new(IndexMap::new()));
 ///A String that stores the id of the current open tab in the editor:
 pub static CURRENT_OPEN_TAB: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(("").to_string()));
+pub static RECENT_FILES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
 //Main tauri function.
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

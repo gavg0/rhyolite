@@ -12,6 +12,7 @@ use crate:: DocumentData;
 use crate::CURRENT_OPEN_TAB;
 
 use html2md::parse_html;
+use pulldown_cmark::{Parser, Options, html};
 
 
 /// This function finds the path to the 'documents'
@@ -36,12 +37,23 @@ pub fn get_documents_dir() -> PathBuf {
     path
 }
 
+/// Return the path to the default Rhyolite Trove directory.
+/// The function takes in the name that the default trove directory will have
+/// and then creates a directory at 'documents/Rhyolite/trove_name' where trove_name is the
+/// name of the default trove.
+/// 
+/// A trove is a folder that stores Rhyolite notes.
 pub fn get_trove_dir(trove_name: &str) -> PathBuf {
+    //Get the path to documents/Rhyolite.
     let documents_dir = get_documents_dir();
 
+    //Append the default trove name to the 'documents/Rhyolite path'.
     let trove_dir = documents_dir.join(trove_name);
+
+    //Then create the path 'documents/Rhyolite/trove_name' if it does not 
     fs::create_dir_all(&trove_dir).expect("Could not create Trove directory");
     
+    //retrun the path of the default trove directory.
     trove_dir
 }
 
@@ -130,19 +142,16 @@ pub fn delete_document(id: String) -> Result<Option<DocumentData>, String> {
     }
 }
 
+
 #[tauri::command]
 pub fn get_document_content(id: String) -> Result<Option<DocumentData>, String> {
     let trove_dir = get_trove_dir("Untitled_Trove");
-    
-    // Try to find the file with the name matching the ID
     let file_path = trove_dir.join(format!("{}.md", id));
     
-    // Check if the file exists
     if !file_path.exists() {
-        return Ok(None);  // Return None if no file is found
+        return Ok(None);
     }
 
-    // Read the content of the file
     match fs::read_to_string(&file_path) {
         Ok(content) => {
             // Parse markdown content
@@ -156,16 +165,27 @@ pub fn get_document_content(id: String) -> Result<Option<DocumentData>, String> 
             };
             
             // Get content without the title
-            let content = if !lines.is_empty() {
+            let markdown_content = if !lines.is_empty() {
                 lines[2..].join("\n")
             } else {
                 String::new()
             };
 
+            // Convert markdown to HTML
+            let mut options = Options::empty();
+            options.insert(Options::ENABLE_TABLES);
+            options.insert(Options::ENABLE_FOOTNOTES);
+            options.insert(Options::ENABLE_STRIKETHROUGH);
+            options.insert(Options::ENABLE_TASKLISTS);
+
+            let parser = Parser::new_ext(&markdown_content, options);
+            let mut html_output = String::new();
+            html::push_html(&mut html_output, parser);
+
             Ok(Some(DocumentData {
                 id: id.clone(),
                 title,
-                content,
+                content: html_output,  // Now returning HTML instead of markdown
             }))
         },
         Err(e) => Err(format!("Failed to read file: {}", e)),

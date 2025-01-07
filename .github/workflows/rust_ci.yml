@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'src-tauri/src/**'
   pull_request:
     branches:
       - master
     paths:
-      - 'src-tauri/src'
+      - 'src-tauri/src/**'
 
 jobs:
   build:

@@ -8,8 +8,10 @@ on:
 
 jobs:
   publish-tauri:
-    permissions:
-      contents: write
+    permissions: 
+      contents: write  # Ensure this is present
+      issues: write    # Optional but recommended
+      pull-requests: write  # Optional but recommended
     strategy:
       fail-fast: false
       matrix:

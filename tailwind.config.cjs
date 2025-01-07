@@ -1,4 +1,5 @@
 import flowbitePlugin from 'flowbite/plugin'
+import flowbiteTypographyPlugin from 'flowbite-typography'
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -9,6 +10,11 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [flowbitePlugin],
+  plugins: [
+      flowbitePlugin,
+      flowbiteTypographyPlugin({
+          wysiwyg: true,
+      }),
+  ],
 };
 

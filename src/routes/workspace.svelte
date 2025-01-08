@@ -209,6 +209,17 @@
         await invoke("send_current_open_tab", { id: newTab.id });
     }
 
+    async function closeTab(id: string): Promise<void> {
+        try {
+            const nextTabId: string = await invoke("close_tab", { id });
+            if (nextTabId) {
+                await switchTab(nextTabId);
+            }
+        } catch (error) {
+            console.error("Failed to close tab:", error);
+        }
+    }
+
     async function switchTab(tabId: string): Promise<void> {
         try {
             const docResult:  DocumentData | null = await invoke(
@@ -372,6 +383,10 @@
             event.preventDefault();
             toggleCommandPalette();
         }
+        if (event.ctrlKey && event.altKey && event.key === "c") {
+            event.preventDefault();
+            closeTab(currentTabID);
+        }
     }
 
     function handleTitleChange(event: Event): void {
@@ -417,9 +432,9 @@
             </button>
         </div>
     </div>
-    <div class="flex flex-col justify-start mt-[60px] h-[calc(100vh-60px)] overflow-hidden">
+    <div class="flex flex-col justify-start mt-[60px] h-[calc(100vh-60px)]">
     <main class="flex h-[80px] mb-5">
-        <div class="flex w-[50%] h-full mx-auto">
+        <div class="flex w-[50%] min-w-[400px] h-full mx-auto">
             <textarea
                 class="w-full h-full resize-none border-none bg-base rounded-lg py-7 text-text text-[2rem] focus:outline-none focus:ring-0 shadow-lg"
                 placeholder="Enter Title here..."
@@ -440,7 +455,7 @@
         </div>
     </main>
 </div>
-    <div class="fixed flex flex-row gap-[20px] self-end bottom-[10px] right-[10px] bg-base px-[10px] py-[5px] rounded-[18px] z-10 text-text text-[0.85em] select-none">
+    <div class="fixed flex flex-row gap-[20px] text-nowrap self-end bottom-[10px] right-[10px] bg-base px-[10px] py-[5px] rounded-[18px] z-10 text-text text-[0.85em] select-none">
         <div>{wordCount} Words</div>
         <div>{charCount} Characters</div>
     </div>

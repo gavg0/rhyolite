@@ -63,7 +63,8 @@ pub fn run() {
             editor::tabs::send_current_open_tab,
             editor::tabs::get_current_open_tab,
             editor::tabs::update_tab_title,
-            editor::tabs::cycle_tabs
+            editor::tabs::cycle_tabs,
+            editor::tabs::close_tab
             ]
         )
         .run(tauri::generate_context!())

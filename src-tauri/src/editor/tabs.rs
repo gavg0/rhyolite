@@ -109,3 +109,30 @@ pub fn delete_tab(id: String) -> Result<(), String> {
     tabs.shift_remove(&id);
     Ok(())
 }
+
+#[tauri::command]
+pub fn close_tab(id: String) -> Result<Option<String>, String> {
+    let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
+    
+    if tabs.len() <= 1 {
+        return Ok(None); // Don't close the last tab
+    }
+    
+    if let Some((index, _, _)) = tabs.shift_remove_full(&id) {
+        // Get the next tab ID (either at same index or last tab)
+        let next_tab_id = tabs.get_index(index)
+            .or_else(|| tabs.last())
+            .map(|(id, _)| id.clone());
+            
+        // Update current open tab if needed
+        if let Some(next_id) = &next_tab_id {
+            let mut current_open_tab = CURRENT_OPEN_TAB.lock()
+                .map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
+            *current_open_tab = next_id.clone();
+        }
+        
+        Ok(next_tab_id)
+    } else {
+        Err("Tab not found".to_string())
+    }
+}

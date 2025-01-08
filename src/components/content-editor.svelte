@@ -641,7 +641,7 @@
                 <span class="sr-only">Toggle blockquote</span>
             </button>
             <Tooltip>
-                Toggle ordered list
+                Toggle blockquote
             </Tooltip>
             <button onclick={ () => toggleMark('setHorizontalRule') } type="button" class="p-1.5 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
                 <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">

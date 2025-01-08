@@ -4,7 +4,11 @@ use uuid::Uuid;
 use crate::TABS; 
 
 use crate::CURRENT_OPEN_TAB;
+use crate::RECENT_FILES;
 use crate:: Tab;
+use crate::RecentFileInfo;
+
+use super::io::save_user_data;
 
 #[tauri::command]
 pub fn send_current_open_tab(id: String) {
@@ -29,6 +33,7 @@ pub fn get_tabs() -> Result<Vec<Tab>, String> {
 #[tauri::command]
 pub fn new_tab() -> Result<Tab, String> {
     let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
+    let mut recent_files = RECENT_FILES.lock().map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
     
     // Generate a new unique ID
     let new_id = Uuid::new_v4().to_string();
@@ -42,10 +47,23 @@ pub fn new_tab() -> Result<Tab, String> {
     // Insert into IndexMap
     tabs.insert(new_id.clone(), new_tab.clone());
     
+    // Add to recent files
+    recent_files.push(RecentFileInfo {
+        id: new_id.clone(),
+        title: "Untitled".to_string(),
+    });
+    
     // Update current open tab
     let mut current_open_tab = CURRENT_OPEN_TAB.lock()
         .map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
     *current_open_tab = new_id;
+
+    std::mem::drop(current_open_tab);
+    std::mem::drop(tabs);
+    std::mem::drop(recent_files);
+
+    // Save changes to userdata.json
+    save_user_data()?;
     
     Ok(new_tab)
 }

@@ -87,6 +87,32 @@ pub fn on_app_close() {
     }
 }
 
+pub fn save_user_data() -> Result<(), String> {
+    let tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
+    let current_open_tab = CURRENT_OPEN_TAB.lock().map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
+    let recent_files = RECENT_FILES.lock().map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
+    
+    // Convert HashMap values to Vec for storage
+    let tabs_vec: Vec<_> = tabs.values().cloned().collect();
+    let user_data = UserData { 
+        tabs: tabs_vec, 
+        last_open_tab: current_open_tab.clone(),
+        recent_files: recent_files.clone() 
+    };
+
+    let appdata_dir = get_documents_dir().join("appdata");
+    fs::create_dir_all(&appdata_dir).expect("Could not create appdata directory");
+    let userdata_path = appdata_dir.join("userdata.json");
+
+    match serde_json::to_string_pretty(&user_data) {
+        Ok(json_content) => {
+            fs::write(userdata_path, json_content)
+                .map_err(|e| format!("Failed to save userdata: {}", e))
+        },
+        Err(e) => Err(format!("Failed to serialize userdata: {}", e))
+    }
+}
+
 // Save files as markdown instead of json 
 #[tauri::command]
 pub fn save_document(id: String, title: String, content: String) -> Result<String, String> {
@@ -151,6 +177,11 @@ pub fn delete_document(id: String) -> Result<Option<DocumentData>, String> {
                 .map_err(|e| format!("Failed to delete file {}: {}", file_path.display(), e))?;
         }
         
+        std::mem::drop(recent_files);
+        std::mem::drop(tabs);
+        // Save changes to userdata.json
+        save_user_data()?;
+
         Ok(next_tab)
     } else {
         Err("Tab not found".to_string())

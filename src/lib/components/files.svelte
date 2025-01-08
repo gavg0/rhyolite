@@ -1,6 +1,7 @@
 <script lang="ts">
     import { invoke } from "@tauri-apps/api/core";
     import { onMount, getContext, setContext } from "svelte";
+    import Close from '$lib/static/close.svg';
 
     interface DocumentData {
         id: string;
@@ -81,6 +82,11 @@
             selectedIndex = -1;
         }
     });
+    $effect(() => {
+        if (editor.return_isFilesMenuvisible()) {
+            loadFiles();
+        }
+    });
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -102,10 +108,13 @@
             <div class="relative w-full max-h-[40px] h-[16%] mb-2 flex justify-between items-center">
                 <span class="text-text text-lg">Recent Files</span>
                 <button 
-                    class="bg-transparent text-text opacity-70 hover:opacity-100 transition-opacity duration-200"
+                    class="bg-transparent text-text opacity-70 hover:bg-surface0 rounded-full  p-2 transition-opacity duration-200"
                     onclick={() => toggleFiles()}
                 >
-                    ✕
+                    <img
+                        src={ Close }
+                        alt="close"
+                    />
                 </button>
             </div>
             

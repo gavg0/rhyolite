@@ -2,8 +2,8 @@
     import { invoke } from "@tauri-apps/api/core";
     import { getCurrentWindow } from "@tauri-apps/api/window";
     import CommandPalette from "../lib/components/commandpalette.svelte";
-    import SideBar from "$lib/components/sidebar.svelte"
-    import FilesMenu from "$lib/components/files.svelte"
+    import SideBar from "$lib/components/sidebar.svelte";
+    import FilesMenu from "$lib/components/files.svelte";
     import { getContext, onMount, setContext } from 'svelte';
     import { X, Minus, Square } from 'lucide-react';
     import { Editor } from '@tiptap/core';
@@ -31,10 +31,9 @@
     import HorizontalRule from '@tiptap/extension-horizontal-rule';
     // import OrderedList from '@tiptap/extension-ordered-list';
     // import BulletList from '@tiptap/extension-bullet-list';
-    import Close from '$lib/static/close.svg'
-    import Minimise from '$lib/static/minimise.svg'
-    import Maximise from '$lib/static/maximise.svg'
-    import Sidebar from "$lib/components/sidebar.svelte";
+    import Close from '$lib/static/close.svg';
+    import Minimise from '$lib/static/minimise.svg';
+    import Maximise from '$lib/static/maximise.svg.svelte';
     
 
     interface DocumentData {
@@ -423,7 +422,7 @@
                 </button>
             {/each}
         </div>
-        <div class="flex flex-row items-center h-full">
+        <div class="flex flex-none flex-row items-center h-full">
             <button class="titlebar-button h-full px-3 cursor-pointer hover:bg-surface2" id="titlebar-minimize" onclick={() => appWindow.minimize()} aria-label="Minimize">
                 <img
                     src={ Minimise }
@@ -431,10 +430,11 @@
                 />
             </button>
             <button class="titlebar-button h-full px-3 cursor-pointer hover:bg-surface2" id="titlebar-maximize" onclick={() => appWindow.toggleMaximize()} aria-label="Maximise">
-                <img
+                <!-- <img
                     src={ Maximise }
                     alt="maximize"
-                />
+                /> -->
+                <Maximise/>
             </button>
             <button class="titlebar-button h-full px-3 cursor-pointer hover:bg-red-700" id="titlebar-close" onclick={() => appWindow.close()} aria-label="Close">
                 <img
@@ -444,7 +444,7 @@
             </button>
         </div>
     </div>
-    <Sidebar/>
+    <SideBar/>
     <div class="flex flex-col justify-start mt-[60px] h-[calc(100vh-60px)]">
     <main class="flex h-[80px] mb-5">
         <div class="flex w-[50%] min-w-[400px] h-full mx-auto">

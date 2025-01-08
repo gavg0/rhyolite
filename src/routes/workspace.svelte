@@ -2,6 +2,8 @@
     import { invoke } from "@tauri-apps/api/core";
     import { getCurrentWindow } from "@tauri-apps/api/window";
     import CommandPalette from "../lib/components/commandpalette.svelte";
+    import SideBar from "$lib/components/sidebar.svelte"
+    import FilesMenu from "$lib/components/files.svelte"
     import { getContext, onMount, setContext } from 'svelte';
     import { X, Minus, Square } from 'lucide-react';
     import { Editor } from '@tiptap/core';
@@ -32,6 +34,7 @@
     import Close from '$lib/static/close.svg'
     import Minimise from '$lib/static/minimise.svg'
     import Maximise from '$lib/static/maximise.svg'
+    import Sidebar from "$lib/components/sidebar.svelte";
     
 
     interface DocumentData {
@@ -55,6 +58,7 @@
     let currentId: string = $state("");
     let recentDocuments:  DocumentData[] = [];
     let isCommandPalettevisible: boolean = $state(false);
+    let isFilesVisible: boolean = $state(false);
 
     setContext(
         'editor', 
@@ -68,7 +72,9 @@
             closeTab,
             deleteDocument,
             return_isCommandPalettevisible: () => isCommandPalettevisible, 
-            toggleCommandPalette 
+            return_isFilesMenuvisible: () => isFilesVisible, 
+            toggleCommandPalette,
+            toggleFilesMenu 
     });
 
     const FontSizeTextStyle = TextStyle.extend({
@@ -192,8 +198,12 @@
         wordCount = editor.storage.characterCount.words();
     }
 
-    export function toggleCommandPalette(): void {
+    function toggleCommandPalette(): void {
         isCommandPalettevisible = !isCommandPalettevisible;
+    }
+
+    function toggleFilesMenu(): void {
+        isFilesVisible = !isFilesVisible;
     }
 
     async function getTabs(): Promise<Tab[]> {
@@ -399,8 +409,8 @@
 <svelte:window on:keydown={handleKeydown} />
 
 <main>
-    <div data-tauri-drag-region class="fixed flex bg-base top-[0px] w-full h-[40px] select-none justify-between px-1" role="tablist" aria-label="Document tabs" >
-        <div data-tauri-drag-region class="flex flex-row items-center h-full px-4 flex-grow">
+    <div data-tauri-drag-region class="fixed flex bg-base top-[0px] w-full h-[40px] select-none justify-between px-1 z-10" role="tablist" aria-label="Document tabs" >
+        <div data-tauri-drag-region class="flex flex-row items-center h-full px-4 ml-4 flex-grow">
             {#each currentTabs as tab}
                 <button
                     type="button"
@@ -434,6 +444,7 @@
             </button>
         </div>
     </div>
+    <Sidebar/>
     <div class="flex flex-col justify-start mt-[60px] h-[calc(100vh-60px)]">
     <main class="flex h-[80px] mb-5">
         <div class="flex w-[50%] min-w-[400px] h-full mx-auto">
@@ -462,6 +473,7 @@
         <div>{charCount} Characters</div>
     </div>
     <CommandPalette/>
+    <FilesMenu/>
 </main>
 
 <style>

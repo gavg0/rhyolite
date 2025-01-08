@@ -8,6 +8,7 @@ use sanitize_filename;
 
 use crate::TABS;
 use crate:: UserData;
+use crate::RecentFileInfo;
 use crate:: DocumentData;
 use crate::CURRENT_OPEN_TAB;
 use crate::RECENT_FILES;
@@ -90,8 +91,13 @@ pub fn on_app_close() {
 #[tauri::command]
 pub fn save_document(id: String, title: String, content: String) -> Result<String, String> {
     let mut recent_files = RECENT_FILES.lock().map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
-    if !recent_files.contains(&id) {
-        recent_files.push(id.clone());
+    if let Some(doc) = recent_files.iter_mut().find(|doc| doc.id == id) {
+        doc.title = title.clone();
+    } else {
+        recent_files.push(RecentFileInfo {
+            id: id.clone(),
+            title: title.clone(),
+        });
     }
     // Create a vault directory within documents_dir
     let trove_dir = get_trove_dir("Untitled_Trove");
@@ -116,7 +122,7 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
 #[tauri::command]
 pub fn delete_document(id: String) -> Result<Option<DocumentData>, String> {
     let mut recent_files = RECENT_FILES.lock().map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
-    recent_files.retain(|x| x != &id);
+    recent_files.retain(|doc| doc.id != id);
     let trove_dir = get_trove_dir("Untitled_trove");
     let filename = sanitize_filename::sanitize(format!("{}.md", id));
     let file_path = trove_dir.join(&filename);
@@ -270,4 +276,27 @@ pub fn load_recent_files() -> Result<Vec<DocumentData>, String> {
     };
 
     Ok(files)
+}
+
+#[tauri::command]
+pub fn get_recent_files_metadata() -> Result<Vec<RecentFileInfo>, String> {
+    let appdata_dir = get_documents_dir().join("appdata");
+    let userdata_path = appdata_dir.join("userdata.json");
+
+    // Check if userdata.json exists
+    if userdata_path.exists() {
+        // Read and deserialize the UserData
+        match fs::read_to_string(&userdata_path) {
+            Ok(content) => {
+                match serde_json::from_str::<UserData>(&content) {
+                    Ok(user_data) => Ok(user_data.recent_files),
+                    Err(e) => Err(format!("Failed to deserialize userdata: {}", e))
+                }
+            },
+            Err(e) => Err(format!("Failed to read userdata file: {}", e))
+        }
+    } else {
+        // If userdata.json doesn't exist, return empty vector
+        Ok(Vec::new())
+    }
 }

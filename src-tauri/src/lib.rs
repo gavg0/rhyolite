@@ -21,12 +21,18 @@ pub struct Tab {
     title: String
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct RecentFileInfo {
+    pub id: String,
+    pub title: String,
+}
+
 ///Userdata Struct, used to store the userdata, like last open tab and all the open tabs.
 #[derive(Serialize, Deserialize, Clone)]
 pub struct UserData {
     tabs: Vec<Tab>,  
     last_open_tab: String,
-    recent_files: Vec<String>
+    recent_files: Vec<RecentFileInfo>
 }
 
 //Mutex Variable declarations:-
@@ -34,7 +40,7 @@ pub struct UserData {
 pub static TABS: Lazy<Mutex<IndexMap<String, Tab>>> = Lazy::new(|| Mutex::new(IndexMap::new()));
 ///A String that stores the id of the current open tab in the editor:
 pub static CURRENT_OPEN_TAB: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(("").to_string()));
-pub static RECENT_FILES: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
+pub static RECENT_FILES: Lazy<Mutex<Vec<RecentFileInfo>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
 //Main tauri function.
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -56,6 +62,7 @@ pub fn run() {
             editor::io::load_recent_files,
             editor::io::delete_document,
             editor::io::get_document_content,
+            editor::io::get_recent_files_metadata,
             editor::tabs::new_tab,
             editor::tabs::load_tab,
             editor::tabs::delete_tab,

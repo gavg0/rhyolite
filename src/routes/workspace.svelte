@@ -411,14 +411,32 @@
     <div data-tauri-drag-region class="fixed flex bg-base top-[0px] w-full h-[40px] select-none justify-between px-1 z-10" role="tablist" aria-label="Document tabs" >
         <div data-tauri-drag-region class="flex flex-row items-center h-full px-4 ml-4 flex-grow">
             {#each currentTabs as tab}
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
                 <button
                     type="button"
-                    class={`flex justify-left items-center px-4 text-nowrap h-[30px] min-w-[120px] rounded-[18px] flex-shrink text-text m-[0.6%] transition-colors hover:bg-surface1 ${currentId === tab.id ? 'bg-surface0' : ''}`}
+                    class={`group flex justify-between items-center px-4 text-nowrap h-[30px] min-w-[120px] rounded-[18px] flex-shrink text-text m-[0.6%] transition-colors hover:bg-surface1 ${currentId === tab.id ? 'bg-surface0' : ''}`}
                     role="tab"
                     aria-controls="editor"
                     onclick={() => switchTab(tab.id)}
                 >
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <span 
+                    class="flex-grow text-left"
+                    onclick={() => switchTab(tab.id)}
+                >
                     {tab.title.length > 20 ? tab.title.slice(0, 20) + '...' : tab.title || 'Untitled'}
+                </span>
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+                <img
+                    src={Close}
+                    alt="close tab"
+                    class={`w-3 h-3 ml-2 hover:bg-surface2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${currentId === tab.id ? 'opacity-100' : ''}`}
+                    onclick={(e) => {
+                        e.stopPropagation();
+                        closeTab();
+                    }}
+                />
                 </button>
             {/each}
         </div>
@@ -430,10 +448,6 @@
                 />
             </button>
             <button class="titlebar-button h-full px-3 cursor-pointer hover:bg-surface2" id="titlebar-maximize" onclick={() => appWindow.toggleMaximize()} aria-label="Maximise">
-                <!-- <img
-                    src={ Maximise }
-                    alt="maximize"
-                /> -->
                 <Maximise/>
             </button>
             <button class="titlebar-button h-full px-3 cursor-pointer hover:bg-red-700" id="titlebar-close" onclick={() => appWindow.close()} aria-label="Close">

@@ -65,6 +65,7 @@
             gotoLastTab, 
             gotoTab1, 
             cycleTabs, 
+            closeTab,
             deleteDocument,
             return_isCommandPalettevisible: () => isCommandPalettevisible, 
             toggleCommandPalette 
@@ -209,8 +210,9 @@
         await invoke("send_current_open_tab", { id: newTab.id });
     }
 
-    async function closeTab(id: string): Promise<void> {
+    async function closeTab(): Promise<void> {
         try {
+            let id = currentId;
             const nextTabId: string = await invoke("close_tab", { id });
             if (nextTabId) {
                 await switchTab(nextTabId);
@@ -385,7 +387,7 @@
         }
         if (event.ctrlKey && event.altKey && event.key === "c") {
             event.preventDefault();
-            closeTab(currentTabID);
+            closeTab();
         }
     }
 
@@ -402,7 +404,7 @@
             {#each currentTabs as tab}
                 <button
                     type="button"
-                    class={`flex justify-left items-center px-4 text-nowrap h-[30px] min-w-[120px] rounded-[18px] flex-shrink text-text m-[0.6%] hover:bg-surface1 ${currentId === tab.id ? 'bg-surface0' : ''}`}
+                    class={`flex justify-left items-center px-4 text-nowrap h-[30px] min-w-[120px] rounded-[18px] flex-shrink text-text m-[0.6%] transition-colors hover:bg-surface1 ${currentId === tab.id ? 'bg-surface0' : ''}`}
                     role="tab"
                     aria-controls="editor"
                     onclick={() => switchTab(tab.id)}

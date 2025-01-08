@@ -55,6 +55,14 @@
             editor.toggleCommandPalette();
         }
       },
+      {
+        name: 'Close Tab',
+        shortcut: 'Ctrl + Alt + C',
+        action: () => {
+            editor.closeTab();
+            editor.toggleCommandPalette();
+        }
+      }
     //   {
     //     name: 'Toggle ToolBar',
     //     shortcut: 'Ctrl + T',
@@ -98,18 +106,18 @@
         }
     }
 
-    function handleWheel(event: WheelEvent) {
-        if (!editor.return_isCommandPalettevisible()) return;
+    // function handleWheel(event: WheelEvent) {
+    //     if (!editor.return_isCommandPalettevisible()) return;
         
-        event.preventDefault();
-        if (event.deltaY > 0) {
-            // Scrolling down
-            selectedindex = (selectedindex + 1) % commands.length;
-        } else {
-            // Scrolling up
-            selectedindex = (selectedindex - 1 + commands.length) % commands.length;
-        }
-    }
+    //     event.preventDefault();
+    //     if (event.deltaY > 0) {
+    //         // Scrolling down
+    //         selectedindex = (selectedindex + 1) % commands.length;
+    //     } else {
+    //         // Scrolling up
+    //         selectedindex = (selectedindex - 1 + commands.length) % commands.length;
+    //     }
+    // }
 
     // Reset selected index when command palette is closed
     $effect(() => {
@@ -131,10 +139,9 @@
             onclick={() => editor.toggleCommandPalette()}
         ></div>
         <div 
-            class="fixed top-[40%] left-1/2 flex flex-col bg-crust border-2 border-subtext0 rounded-lg p-3 z-[60] w-min-[200px] w-[50%] h-[40%] gap-2 -translate-x-1/2 -translate-y-1/2 overflow-y-scroll"
-            onwheel={handleWheel}
+            class="fixed top-[40%] left-1/2 flex flex-col bg-crust border-2 border-subtext0 rounded-lg p-3 z-[60] min-w-[400px] max-w-[800px] max-h-[400px] w-[80%] h-[60%] gap-2 -translate-x-1/2 -translate-y-1/2 overflow-y-scroll"
         >
-            <div class="relative w-full h-[16%] mb-2">
+            <div class="relative w-full max-h-[40px] h-[16%] mb-2">
                 <textarea
                     class="flex w-full h-full overflow-hidden resize-none pr-8 p-2 cursor-text text-text bg-surface0 text-left box-border border-2 border-subtext0 outline-none rounded transition-all duration-200 hover:border-overlay0 focus:border-overlay0 focus:outline-none focus:ring-0"
                     placeholder="Select a Command"
@@ -150,7 +157,7 @@
             {#each commands as command, index}
                 <button
                     type="button"
-                    class={`flex justify-between items-center p-1 bg-transparent hover:bg-surface0 cursor-pointer w-full h-[14%] text-left text-text border-none shadow-none rounded transition-colors duration-200 ${selectedindex === index ? 'bg-surface0' : ''}`}
+                    class={`flex justify-between items-center px-2 py-1 hover:bg-surface0 cursor-pointer w-full h-[14%] text-left text-text border-none shadow-none rounded transition-colors duration-200 ${selectedindex === index ? 'bg-surface0' : ''}`}
                     onclick={() => command.action()}
                     onmouseenter={() => selectedindex = index}
                 >

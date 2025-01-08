@@ -3,6 +3,7 @@ import tabsStore from "../store/tabs.store";
 import { ApiProvider } from "./api.service";
 import TabService from "./tab.service";
 import type { Document } from "../types/document";
+import { isValidJSON } from "../helpers/common.helper";
 
 const apiProvider = new ApiProvider();
 
@@ -92,19 +93,6 @@ const loadDocument = async (documentId: string): Promise<Document | null> => {
     } catch (error) {
         console.error("Failed to load document:", error);
         return null;
-    }
-}
-
-const isValidJSON = (str: any): boolean => {
-    if (typeof str !== 'string' || str.trim() === '') {
-        return false; // Not a valid string
-    }
-
-    try {
-        JSON.parse(str);
-        return true; // The string is valid JSON
-    } catch (e) {
-        return false; // The string is not valid JSON
     }
 }
 

@@ -2,10 +2,10 @@
     import "../styles/styles.css";
 
     import { onMount } from "svelte";
-    // import Commandpalette from "./commandpalette.svelte";
+    import CommandPalette from "../components/command-palette.svelte";
 
     import Tabs from "../components/tabs.svelte";
-    import KeyboardShortcuts from "../components/keyboard-shortcuts.svelte";
+    import HomeHotkeys from "../components/home-hotkeys.svelte";
     import DocumentService from "../services/document.service";
 
     onMount(() => {
@@ -18,8 +18,13 @@
     // }
 </script>
 
-<KeyboardShortcuts />
+<main>
+    <HomeHotkeys />
 
-<div class="p-5">
-    <Tabs />
-</div>
+    <div class="p-5">
+        <Tabs />
+    </div>
+
+    <CommandPalette />
+</main>
+

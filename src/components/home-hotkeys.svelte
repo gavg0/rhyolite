@@ -1,6 +1,7 @@
 <script lang="ts">
     import DocumentService from "../services/document.service";
     import TabService from "../services/tab.service";
+    import CommandPaletteStore from "../store/command-palette.store";
 
     const handleKeydown = (event: KeyboardEvent): void => {
         if (event.ctrlKey && event.key === "d") {
@@ -32,7 +33,7 @@
         }
         if (event.ctrlKey && event.key === "p") {
             event.preventDefault();
-            // toggleCommandPalette();
+            CommandPaletteStore.toggleVisibility();
         }
     }
 </script>

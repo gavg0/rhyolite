@@ -3,6 +3,7 @@
     import DocumentService from "../services/document.service";
     import TabService from "../services/tab.service";
     import { onDestroy } from "svelte";
+    import ContentEditorStore from "../store/content-editor.store";
 
     let selectedIndex: number = $state(-1);
     let searchText: string = $state("");
@@ -58,7 +59,7 @@
         name: 'Toggle ToolBar',
         shortcut: 'Ctrl + T',
         action: () => {
-            // editor.toggleToolbar();
+            ContentEditorStore.toggleToolbarVisibility();
             CommandPaletteStore.toggleVisibility();
         }
       }

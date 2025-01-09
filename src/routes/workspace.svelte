@@ -82,21 +82,6 @@
         toggleFilesMenu,
     });
 
-    // const FontSizeTextStyle = TextStyle.extend({
-    //     addAttributes() {
-    //         return {
-    //             fontSize: {
-    //                 default: null,
-    //                 parseHTML: (element) => element.style.fontSize,
-    //                 renderHTML: (attributes) =>
-    //                     !attributes.fontSize
-    //                         ? {}
-    //                         : { style: `font-size: ${attributes.fontSize}` },
-    //             },
-    //         };
-    //     },
-    // });
-
     const appWindow = getCurrentWindow();
     // create a lowlight instance with all languages loaded
     const lowlight = createLowlight(all);
@@ -123,7 +108,6 @@
                     },
                 }),
                 Color,
-                // FontSizeTextStyle,
                 FontFamily,
                 Highlight,
                 Text,
@@ -259,6 +243,7 @@
             const nextTabId: string = await invoke("close_tab", { id });
             if (nextTabId) {
                 await switchTab(nextTabId);
+                currentTabs = await getTabs();
             }
         } catch (error) {
             console.error("Failed to close tab:", error);
@@ -397,17 +382,25 @@
             editor!.commands.setContent("");
             updatecharwordcounts();
             currentTabs = await getTabs();
+            autoSave();
         } catch (error) {
             console.error("Failed to create new document:", error);
         }
     }
 
+    let lastNewTabTime: number = $state(0);
+    const MIN_TAB_CREATION_INTERVAL = 100;
     function handleKeydown(event: KeyboardEvent): void {
         if (event.ctrlKey && event.key === "d") {
             event.preventDefault();
             deleteDocument();
         }
         if (event.ctrlKey && event.key === "n") {
+            if (Date.now() - lastNewTabTime < MIN_TAB_CREATION_INTERVAL) {
+                event.preventDefault();
+                return;
+            }
+            lastNewTabTime = Date.now();
             event.preventDefault();
             newDocument();
         }

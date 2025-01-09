@@ -1,15 +1,22 @@
-:root {
-    --color-text: #ffffff;
-    --color-subtext2: #f1f2f3;
-    --color-subtext1: #d8dbde;
-    --color-subtext0: #c2c6cb;
-    --color-overlay2: #acb2b8;
-    --color-overlay1: #969da5;
-    --color-overlay0: #808992;
-    --color-surface2: #6c757d;
-    --color-surface1: #596167;
-    --color-surface0: #464c51;
-    --color-base: #33373b;
-    --color-crust: #202325;
-    --color-mantle: #0d0e0f;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        /* Converted from HEX to HSL */
+        --color-text: 0deg 0% 100%; /* hsl(0deg 0% 100%) */
+        --color-subtext2: 210deg 13% 95%; /* hsl(210deg 13% 95%) */
+        --color-subtext1: 210deg 13% 86%; /* hsl(210deg 13% 86%) */
+        --color-subtext0: 210deg 13% 79%; /* hsl(210deg 13% 79%) */
+        --color-overlay2: 210deg 11% 71%; /* hsl(210deg 11% 71%) */
+        --color-overlay1: 210deg 11% 63%; /* hsl(210deg 11% 63%) */
+        --color-overlay0: 210deg 11% 54%; /* hsl(210deg 11% 54%) */
+        --color-surface2: 210deg 8% 48%; /* hsl(210deg 8% 48%) */
+        --color-surface1: 210deg 7% 41%; /* hsl(210deg 7% 41%) */
+        --color-surface0: 210deg 7% 35%; /* hsl(210deg 7% 35%) */
+        --color-base: 210deg 8% 23%; /* hsl(210deg 8% 23%) */
+        --color-crust: 210deg 9% 15%; /* hsl(210deg 9% 15%) */
+        --color-mantle: 210deg 9% 6%; /* hsl(210deg 9% 6%) */
+    }
 }

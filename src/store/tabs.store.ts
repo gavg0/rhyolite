@@ -2,12 +2,12 @@ import { type Writable, writable, get } from 'svelte/store';
 import type { Tab } from '../types/tab';
 import DocumentService from "../services/document.service";
 
-export interface ITabsStore {
+export interface ITabsStates {
     tabs: Tab[];
     currentTab: Tab | null;
 }
 
-const tabsStore: Writable<ITabsStore> = writable<ITabsStore>({
+const states: Writable<ITabsStates> = writable<ITabsStates>({
     tabs: [],
     currentTab: null,
 });
@@ -15,7 +15,7 @@ const tabsStore: Writable<ITabsStore> = writable<ITabsStore>({
 const initTabsStore = async () => {
     const tabs = await DocumentService.getAllDocumentTabs();
     const currentTab = tabs.length > 0 ? tabs[0] : null;
-    tabsStore.update( () => ({ tabs, currentTab }));
+    states.update( () => ({ tabs, currentTab }));
 }
 
 const resetCurrentTab = () => {
@@ -25,7 +25,7 @@ const resetCurrentTab = () => {
 }
 
 const updateTabsState = (tabs: Tab[]): Tab[] => {
-    tabsStore.update(data => ({
+    states.update(data => ({
         tabs: tabs,
         currentTab: data.currentTab,
     }));
@@ -33,7 +33,7 @@ const updateTabsState = (tabs: Tab[]): Tab[] => {
 }
 
 const updateCurrentTabState = (currentTab: Tab | null): Tab | null => {
-    tabsStore.update(data => ({
+    states.update(data => ({
         tabs: data.tabs,
         currentTab: currentTab,
     }));
@@ -41,22 +41,22 @@ const updateCurrentTabState = (currentTab: Tab | null): Tab | null => {
 }
 
 const getTabById = (tabId: string): Tab | undefined => {
-    const { tabs }: { tabs: Tab[] } = get(tabsStore); // Access the current state of tabsStore
+    const { tabs }: { tabs: Tab[] } = get(states); // Access the current state of states
     return tabs.find(tab => tab.id === tabId); // Replace 'id' with the actual property name if it's different
 };
 
 const getCurrentTabState = (): Tab | null => {
-    const { currentTab }: { currentTab: Tab | null } = get(tabsStore);
+    const { currentTab }: { currentTab: Tab | null } = get(states);
     return currentTab;
 };
 
 const getTabsState = (): Tab[] => {
-    const { tabs }: { tabs: Tab[] } = get(tabsStore);
+    const { tabs }: { tabs: Tab[] } = get(states);
     return tabs;
 }
 
 export default {
-    tabsStore,
+    states,
     initTabsStore,
     resetCurrentTab,
     updateTabsState,

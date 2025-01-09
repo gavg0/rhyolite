@@ -120,7 +120,7 @@
     });
 
     let flagVisibility = $state(false);
-    const unsubscribeStates = CommandPaletteStore.commandPaletteStore.subscribe(value => {
+    const unsubscribeStates = CommandPaletteStore.states.subscribe(value => {
         flagVisibility = value.flagCommandPaletteVisibility;
     });
     onDestroy(unsubscribeStates); // Clean up

@@ -8,7 +8,7 @@
     let tabs: Tab[] = $state([]);
     let currentTab: Tab | null = $state(null);
 
-    const unsubscribeTabsState = TabsStore.tabsStore.subscribe(value => {
+    const unsubscribeTabsState = TabsStore.states.subscribe(value => {
         tabs = value.tabs;
         currentTab = value.currentTab;
     });

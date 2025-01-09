@@ -1,28 +1,28 @@
 import { type Writable, writable, get } from 'svelte/store';
 
-interface IContentEditorStore {
+interface IContentEditorStates {
     flagToolbarVisibility: boolean;
 }
 
-const contentEditorStore: Writable<IContentEditorStore> = writable<IContentEditorStore>({
+const states: Writable<IContentEditorStates> = writable<IContentEditorStates>({
     flagToolbarVisibility: false,
 });
 
 const isToolbarVisible = (): boolean => {
-    const { flagToolbarVisibility }: IContentEditorStore = get(contentEditorStore);
+    const { flagToolbarVisibility }: IContentEditorStates = get(states);
     return flagToolbarVisibility;
 }
 
 const toggleToolbarVisibility = (): boolean => {
-    const { flagToolbarVisibility }: IContentEditorStore = get(contentEditorStore);
-    contentEditorStore.update(() => ({
+    const { flagToolbarVisibility }: IContentEditorStates = get(states);
+    states.update(() => ({
         flagToolbarVisibility: !flagToolbarVisibility,
     }));
     return !flagToolbarVisibility;
 }
 
 export default {
-    contentEditorStore,
+    states,
     isToolbarVisible,
     toggleToolbarVisibility,
 }

@@ -195,7 +195,7 @@
     }
 
     let flagToolbarVisibility = $state(false);
-    const unsubscribeStates = ContentEditorStore.contentEditorStore.subscribe(value => {
+    const unsubscribeStates = ContentEditorStore.states.subscribe(value => {
         flagToolbarVisibility = value.flagToolbarVisibility;
     });
     onDestroy(unsubscribeStates); // Clean up

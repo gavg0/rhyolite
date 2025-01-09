@@ -1,21 +1,21 @@
 import { type Writable, writable, get } from 'svelte/store';
 
-interface ICommandPaletteStore {
+interface ICommandPaletteStates {
     flagCommandPaletteVisibility: boolean;
 }
 
-const commandPaletteStore: Writable<ICommandPaletteStore> = writable<ICommandPaletteStore>({
+const states: Writable<ICommandPaletteStates> = writable<ICommandPaletteStates>({
     flagCommandPaletteVisibility: false,
 });
 
 const isVisible = (): boolean => {
-    const { flagCommandPaletteVisibility }: ICommandPaletteStore = get(commandPaletteStore);
+    const { flagCommandPaletteVisibility }: ICommandPaletteStates = get(states);
     return flagCommandPaletteVisibility;
 }
 
 const toggleVisibility = (): boolean => {
-    const { flagCommandPaletteVisibility }: ICommandPaletteStore = get(commandPaletteStore);
-    commandPaletteStore.update(() => ({
+    const { flagCommandPaletteVisibility }: ICommandPaletteStates = get(states);
+    states.update(() => ({
         flagCommandPaletteVisibility: !flagCommandPaletteVisibility,
     }));
     console.log(!flagCommandPaletteVisibility);
@@ -23,7 +23,7 @@ const toggleVisibility = (): boolean => {
 }
 
 export default {
-    commandPaletteStore,
+    states,
     isVisible,
     toggleVisibility,
 }

@@ -14,9 +14,9 @@ const getAllDocumentTabs = async (): Promise<Tab[]> => {
 
 const addNewDocumentTab = async (): Promise<void> => {
     try {
-        await getAllDocumentTabs();
-
         const newTab: Tab = await apiProvider.addNewDocumentTab();
+
+        await getAllDocumentTabs();
 
         tabsStore.updateCurrentTabState(newTab);
 
@@ -59,7 +59,7 @@ const loadRecentDocuments = async (): Promise<void> => {
             }
 
             // Update the tabs in UI
-            await apiProvider.getAllDocumentTabs();
+            await getAllDocumentTabs();
 
             // Load the last open document into the editor
             const open_tab: string = await apiProvider.getCurrentOpenTab();

@@ -7,7 +7,6 @@
     import { getContext, onMount, setContext } from "svelte";
     import { X, Minus, Square } from "lucide-react";
     import { Editor } from "@tiptap/core";
-    import StarterKit from "@tiptap/starter-kit";
     import Highlight from "@tiptap/extension-highlight";
     import Underline from "@tiptap/extension-underline";
     import Link from "@tiptap/extension-link";
@@ -26,11 +25,21 @@
     import Text from "@tiptap/extension-text";
     import Heading from "@tiptap/extension-heading";
     import Code from "@tiptap/extension-code";
-    import CodeBlock from "@tiptap/extension-code-block";
+    // import CodeBlock from "@tiptap/extension-code-block";
+    import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+    import Table from "@tiptap/extension-table";
+    import TableCell from "@tiptap/extension-table-cell";
+    import TableHeader from "@tiptap/extension-table-header";
+    import TableRow from "@tiptap/extension-table-row";
+    import Gapcursor from "@tiptap/extension-gapcursor";
     import Italic from "@tiptap/extension-italic";
     import HorizontalRule from "@tiptap/extension-horizontal-rule";
-    // import OrderedList from '@tiptap/extension-ordered-list';
-    // import BulletList from '@tiptap/extension-bullet-list';
+    import TaskItem from "@tiptap/extension-task-item";
+    import TaskList from "@tiptap/extension-task-list";
+    import ListItem from "@tiptap/extension-list-item";
+    import OrderedList from "@tiptap/extension-ordered-list";
+    import BulletList from "@tiptap/extension-bullet-list";
+    import { all, createLowlight } from "lowlight";
     import Close from "$lib/static/close.svg";
     import Minimise from "$lib/static/minimise.svg";
     import Maximise from "$lib/static/maximise.svg.svelte";
@@ -73,34 +82,35 @@
         toggleFilesMenu,
     });
 
-    const FontSizeTextStyle = TextStyle.extend({
-        addAttributes() {
-            return {
-                fontSize: {
-                    default: null,
-                    parseHTML: (element) => element.style.fontSize,
-                    renderHTML: (attributes) =>
-                        !attributes.fontSize
-                            ? {}
-                            : { style: `font-size: ${attributes.fontSize}` },
-                },
-            };
-        },
-    });
+    // const FontSizeTextStyle = TextStyle.extend({
+    //     addAttributes() {
+    //         return {
+    //             fontSize: {
+    //                 default: null,
+    //                 parseHTML: (element) => element.style.fontSize,
+    //                 renderHTML: (attributes) =>
+    //                     !attributes.fontSize
+    //                         ? {}
+    //                         : { style: `font-size: ${attributes.fontSize}` },
+    //             },
+    //         };
+    //     },
+    // });
 
     const appWindow = getCurrentWindow();
+    // create a lowlight instance with all languages loaded
+    const lowlight = createLowlight(all);
 
     onMount(() => {
         editor = new Editor({
             element,
             extensions: [
-                StarterKit,
+                TextStyle,
                 Heading.configure({
                     HTMLAttributes: {
                         class: "text-text",
                     },
                 }),
-                TextStyle,
                 Blockquote.configure({
                     HTMLAttributes: {
                         class: "border-l-2 border-current pl-4 my-4 text-text text-sm bg-transparent font-normal leading-none before:content-none after:content-none",
@@ -113,7 +123,7 @@
                     },
                 }),
                 Color,
-                FontSizeTextStyle,
+                // FontSizeTextStyle,
                 FontFamily,
                 Highlight,
                 Text,
@@ -134,6 +144,13 @@
                     wordCounter: (text) =>
                         text.split(/\s+/).filter((word) => word !== "").length,
                 }),
+                Gapcursor,
+                Table.configure({
+                    resizable: true,
+                }),
+                TableRow,
+                TableHeader,
+                TableCell,
                 Image,
                 YouTube,
                 Typography,
@@ -142,12 +159,18 @@
                         class: "bg-mantle text-text rounded px-1", // Added bg-surface0
                     },
                 }),
-                CodeBlock.configure({
+                CodeBlockLowlight.configure({
+                    lowlight,
                     HTMLAttributes: {
                         class: "bg-mantle text-text rounded-lg p-4", // Added bg-surface0
                     },
                 }),
                 Italic,
+                TaskList,
+                TaskItem,
+                ListItem,
+                OrderedList,
+                BulletList,
             ],
             content: ``,
             editorProps: {

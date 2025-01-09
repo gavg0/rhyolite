@@ -43,7 +43,7 @@ Install the `.rpm` version of the package from the [releases section](https://gi
 
 For any other GNU/Linux distribution you can use the `.AppImage` or run the `raw linux(linux_binary)` version from the [the releases section/](https://github.com/RedddFoxxyy/Rhyolite/releases).
 
-Note: You might need to make them executable by running ~~chmod +x Rhyolite.AppImage~~ or `chmod +x Rhyolite_[version]_linux_binary`.
+Note: You might need to make them executable by running `chmod +x Rhyolite_[version]_.AppImage` or `chmod +x Rhyolite_[version]_linux_binary`.
 
 # Manual compilation
 
@@ -53,8 +53,8 @@ NOTE: if you run into any compilation error you can always debug the error with 
 
 # On first startup
 
-1. Run the `fextify.exe` included in this folder. (or run `npm run tauri build -- --target x86_64-pc-windows-msvc` to compile)
-2. ~~Press `CTRL` + `P` to open the command pallet. It will give you a good idea of what's going on. Otherwise, explore!~~
+1. Run the `Rhyolite.exe` included in this folder. (or run `npm run tauri build` to compile)
+2. Press `CTRL` + `P` to open the command pallet. It will give you a good idea of what's going on. Otherwise, explore!
 
 # ~~Themes~~(soon)
 
@@ -77,3 +77,21 @@ You can open a pull request to add your theme in `/src/styles/themes`. We will a
 1. The themeing is not good, so some stuff might be hard to see.
 2. Tab icon can sometimes glitch out.
 3. Opening a lot of tabs can sometimes glitch the title.
+
+# Licensing
+
+```
+Copyright 2025 RedddFoxxyy
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```

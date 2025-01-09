@@ -1,74 +1,22 @@
-:root {
-    font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    line-height: 24px;
-    font-weight: 400;
-  
-    color: #e0e0e0;
-    background-color: #0f0f0f;
-  
-    --container-title-color: #1b1b1b;
-    --container-color: #1b1b1b;
-    --container-editor-color: #0f0f0f;
-    --container-text-color: #e0e0e0;
-    --container-box-shadow:#00000011;
-    --container-box-shadow-focused: #0000001f;
-  
-    --ui-element-background: #c7c7c731;
-  
-    --editor-bg: var(--container-editor-color);
-    --editor-text: #e0e0e0;
-    --editor-selection-highlight: #9853ff47;
-    --editor-border: #333;
-    --editor-accent: #646cff;
-    --editor-placeholder: #666;
-    --editor-blockquote: #c0c0c0;
-    --editor-code-bg: #1a1a1a;
-    
-    /* Button Variables */
-    --button-bg: #2b2b2b00;
-    --button-border: #3a3a3a00;
-    --button-shadow: #a75eff00;
-    --button-hover-bg: #c4c4c450;
-    --button-hover-border: #4a4a4a;
-    --button-hover-shadow: rgba(154, 60, 255, 0.3);
-    --button-active-bg: #4a4a4a;
-    --button-active-border: #5a5a5a;
-    --button-active-shadow: rgba(0, 0, 0, 0.4);
-    --button-disabled-bg: #1a1a1a;
-    --button-disabled-border: #2a2a2a;
-    --button-focus-border: #6a6a6a;
-    --button-focus-shadow: rgba(100, 100, 100, 0.3);
-    
-    /* Button Icon Colors */
-    --button-icon-color: #ffffff;
-    --button-icon-hover-color: #ffffff;
-    --button-icon-active-color: #ffffff;
-    
-    /* Dropdown Variables */
-    --dropdown-bg: #2a2a2a61;
-    --dropdown-text-color: #ffffff;
-    --dropdown-border: #3a3a3a00;
-    --dropdown-shadow: rgba(0, 0, 0, 0.2);
-    --dropdown-hover-bg: #3a3a3a3d;
-    --dropdown-hover-border: #4a4a4a;
-    --dropdown-hover-shadow: rgba(154, 60, 255, 0.3);
-    --dropdown-options-bg: #2a2a2a;
-    --dropdown-options-border: #3a3a3a;
-    --dropdown-options-shadow: rgba(0, 0, 0, 0.3);
-    --dropdown-item-color: #ffffff;
-    --dropdown-item-hover-bg: #3a3a3a;
-    --dropdown-item-hover-color: #ffffff;
-    
-    /* Color Picker Variables */
-    --color-picker-border: #3a3a3a00;
-    --color-picker-hover-border: #4a4a4a;
-    --color-picker-hover-shadow: rgba(0, 0, 0, 0.3);
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-    /* commandpalette variables */
-    --commandpalette_background_blur: #00000072;
-    --commandpalette_bg: #222222;
-    --commandpalette_hover_bg:#c4c4c450;
-    --commandpalette_border: #ababab;
-
-  }
+@layer base {
+    :root {
+        /* Converted from HEX to HSL */
+        --color-text: 0deg 0% 100%; /* hsl(0deg 0% 100%) */
+        --color-subtext2: 210deg 13% 95%; /* hsl(210deg 13% 95%) */
+        --color-subtext1: 210deg 13% 86%; /* hsl(210deg 13% 86%) */
+        --color-subtext0: 210deg 13% 79%; /* hsl(210deg 13% 79%) */
+        --color-overlay2: 210deg 11% 71%; /* hsl(210deg 11% 71%) */
+        --color-overlay1: 210deg 11% 63%; /* hsl(210deg 11% 63%) */
+        --color-overlay0: 210deg 11% 54%; /* hsl(210deg 11% 54%) */
+        --color-surface2: 210deg 8% 48%; /* hsl(210deg 8% 48%) */
+        --color-surface1: 210deg 7% 41%; /* hsl(210deg 7% 41%) */
+        --color-surface0: 210deg 7% 35%; /* hsl(210deg 7% 35%) */
+        --color-base: 210deg 8% 23%; /* hsl(210deg 8% 23%) */
+        --color-crust: 210deg 9% 15%; /* hsl(210deg 9% 15%) */
+        --color-mantle: 210deg 9% 6%; /* hsl(210deg 9% 6%) */
+    }
+}

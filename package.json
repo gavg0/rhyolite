@@ -1,8 +1,11 @@
 {
-  "name": "fextifyplus",
-  "version": "0.1.2",
-  "description": "",
+  "name": "rhyolite",
+  "version": "0.1.4",
+  "description": "A simple text editor written in Tauri, inspired by Obsidian.",
   "type": "module",
+  "author": {
+    "name": "Rhyolite Team"
+  },
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",

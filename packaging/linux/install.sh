@@ -3,7 +3,7 @@
 set -e
 
 APP_NAME="Rhyolite"   # Replace with your app's name
-BINARY_URL="https://github.com/RedddFoxxyy/Rhyolite/releases/download/v0.1.2/Rhyolite_0.1.2_x86_64_linux_binary"  # Update with your binary's URL
+BINARY_URL="https://github.com/RedddFoxxyy/Rhyolite/releases/download/v0.1.4/Rhyolite_0.1.4_x86_64_linux_binary"  # Update with your binary's URL
 ICON_URL="https://raw.githubusercontent.com/RedddFoxxyy/Rhyolite/master/src-tauri/icons/icon.png"  # Update with your app's icon URL
 INSTALL_DIR="$HOME/.local/bin"
 DESKTOP_FILE_DIR="$HOME/.local/share/applications" # For a user-specific install

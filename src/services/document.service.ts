@@ -1,5 +1,5 @@
 import type { Tab } from "../types/tab";
-import tabsStore from "../store/tabs.store";
+import tabsStore from "../stores/tabs.store";
 import { ApiProvider } from "./api.service";
 import TabService from "./tab.service";
 import type { Document } from "../types/document";

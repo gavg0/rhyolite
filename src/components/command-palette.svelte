@@ -1,9 +1,9 @@
 <script lang="ts">
-    import CommandPaletteStore from "../store/command-palette.store";
+    import CommandPaletteStore from "../stores/command-palette.store";
     import DocumentService from "../services/document.service";
     import TabService from "../services/tab.service";
     import { onDestroy } from "svelte";
-    import ContentEditorStore from "../store/content-editor.store";
+    import ContentEditorStore from "../stores/content-editor.store";
 
     let selectedIndex: number = $state(-1);
     let searchText: string = $state("");

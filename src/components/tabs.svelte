@@ -2,7 +2,7 @@
     import { Tabs, } from 'flowbite-svelte';
     import DocumentTabItem from "./document-tab-item.svelte";
     import { onDestroy } from 'svelte';
-    import TabsStore from "../store/tabs.store";
+    import TabsStore from "../stores/tabs.store";
     import {type Tab, TabType} from "../types/tab";
 
     let tabs: Tab[] = $state([]);

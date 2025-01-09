@@ -1,5 +1,5 @@
 import type { Tab } from "../types/tab";
-import TabsStore, {type ITabsStates} from "../store/tabs.store";
+import TabsStore, {type ITabsStates} from "../stores/tabs.store";
 import { ApiProvider } from "./api.service";
 
 const apiProvider = new ApiProvider();

@@ -15,7 +15,7 @@
     import { Color } from '@tiptap/extension-color';
     import Bold from '@tiptap/extension-bold';
     import type { ChainedCommands } from "@tiptap/core";
-    import ContentEditorStore from "../../store/content-editor.store";
+    import ContentEditorStore from "../../stores/content-editor.store";
     import { ChevronUpOutline, ChevronDownOutline } from 'flowbite-svelte-icons';
     import ToolbarButton from "./components/toolbar-button.svelte";
 

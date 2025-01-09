@@ -1,8 +1,8 @@
 <script lang="ts">
     import DocumentService from "../services/document.service";
     import TabService from "../services/tab.service";
-    import CommandPaletteStore from "../store/command-palette.store";
-    import ContentEditorStore from "../store/content-editor.store";
+    import CommandPaletteStore from "../stores/command-palette.store";
+    import ContentEditorStore from "../stores/content-editor.store";
 
     const handleKeydown = (event: KeyboardEvent): void => {
         if (event.ctrlKey && event.key === "d") {

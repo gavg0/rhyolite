@@ -1,7 +1,7 @@
 <script lang="ts">
     import {Input, TabItem,} from "flowbite-svelte";
     import type {Tab} from "../types/tab";
-    import ContentEditor from "./content-editor.svelte";
+    import ContentEditor from "./content-editor/content-editor.svelte";
     import {Editor,} from 'svelte-tiptap';
     import {onMount} from "svelte";
     import TabService from "../services/tab.service";

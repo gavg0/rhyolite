@@ -16,8 +16,9 @@ const addNewDocumentTab = async (): Promise<void> => {
     try {
         const newTab: Tab = await apiProvider.addNewDocumentTab();
 
-        await getAllDocumentTabs();
+        const currentTabs = tabsStore.getTabsState();
 
+        tabsStore.updateTabsState([...currentTabs, newTab]);
         tabsStore.updateCurrentTabState(newTab);
 
         await apiProvider.sendCurrentOpenTab(newTab.id);

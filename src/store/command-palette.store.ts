@@ -18,7 +18,6 @@ const toggleVisibility = (): boolean => {
     states.update(() => ({
         flagCommandPaletteVisibility: !flagCommandPaletteVisibility,
     }));
-    console.log(!flagCommandPaletteVisibility);
     return !flagCommandPaletteVisibility;
 }
 

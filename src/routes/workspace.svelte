@@ -389,14 +389,19 @@
     }
 
     let lastNewTabTime: number = $state(0);
-    const MIN_TAB_CREATION_INTERVAL = 100;
+    let lastTabDeleteTime: number = $state(0);
+    const MIN_DEBOUNCE_INTERVAL = 100;
     function handleKeydown(event: KeyboardEvent): void {
         if (event.ctrlKey && event.key === "d") {
+            if (Date.now() - lastTabDeleteTime < MIN_DEBOUNCE_INTERVAL) {
+                event.preventDefault();
+                return;
+            }
             event.preventDefault();
             deleteDocument();
         }
         if (event.ctrlKey && event.key === "n") {
-            if (Date.now() - lastNewTabTime < MIN_TAB_CREATION_INTERVAL) {
+            if (Date.now() - lastNewTabTime < MIN_DEBOUNCE_INTERVAL) {
                 event.preventDefault();
                 return;
             }
@@ -436,6 +441,7 @@
     function handleTitleChange(event: Event): void {
         const target = event.target as HTMLTextAreaElement;
         titleText = target.value;
+        autoSave();
     }
 </script>
 

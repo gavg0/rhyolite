@@ -20,7 +20,6 @@ let documentContent: any = $state();
 onMount(async () => {
     documentTitle = tab.title;
     // content = tab.content;
-    console.log('load...');
     const doc = await DocumentService.loadDocument(tab.id);
 
     if(!doc) return;
@@ -32,7 +31,7 @@ onMount(async () => {
 const handleTitleChange = (event: Event) => {
     const target = event.target as HTMLTextAreaElement;
     documentTitle = target.value;
-    TabService.updateTabTitleById(tab.id, documentTitle);
+    TabService.updateTabTitleById(tab.id, target.value);
 
     saveDocument();
 }
@@ -50,7 +49,6 @@ const saveDocument = async () => {
     if(saveTimeout) clearTimeout(saveTimeout);
     // Set a new timeout to trigger `saveAction` after 0.5 seconds
     saveTimeout = setTimeout(() => {
-        console.log('saving...');
         DocumentService.saveDocument({
             documentId: tab.id,
             documentTitle,
@@ -61,7 +59,7 @@ const saveDocument = async () => {
 </script>
 
 <TabItem open={open} onclick={onclick}>
-    <span slot="title">{ tab.title }</span>
+    <div slot="title" class="w-20 overflow-hidden text-ellipsis whitespace-nowrap">{ (!tab.title || tab.title === "") ? "Untitled" : tab.title}</div>
     <div class="mb-6">
         <Input id="large-input" size="lg" placeholder="Enter title here..." value={documentTitle} oninput={handleTitleChange} />
     </div>

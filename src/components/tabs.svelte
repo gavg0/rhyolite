@@ -16,7 +16,6 @@
 
     const onOpenTab = (tab: Tab) => {
         TabsStore.updateCurrentTabState(tab);
-        console.log('current tab', tab);
     }
 </script>
 

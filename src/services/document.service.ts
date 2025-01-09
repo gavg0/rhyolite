@@ -14,9 +14,10 @@ const getAllDocumentTabs = async (): Promise<Tab[]> => {
 
 const addNewDocumentTab = async (): Promise<void> => {
     try {
+        await getAllDocumentTabs();
+
         const newTab: Tab = await apiProvider.addNewDocumentTab();
 
-        await getAllDocumentTabs();
         tabsStore.updateCurrentTabState(newTab);
 
         await apiProvider.sendCurrentOpenTab(newTab.id);
@@ -79,7 +80,7 @@ const saveDocument = async (
     await apiProvider.saveDocument({
         documentId,
         documentTitle,
-        documentContent: typeof documentContent === "string" ? documentContent : JSON.stringify(documentContent),
+        documentContent: documentContent ? ( typeof documentContent === "string" ? documentContent : JSON.stringify(documentContent) ): "",
     });
 }
 

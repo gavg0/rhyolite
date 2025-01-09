@@ -1,0 +1,16 @@
+/* public/themes/dark-theme.css */
+:root {
+    --color-text: #ffffff;
+    --color-subtext2: #f1f2f3;
+    --color-subtext1: #d8dbde;
+    --color-subtext0: #c2c6cb;
+    --color-overlay2: #acb2b8;
+    --color-overlay1: #969da5;
+    --color-overlay0: #808992;
+    --color-surface2: #6c757d;
+    --color-surface1: #596167;
+    --color-surface0: #464c51;
+    --color-base: #33373b;
+    --color-crust: #202325;
+    --color-mantle: #0d0e0f;
+}

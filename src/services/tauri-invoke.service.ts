@@ -31,8 +31,12 @@ export class TauriInvokeServiceProvider implements IApiServiceProvider {
             title: documentTitle,
             content: documentContent,
         });
+        await invoke("update_tab_title", {
+            id: documentId,
+            title: documentTitle,
+        });
     }
-
+    
     async loadRecentDocuments(): Promise<Document[]>{
         return await invoke<Document[]>("load_recent_files");
     }

@@ -42,6 +42,7 @@ let saveTimeout: number | undefined;
 const delaySave = 500;
 const handleContentChange = (editor: Editor) => {
     documentContent = editor.getHTML();
+    // console.log(documentContent) // Uncomment for debugging.
     // Update word and character counts
     wordCount = editor.storage.characterCount.words();
     charCount = editor.storage.characterCount.characters();

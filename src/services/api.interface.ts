@@ -16,8 +16,6 @@ export interface IApiServiceProvider {
 
     loadRecentDocuments(): Promise<Document[]>;
 
-    resetTabsOrderCount():Promise<void>;
-
     loadTab(
         { documentId, documentTitle }: { documentId: string; documentTitle: string }
     ): Promise<void>;

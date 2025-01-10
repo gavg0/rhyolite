@@ -39,7 +39,6 @@ const deleteDocumentTab = async (): Promise<void> => {
             const lastTab = tabs[tabs.length - 1];
             tabsStore.updateCurrentTabState(lastTab);
         } else {
-            await apiProvider.resetTabsOrderCount();
             await addNewDocumentTab();
         }
     } catch (error) {

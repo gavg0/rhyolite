@@ -37,9 +37,10 @@ export class TauriInvokeServiceProvider implements IApiServiceProvider {
         return await invoke<Document[]>("load_recent_files");
     }
 
-    async resetTabsOrderCount() {
-        await invoke("reset_tab_order_count");
-    }
+    // Not required Anymore, order of tab handled by the back end.
+    // async resetTabsOrderCount() {
+    //     await invoke("reset_tab_order_count");
+    // }
 
     async loadTab(
         { documentId, documentTitle }: { documentId: string; documentTitle: string }

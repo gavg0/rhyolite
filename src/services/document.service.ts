@@ -8,23 +8,23 @@ import { isValidJSON } from "../helpers/common.helper";
 const apiProvider = new ApiProvider();
 
 const getAllDocumentTabs = async (): Promise<Tab[]> => {
-    const tabs: Tab[] =  await apiProvider.getAllDocumentTabs();
+    const tabs: Tab[] = await apiProvider.getAllDocumentTabs();
     return tabsStore.updateTabsState(tabs);
-}
+};
 
 const addNewDocumentTab = async (): Promise<void> => {
     try {
         const newTab: Tab = await apiProvider.addNewDocumentTab();
 
         await getAllDocumentTabs();
-        
+
         tabsStore.updateCurrentTabState(newTab);
 
         await apiProvider.sendCurrentOpenTab(newTab.id);
     } catch (error) {
         console.error("Failed to create new document:", error);
     }
-}
+};
 
 const deleteDocumentTab = async (): Promise<void> => {
     try {
@@ -43,7 +43,7 @@ const deleteDocumentTab = async (): Promise<void> => {
     } catch (error) {
         console.error("Failed to delete document:", error);
     }
-}
+};
 
 const loadRecentDocuments = async (): Promise<void> => {
     try {
@@ -54,7 +54,10 @@ const loadRecentDocuments = async (): Promise<void> => {
 
             // Load each document as a tab
             for (const doc of docs) {
-                await apiProvider.loadTab({ documentId: doc.id, documentTitle: doc.title });
+                await apiProvider.loadTab({
+                    documentId: doc.id,
+                    documentTitle: doc.title,
+                });
             }
 
             // Update the tabs in UI
@@ -70,23 +73,28 @@ const loadRecentDocuments = async (): Promise<void> => {
     } catch (error) {
         console.error("Failed to load documents:", error);
     }
-}
+};
 
-const saveDocument = async (
-    { documentId, documentTitle, documentContent }:
-        { documentId: string; documentTitle: string; documentContent: any }
-): Promise<void> => {
+const saveDocument = async ({
+    documentId,
+    documentTitle,
+    documentContent,
+}: {
+    documentId: string;
+    documentTitle: string;
+    documentContent: any;
+}): Promise<void> => {
     await apiProvider.saveDocument({
         documentId,
         documentTitle,
         documentContent: documentContent || "",
     });
-}
+};
 
 const loadDocument = async (documentId: string): Promise<Document | null> => {
     try {
-        const doc =  await apiProvider.getDocumentContent(documentId);
-        if(!doc) return null;
+        const doc = await apiProvider.getDocumentContent(documentId);
+        if (!doc) return null;
 
         // No need to parse JSON since content is already HTML
         // if (isValidJSON(doc.content)) doc.content = JSON.parse(doc.content);
@@ -95,7 +103,7 @@ const loadDocument = async (documentId: string): Promise<Document | null> => {
         console.error("Failed to load document:", error);
         return null;
     }
-}
+};
 
 export default {
     getAllDocumentTabs,
@@ -104,4 +112,4 @@ export default {
     loadRecentDocuments,
     saveDocument,
     loadDocument,
-}
+};

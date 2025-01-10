@@ -1,15 +1,16 @@
 //! This module provides IO related functions for the app.
-use std::fs;
-use std::path::PathBuf;
+use std::fs; //Filesystem module
+use std::path::PathBuf; //PathBuf datatype to store path strings
+// use tauri_plugin_dialog::DialogExt; //DialogExt trait to show dialog boxes
 
-use dirs;
-use sanitize_filename;
+use dirs; //dirs module to get the path of the documents directory
+use sanitize_filename; //sanitize_filename module to sanitize filenames
 
-use html2md::parse_html;
-use pulldown_cmark::{html, Options, Parser};
+use html2md::parse_html; //html2md module to convert html to markdown
+use pulldown_cmark::{html, Options, Parser}; //pulldown_cmark module to parse markdown
 
-use crate::{DocumentData, RecentFileInfo, UserData};
-use crate::{CURRENT_OPEN_TAB, RECENT_FILES, TABS};
+use crate::{DocumentData, RecentFileInfo, UserData}; //Importing the DocumentData, RecentFileInfo and UserData structs
+use crate::{CURRENT_OPEN_TAB, RECENT_FILES, TABS}; //Importing the CURRENT_OPEN_TAB, RECENT_FILES and TABS mutexes
 
 /// This function finds the path to the 'documents'
 /// directory for different 'os' and returns the PathBuf(a mutable path string)
@@ -53,6 +54,14 @@ pub fn get_trove_dir(trove_name: &str) -> PathBuf {
     trove_dir
 }
 
+/// This function is called when the app is closing.
+/// It saves the complete tabs information.
+/// It locks the TABS, CURRENT_OPEN_TAB and RECENT_FILES mutexes and then
+/// converts the IndexMap values to Vec for storage.
+/// Then it creates a UserData struct and stores the tabs, last open tab and recent files in it.
+/// Then it creates a directory 'appdata' in the documents directory and stores the userdata in a file
+/// 'userdata.json' in the appdata directory.
+/// If there is an error in saving the userdata, it prints the error.
 pub fn on_app_close() {
     // Save the complete tabs information
     let tabs = TABS
@@ -90,6 +99,14 @@ pub fn on_app_close() {
     }
 }
 
+/// This function saves the user data.
+/// It locks the TABS, CURRENT_OPEN_TAB and RECENT_FILES mutexes and then
+/// converts the IndexMap values to Vec for storage.
+/// Then it creates a UserData struct and stores the tabs, last open tab and recent files in it.
+/// Then it creates a directory 'appdata' in the documents directory and stores the userdata in a file
+/// 'userdata.json' in the appdata directory.
+/// If there is an error in saving the userdata, it returns the error.
+/// If the userdata is saved successfully, it returns Ok(()).
 pub fn save_user_data() -> Result<(), String> {
     let tabs = TABS
         .lock()
@@ -120,7 +137,7 @@ pub fn save_user_data() -> Result<(), String> {
     }
 }
 
-// Save files as markdown instead of json
+/// This function saves the document.
 #[tauri::command]
 pub fn save_document(id: String, title: String, content: String) -> Result<String, String> {
     let mut recent_files = RECENT_FILES
@@ -252,7 +269,7 @@ pub fn get_document_content(id: String) -> Result<Option<DocumentData>, String> 
 }
 
 #[tauri::command]
-pub fn load_recent_files() -> Result<Vec<DocumentData>, String> {
+pub fn load_last_open_tabs() -> Result<Vec<DocumentData>, String> {
     let appdata_dir = get_documents_dir().join("appdata");
     let userdata_path = appdata_dir.join("userdata.json");
 
@@ -323,6 +340,7 @@ pub fn load_recent_files() -> Result<Vec<DocumentData>, String> {
     Ok(files)
 }
 
+/// This function returns the metadata of the recent files.
 #[tauri::command]
 pub fn get_recent_files_metadata() -> Result<Vec<RecentFileInfo>, String> {
     if let Err(e) = save_user_data() {

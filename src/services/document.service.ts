@@ -47,7 +47,7 @@ const deleteDocumentTab = async (): Promise<void> => {
 
 const loadRecentDocuments = async (): Promise<void> => {
     try {
-        const docs: Document[] = await apiProvider.loadRecentDocuments();
+        const docs: Document[] = await apiProvider.getLastOpenedTabs();
 
         if (docs.length > 0) {
             // await apiProvider.resetTabsOrderCount();

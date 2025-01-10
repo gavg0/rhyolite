@@ -42,8 +42,8 @@ export class TauriInvokeServiceProvider implements IApiServiceProvider {
         });
     }
 
-    async loadRecentDocuments(): Promise<Document[]> {
-        return await invoke<Document[]>("load_recent_files");
+    async getLastOpenedTabs(): Promise<Document[]> {
+        return await invoke<Document[]>("load_last_open_tabs");
     }
 
     // Not required Anymore, order of tab handled by the back end.

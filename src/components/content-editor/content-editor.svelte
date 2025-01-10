@@ -43,6 +43,7 @@
     import ToolbarButton from "./components/toolbar-button.svelte";
 
     let editor = $state() as Readable<Editor>;
+    const lowlight = createLowlight(all);
 
     interface ContentEditorProps {
         content: any;
@@ -93,6 +94,11 @@
                 FontFamily,
                 Highlight,
                 Underline,
+                Typography,
+                Document,
+                TaskList,
+                TaskItem,
+                ListItem,
                 Link.configure({
                     openOnClick: false,
                     autolink: true,
@@ -109,6 +115,9 @@
                         [...new Intl.Segmenter().segment(text)].length,
                     wordCounter: (text) =>
                         text.split(/\s+/).filter((word) => word !== "").length,
+                }),
+                CodeBlockLowlight.configure({
+                    lowlight,
                 }),
                 Image,
                 YouTube,

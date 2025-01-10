@@ -17,15 +17,20 @@ export class TauriInvokeServiceProvider implements IApiServiceProvider {
     }
 
     async getDocumentContent(tabId: string): Promise<Document | null> {
-        return await invoke<Document | null>(
-            "get_document_content",
-            { id: tabId },
-        );
+        return await invoke<Document | null>("get_document_content", {
+            id: tabId,
+        });
     }
 
-    async saveDocument(
-        { documentId, documentTitle, documentContent }: { documentId: string; documentTitle: string; documentContent: string }
-    ): Promise<void> {
+    async saveDocument({
+        documentId,
+        documentTitle,
+        documentContent,
+    }: {
+        documentId: string;
+        documentTitle: string;
+        documentContent: string;
+    }): Promise<void> {
         await invoke("save_document", {
             id: documentId,
             title: documentTitle,
@@ -36,8 +41,8 @@ export class TauriInvokeServiceProvider implements IApiServiceProvider {
             title: documentTitle,
         });
     }
-    
-    async loadRecentDocuments(): Promise<Document[]>{
+
+    async loadRecentDocuments(): Promise<Document[]> {
         return await invoke<Document[]>("load_recent_files");
     }
 
@@ -46,20 +51,24 @@ export class TauriInvokeServiceProvider implements IApiServiceProvider {
     //     await invoke("reset_tab_order_count");
     // }
 
-    async loadTab(
-        { documentId, documentTitle }: { documentId: string; documentTitle: string }
-    ): Promise<void> {
+    async loadTab({
+        documentId,
+        documentTitle,
+    }: {
+        documentId: string;
+        documentTitle: string;
+    }): Promise<void> {
         await invoke("load_tab", {
             id: documentId,
             title: documentTitle,
         });
     }
 
-    async CloseCurrentTab(documentId: string){
+    async CloseCurrentTab(documentId: string) {
         await invoke("close_tab", { id: documentId });
     }
 
-    async deleteDocument(documentId: string){
+    async deleteDocument(documentId: string) {
         await invoke("delete_document", { id: documentId });
     }
 

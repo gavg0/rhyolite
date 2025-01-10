@@ -1,7 +1,6 @@
 export interface Tab {
     id: string;
     title: string;
-    order?: number;
     tabType?: TabType;
     documentId?: string;
 }

@@ -24,6 +24,10 @@
             event.preventDefault();
             TabService.cycleTabs();
         }
+        if (event.ctrlKey && event.altKey && event.key === "c") {
+            event.preventDefault();
+            TabService.closeTab();
+        }
         if (event.ctrlKey && event.key === "1") {
             event.preventDefault();
             TabService.gotoTab1();

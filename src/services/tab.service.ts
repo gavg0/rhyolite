@@ -1,6 +1,7 @@
 import type { Tab } from "../types/tab";
 import TabsStore, {type ITabsStates} from "../stores/tabs.store";
 import { ApiProvider } from "./api.service";
+import docservice from "./document.service";
 
 const apiProvider = new ApiProvider();
 
@@ -15,6 +16,22 @@ const switchTab = async (tabId: string): Promise<Tab | undefined> => {
     return tab;
 };
 
+const closeTab = async () => {
+    try {
+        const currentTab: Tab | null = TabsStore.getCurrentTabState();
+        if (currentTab === null) return;
+        await apiProvider.CloseCurrentTab(currentTab.id);
+        const tabs = await docservice.getAllDocumentTabs();
+        if (tabs.length > 0) {
+            const lastTab = tabs[tabs.length - 1];
+            TabsStore.updateCurrentTabState(lastTab);
+        } else {
+            await docservice.addNewDocumentTab();
+        }
+    } catch (error) {
+        console.error("Failed to delete document:", error);
+    }
+};
 
 const gotoTab1 = async () => {
     const tabs: Tab[] = TabsStore.getTabsState();
@@ -58,5 +75,6 @@ export default {
     gotoTab1,
     gotoLastTab,
     cycleTabs,
+    closeTab,
     updateTabTitleById,
 }

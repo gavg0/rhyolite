@@ -55,6 +55,10 @@ export class TauriInvokeServiceProvider implements IApiServiceProvider {
         });
     }
 
+    async CloseCurrentTab(documentId: string){
+        await invoke("close_tab", { id: documentId });
+    }
+
     async deleteDocument(documentId: string){
         await invoke("delete_document", { id: documentId });
     }

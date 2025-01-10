@@ -4,6 +4,7 @@
     import { createEditor, Editor, EditorContent } from 'svelte-tiptap';
     import { Dropdown, DropdownItem, Tooltip } from 'flowbite-svelte';
     import StarterKit from '@tiptap/starter-kit';
+    import CharacterCount from '@tiptap/extension-character-count';
     import Highlight from '@tiptap/extension-highlight';
     import Underline from '@tiptap/extension-underline';
     import Link from '@tiptap/extension-link';
@@ -80,6 +81,12 @@
                         'heading',
                         'paragraph',
                     ]
+                }),
+                CharacterCount.configure({
+                    textCounter: (text) =>
+                        [...new Intl.Segmenter().segment(text)].length,
+                    wordCounter: (text) =>
+                        text.split(/\s+/).filter((word) => word !== "").length,
                 }),
                 Image,
                 YouTube,

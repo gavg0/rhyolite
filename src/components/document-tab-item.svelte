@@ -17,6 +17,8 @@ let { open, tab, onclick }: DocumentTabItemProps = $props();
 
 let documentTitle: string = $state("");
 let documentContent: any = $state();
+let wordCount: number = $state(0);
+let charCount: number = $state(0);
 onMount(async () => {
     documentTitle = tab.title;
     // content = tab.content;
@@ -40,7 +42,9 @@ let saveTimeout: number | undefined;
 const delaySave = 500;
 const handleContentChange = (editor: Editor) => {
     documentContent = editor.getHTML();
-
+    // Update word and character counts
+    wordCount = editor.storage.characterCount.words();
+    charCount = editor.storage.characterCount.characters();
     saveDocument();
 }
 
@@ -65,5 +69,8 @@ const saveDocument = async () => {
     </div>
     <div class="mb-6">
         <ContentEditor content={documentContent} onchange={handleContentChange}  />
+    </div>
+    <div class="text-sm text-gray-500 dark:text-gray-400">
+        {wordCount} words | {charCount} characters
     </div>
 </TabItem>

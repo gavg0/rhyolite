@@ -43,9 +43,9 @@ export class TauriInvokeServiceProvider implements IApiServiceProvider {
 
     async loadTab(
         { documentId, documentTitle }: { documentId: string; documentTitle: string }
-    ) {
+    ): Promise<void> {
         await invoke("load_tab", {
-            idIn: documentId,
+            id: documentId,
             title: documentTitle,
         });
     }

@@ -39,7 +39,7 @@ const handleTitleChange = (event: Event) => {
 let saveTimeout: number | undefined;
 const delaySave = 500;
 const handleContentChange = (editor: Editor) => {
-    documentContent = editor.getJSON();
+    documentContent = editor.getHTML();
 
     saveDocument();
 }

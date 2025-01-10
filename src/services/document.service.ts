@@ -52,7 +52,7 @@ const loadRecentDocuments = async (): Promise<void> => {
         const docs: Document[] = await apiProvider.loadRecentDocuments();
 
         if (docs.length > 0) {
-            await apiProvider.resetTabsOrderCount();
+            // await apiProvider.resetTabsOrderCount();
 
             // Load each document as a tab
             for (const doc of docs) {
@@ -81,7 +81,7 @@ const saveDocument = async (
     await apiProvider.saveDocument({
         documentId,
         documentTitle,
-        documentContent: documentContent ? ( typeof documentContent === "string" ? documentContent : JSON.stringify(documentContent) ): "",
+        documentContent: documentContent || "",
     });
 }
 
@@ -90,7 +90,8 @@ const loadDocument = async (documentId: string): Promise<Document | null> => {
         const doc =  await apiProvider.getDocumentContent(documentId);
         if(!doc) return null;
 
-        if (isValidJSON(doc.content)) doc.content = JSON.parse(doc.content);
+        // No need to parse JSON since content is already HTML
+        // if (isValidJSON(doc.content)) doc.content = JSON.parse(doc.content);
         return doc;
     } catch (error) {
         console.error("Failed to load document:", error);

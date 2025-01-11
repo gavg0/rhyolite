@@ -1,15 +1,14 @@
 # Rhyolite
 
 <img src='assets\Rhyolite_is_Cool!.png'>
-A simple text editor written in Tauri, inspired by Obsidian. 
 
-<br>
+## A simple text editor written in Tauri, inspired by Obsidian. 
 
 
-This is a **prototype**, not a fully polished version and is a fork of [fextify](https://github.com/face-hh/fextify) since the original repo was not being updated or maintained anymore. **!!CAUTION!!** The project is going under a lot of improvements, migrations and upgrades, it is advised to wait till a new binary is released and then test the project! 
+This is a **prototype**, not a fully polished version and is a fork of [fextify](https://github.com/face-hh/fextify) since the original repo was not being updated or maintained anymore. **!!CAUTION!!** The project is going under a lot of improvements, migrations and upgrades, it is advised to wait till a new binary is released and then test the project! If you want to compile the project from source clone from the master-v0.1.4-old branch.
 
 # Changes include but are not limited too:-
-- Rewriting the backend and frontend using Tauri and Svelte.
+- Rewriting the backend and frontend using Rust and Svelte.
 - Changing the default editor from ckeditor to quill(since ckeditor 5 is not free anymore.)
 - ~~Maybe a renaming and icon change in future(planned).~~(Renamed to Rhyolite)
 
@@ -19,9 +18,16 @@ I decided to redo the whole project and continue developement on it cause I real
 
 ## Windows
 
+### For 64bit systems:
 Run the `Rhyolite_[version]_x64_en-US.msi` msi installer or run the `Rhyolite_[version]_x64-setup.exe` installer included in the [releases section](https://github.com/RedddFoxxyy/Rhyolite/releases).
 
-## Mac-OS
+### For 32bit systems:
+Run the `Rhyolite_[version]_x86_en-US.msi` msi installer or run the `Rhyolite_[version]_x86-setup.exe` installer included in the [releases section](https://github.com/RedddFoxxyy/Rhyolite/releases).
+
+### For Arm64(snapdragon processors) systems:
+Run the `Rhyolite_[version]_arm64_en-US.msi` msi installer or run the `Rhyolite_[version]_arm64-setup.exe` installer included in the [releases section](https://github.com/RedddFoxxyy/Rhyolite/releases).
+
+## Mac-OS (You might face issues opening the mac version since the app is not signed.)
 
 Run the `Rhyolite_[version]_x64.dmg` or run the `Rhyolite_[version]_aarch64.dmg` for M series Macbooks, included in the [releases section](https://github.com/RedddFoxxyy/Rhyolite/releases).
 

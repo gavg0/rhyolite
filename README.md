@@ -18,6 +18,7 @@ I decided to redo the whole project and continue developement on it cause I real
 # For New Contributers:-
 - The source code in the master branch went through a massive restructuring and as a result we now have a default styling of the Flowbite/Tiptap editor and will not look the same as portrayed in the image. If you want to compile the source for latest release of the app I will suggest that you compile the source from master-v0.1.4-old branch instead.
 - After we restyle the UI again, the app will look similar to v0.1.4!
+- If you want to work on the latest version of the app, I will suggest that you join discord!
 
 # How to run?
 

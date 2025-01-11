@@ -8,6 +8,7 @@ use sanitize_filename; //sanitize_filename module to sanitize filenames
 
 use html2md::parse_html; //html2md module to convert html to markdown
 use pulldown_cmark::{html, Options, Parser}; //pulldown_cmark module to parse markdown
+use crate::editor::markdown_handler;
 
 use crate::{DocumentData, RecentFileInfo, UserData}; //Importing the DocumentData, RecentFileInfo and UserData structs
 use crate::{CURRENT_OPEN_TAB, RECENT_FILES, TABS}; //Importing the CURRENT_OPEN_TAB, RECENT_FILES and TABS mutexes

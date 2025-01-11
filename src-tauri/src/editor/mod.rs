@@ -2,3 +2,4 @@
 
 pub mod io;
 pub mod tabs;
+pub mod markdown_handler;

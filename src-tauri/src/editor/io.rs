@@ -6,8 +6,7 @@ use std::path::PathBuf; //PathBuf datatype to store path strings
 use dirs; //dirs module to get the path of the documents directory
 use sanitize_filename; //sanitize_filename module to sanitize filenames
 
-use html2md::parse_html; //html2md module to convert html to markdown
-use pulldown_cmark::{html, Options, Parser}; //pulldown_cmark module to parse markdown
+use crate::editor::markdown_handler;
 
 use crate::{DocumentData, RecentFileInfo, UserData}; //Importing the DocumentData, RecentFileInfo and UserData structs
 use crate::{CURRENT_OPEN_TAB, RECENT_FILES, TABS}; //Importing the CURRENT_OPEN_TAB, RECENT_FILES and TABS mutexes
@@ -155,7 +154,7 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
     let trove_dir = get_trove_dir("Untitled_Trove");
 
     // Convert HTML to Markdown
-    let markdown_content = parse_html(&content);
+    let markdown_content = markdown_handler::html_to_markdown(&content);
 
     // Add title as heading
     let full_markdown = format!("# {}\n\n{}", title, markdown_content);
@@ -230,33 +229,7 @@ pub fn get_document_content(id: String) -> Result<Option<DocumentData>, String> 
 
     match fs::read_to_string(&file_path) {
         Ok(content) => {
-            // Parse markdown content
-            let lines: Vec<&str> = content.lines().collect();
-
-            // Extract title from first line (assumes "# Title" format)
-            let title = if !lines.is_empty() && lines[0].starts_with("# ") {
-                lines[0][2..].to_string()
-            } else {
-                "Untitled".to_string()
-            };
-
-            // Get content without the title
-            let markdown_content = if !lines.is_empty() {
-                lines[2..].join("\n")
-            } else {
-                String::new()
-            };
-
-            // Convert markdown to HTML
-            let mut options = Options::empty();
-            options.insert(Options::ENABLE_TABLES);
-            options.insert(Options::ENABLE_FOOTNOTES);
-            options.insert(Options::ENABLE_STRIKETHROUGH);
-            options.insert(Options::ENABLE_TASKLISTS);
-
-            let parser = Parser::new_ext(&markdown_content, options);
-            let mut html_output = String::new();
-            html::push_html(&mut html_output, parser);
+            let (title, html_output) = markdown_handler::markdown_to_html(&content);
 
             Ok(Some(DocumentData {
                 id: id.clone(),

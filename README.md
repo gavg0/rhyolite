@@ -15,6 +15,10 @@ This is a **prototype**, not a fully polished version and is a fork of [fextify]
 
 I decided to redo the whole project and continue developement on it cause I really liked the project and as a new dev I also wanted to make an open source project of my own, but before that I needed some experience so decided to contribute to this! I also renamed the project to Rhyolite(a volcanic rock just like obsidian!).
 
+# For New Contributers:-
+- The source code in the master branch went through a massive restructuring and as a result we now have a default styling of the Flowbite/Tiptap editor and will not look the same as portrayed in the image. If you want to compile the source for latest release of the app I will suggest that you compile the source from master-v0.1.4-old branch instead.
+- After we restyle the UI again, the app will look similar to v0.1.4!
+
 # How to run?
 
 ## Windows

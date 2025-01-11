@@ -295,7 +295,7 @@ pub fn load_last_open_tabs() -> Result<Vec<DocumentData>, String> {
     let files = match fs::read_dir(&trove_dir) {
         Ok(entries) => entries
             .filter_map(|entry| entry.ok())
-            .filter(|entry| entry.path().extension().map_or(false, |ext| ext == "md"))
+            .filter(|entry| entry.path().extension().is_some_and(|ext| ext == "md"))
             .filter_map(|entry| {
                 let path = entry.path();
                 let id = path

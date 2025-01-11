@@ -6,7 +6,7 @@
 ## A simple text editor written in Tauri, inspired by Obsidian. 
 
 
-This is a **prototype**, not a fully polished version and is a fork of [fextify](https://github.com/face-hh/fextify) since the original repo was not being updated or maintained anymore. **!!CAUTION!!** The project is going under a lot of improvements, migrations and upgrades, it is advised to wait till a new binary is released and then test the project! If you want to compile the project from source clone from the master-v0.1.4-old branch.
+This is a **prototype**, not a fully polished version. **!!CAUTION!!** The project is going under a lot of improvements, migrations and upgrades, it is advised to wait till a new binary is released and then test the project! If you want to compile the project from source clone from the master-v0.1.4-old branch.
 
 # Changes include but are not limited too:-
 - Rewriting the backend and frontend using Rust and Svelte.

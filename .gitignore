@@ -327,5 +327,7 @@ web_modules/
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+# Build and Development directories
 /build
 /src-tauri/gen/android

@@ -1,6 +1,7 @@
 # Rhyolite
 
-<img src='assets\Rhyolite_is_Cool!.png'>
+<img src='assets\Rhyolite_is_cool_2.png'>
+<img src='assets\Rhyolite_is_cool_3.png'>
 
 ## A simple text editor written in Tauri, inspired by Obsidian. 
 

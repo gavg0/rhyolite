@@ -68,20 +68,6 @@ NOTE: if you run into any compilation error you can always debug the error with 
 1. Run the `Rhyolite.exe` included in this folder. (or run `npm run tauri build` to compile)
 2. Press `CTRL` + `P` to open the command pallet. It will give you a good idea of what's going on. Otherwise, explore!
 
-# ~~Themes~~(soon)
-
-### Premade
-
-~~You can press `CTRL` + `ALT` + `S` to open the Theme Selector.~~
-
-### Creating
-
-~~You can duplicate the `src/themes/default.css` and modify its colors. We recommend you import the theme automatically on restart by adding `<link rel="stylesheet" href="themes/my_theme.css" />` in `src/index.html` and use `npm run tauri dev` to have the application reset on save.~~
-
-### Publishing
-
-You can open a pull request to add your theme in `/src/styles/themes`. We will add it if it's good. The app does not yet support multiple theme choosing, will implement that soon.
-
 ~~Alternatively, you can join our [Discord server](https://discord.gg/K6FAd8FTma) and post it on the `fextify-themes` forum!~~
 
 # Known bugs

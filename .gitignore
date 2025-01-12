@@ -331,3 +331,4 @@ web_modules/
 # Build and Development directories
 /build
 /src-tauri/gen/android
+/.idea

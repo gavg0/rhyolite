@@ -9,6 +9,7 @@ dependencies = [
  "dirs",
  "html2md",
  "indexmap 2.7.0",
+ "markdown_engine",
  "mdka",
  "once_cell",
  "pulldown-cmark",
@@ -1561,6 +1562,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "html5ever"
+version = "0.29.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2e15626aaf9c351bc696217cbe29cb9b5e86c43f8a46b5e2f5c6c5cf7cb904ce"
+dependencies = [
+ "log",
+ "mac",
+ "markup5ever 0.14.0",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.90",
+]
+
+[[package]]
 name = "http"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2099,6 +2114,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "markdown_engine"
+version = "0.1.0"
+dependencies = [
+ "html5ever 0.29.0",
+ "jni 0.21.1",
+ "lazy_static",
+ "markup5ever_rcdom 0.5.0-unofficial",
+ "percent-encoding",
+ "regex",
+]
+
+[[package]]
 name = "markup5ever"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2117,6 +2144,20 @@ name = "markup5ever"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "16ce3abbeba692c8b8441d036ef91aea6df8da2c6b6e21c7e14d3c18e526be45"
+dependencies = [
+ "log",
+ "phf 0.11.2",
+ "phf_codegen 0.11.3",
+ "string_cache",
+ "string_cache_codegen",
+ "tendril",
+]
+
+[[package]]
+name = "markup5ever"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "82c88c6129bd24319e62a0359cb6b958fa7e8be6e19bb1663bc396b90883aca5"
 dependencies = [
  "log",
  "phf 0.11.2",
@@ -2148,6 +2189,18 @@ dependencies = [
  "markup5ever 0.12.1",
  "tendril",
  "xml5ever 0.18.1",
+]
+
+[[package]]
+name = "markup5ever_rcdom"
+version = "0.5.0-unofficial"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d9cb12459c4cab18dcc580159590f404ad78c0a9c5435ace80288ed43abdce31"
+dependencies = [
+ "html5ever 0.29.0",
+ "markup5ever 0.14.0",
+ "tendril",
+ "xml5ever 0.20.0",
 ]
 
 [[package]]
@@ -5247,6 +5300,17 @@ dependencies = [
  "log",
  "mac",
  "markup5ever 0.12.1",
+]
+
+[[package]]
+name = "xml5ever"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2278b4bf33071ba8e30368a59436c65eec8e01c49d5c29b3dfeb0cdc45331383"
+dependencies = [
+ "log",
+ "mac",
+ "markup5ever 0.14.0",
 ]
 
 [[package]]

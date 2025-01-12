@@ -35,7 +35,7 @@ const handleTitleChange = (event: Event) => {
     documentTitle = target.value;
     TabService.updateTabTitleById(tab.id, target.value);
 
-    saveDocument();
+    // saveDocument();
 }
 
 let saveTimeout: number | undefined;

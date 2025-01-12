@@ -1,6 +1,7 @@
 //! This module provides IO related functions for the app.
 use std::fs; //Filesystem module
 use std::path::PathBuf; //PathBuf datatype to store path strings
+use uuid::Uuid; //Uuid module to generate unique ids
 // use tauri_plugin_dialog::DialogExt; //DialogExt trait to show dialog boxes
 
 use dirs; //dirs module to get the path of the documents directory
@@ -157,14 +158,14 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
     let markdown_content = markdown_handler::html_to_markdown(&content);
 
     // Add title as heading
-    let full_markdown = format!("# {}\n\n{}", title, markdown_content);
+    // let full_markdown = format!("# {}\n\n{}", title, markdown_content);
 
     // Use .md extension instead of .json
-    let safe_filename = sanitize_filename::sanitize(format!("{}.md", id));
+    let safe_filename = sanitize_filename::sanitize(format!("{}.md", title));
     let file_path = trove_dir.join(&safe_filename);
 
     // Write markdown content directly to file
-    match fs::write(&file_path, full_markdown) {
+    match fs::write(&file_path, markdown_content) {
         Ok(_) => Ok(file_path.to_string_lossy().to_string()),
         Err(e) => Err(format!("Failed to write file: {}", e)),
     }
@@ -172,23 +173,25 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
 
 #[tauri::command]
 pub fn delete_document(id: String) -> Result<Option<DocumentData>, String> {
-    let mut recent_files = RECENT_FILES
-        .lock()
-        .map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
-    recent_files.retain(|doc| doc.id != id);
-    let trove_dir = get_trove_dir("Untitled_Trove");
-    let filename = sanitize_filename::sanitize(format!("{}.md", id));
-    let file_path = trove_dir.join(&filename);
-
-    // Remove the tab and get its index
     let mut tabs = TABS
         .lock()
         .map_err(|e| format!("Failed to lock TABS: {}", e))?;
+    let mut recent_files = RECENT_FILES
+        .lock()
+        .map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
+    let tab_title = tabs.get(&id)
+        .map(|tab| tab.title.clone())
+        .unwrap();
+    recent_files.retain(|doc| doc.id != id);
+    let trove_dir = get_trove_dir("Untitled_Trove");
+    let filename = sanitize_filename::sanitize(format!("{}.md", tab_title));
+    let file_path = trove_dir.join(&filename);
 
+    // Remove the tab and get its index
     if let Some((index, _, _)) = tabs.shift_remove_full(&id) {
         // Get the tab at the same index (the one that shifted up)
         // If no tab at that index, get the last tab
-        let next_tab = if let Some((next_id, _)) = tabs.get_index(index).or_else(|| tabs.last()) {
+        let next_tab = if let Some((next_id, next_tab)) = tabs.get_index(index).or_else(|| tabs.last()) {
             // Update current open tab
             let mut current_open_tab = CURRENT_OPEN_TAB
                 .lock()
@@ -196,7 +199,7 @@ pub fn delete_document(id: String) -> Result<Option<DocumentData>, String> {
             *current_open_tab = next_id.clone();
 
             // Get the document content for the next tab
-            get_document_content(next_id.clone())?
+            get_document_content(next_id.clone(), next_tab.title.clone())?
         } else {
             None
         };
@@ -219,9 +222,9 @@ pub fn delete_document(id: String) -> Result<Option<DocumentData>, String> {
 }
 
 #[tauri::command]
-pub fn get_document_content(id: String) -> Result<Option<DocumentData>, String> {
+pub fn get_document_content(id: String, title: String) -> Result<Option<DocumentData>, String> {
     let trove_dir = get_trove_dir("Untitled_Trove");
-    let file_path = trove_dir.join(format!("{}.md", id));
+    let file_path = trove_dir.join(format!("{}.md", title));
 
     if !file_path.exists() {
         return Ok(None);
@@ -229,12 +232,12 @@ pub fn get_document_content(id: String) -> Result<Option<DocumentData>, String> 
 
     match fs::read_to_string(&file_path) {
         Ok(content) => {
-            let (title, html_output) = markdown_handler::markdown_to_html(&content);
+            let html_output = markdown_handler::markdown_to_html(&content);
 
             Ok(Some(DocumentData {
-                id: id.clone(),
+                id,
                 title,
-                content: html_output, // Now returning HTML instead of markdown
+                content: html_output,
             }))
         }
         Err(e) => Err(format!("Failed to read file: {}", e)),
@@ -271,7 +274,7 @@ pub fn load_last_open_tabs() -> Result<Vec<DocumentData>, String> {
                         tabs.clear();
                         for tab in user_data.tabs {
                             // Try to load each document by ID
-                            match get_document_content(tab.id.clone()) {
+                            match get_document_content(tab.id.clone(), tab.title.clone()) {
                                 Ok(Some(doc)) => {
                                     last_open_files.push(doc);
                                     tabs.insert(tab.id.clone(), tab.clone());
@@ -298,13 +301,14 @@ pub fn load_last_open_tabs() -> Result<Vec<DocumentData>, String> {
             .filter(|entry| entry.path().extension().is_some_and(|ext| ext == "md"))
             .filter_map(|entry| {
                 let path = entry.path();
-                let id = path
+                let title = path
                     .file_stem()
                     .and_then(|s| s.to_str())
                     .map(String::from)
                     .unwrap_or_default();
 
-                get_document_content(id).ok().flatten()
+                let id = Uuid::new_v4().to_string();
+                get_document_content(id, title).ok().flatten()
             })
             .collect(),
         Err(e) => return Err(format!("Failed to read directory: {}", e)),

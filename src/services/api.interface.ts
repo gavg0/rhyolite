@@ -8,7 +8,7 @@ export interface IApiServiceProvider {
 
     sendCurrentOpenTab(tabId: string): Promise<void>;
 
-    getDocumentContent(tabId: string): Promise<Document | null>;
+    getDocumentContent(tabId: string, tabTitle: string): Promise<Document | null>;
 
     saveDocument({
         documentId,

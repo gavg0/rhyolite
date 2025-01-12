@@ -22,7 +22,7 @@ let charCount: number = $state(0);
 onMount(async () => {
     documentTitle = tab.title;
     // content = tab.content;
-    const doc = await DocumentService.loadDocument(tab.id);
+    const doc = await DocumentService.loadDocument(tab.id, tab.title);
 
     if(!doc) return;
     documentContent = doc.content;
@@ -35,7 +35,7 @@ const handleTitleChange = (event: Event) => {
     documentTitle = target.value;
     TabService.updateTabTitleById(tab.id, target.value);
 
-    saveDocument();
+    // saveDocument();
 }
 
 let saveTimeout: number | undefined;

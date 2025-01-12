@@ -36,10 +36,10 @@ pub struct UserData {
 }
 
 //Mutex Variable declarations:-
-///A Vector data type to store all the tabs in an assending order(depending upon the order value of the Tab):
+///A Vector data type to store all the tabs in ascending order(depending upon the order value of the Tab):
 pub static TABS: Lazy<Mutex<IndexMap<String, Tab>>> = Lazy::new(|| Mutex::new(IndexMap::new()));
 ///A String that stores the id of the current open tab in the editor:
-pub static CURRENT_OPEN_TAB: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(("").to_string()));
+pub static CURRENT_OPEN_TAB: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new("".to_string()));
 pub static RECENT_FILES: Lazy<Mutex<Vec<RecentFileInfo>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
 //Main tauri function.
@@ -53,6 +53,7 @@ pub fn run() {
                 editor::io::on_app_close();
 
                 // Prevent the window from closing immediately
+                #[cfg(not(target_os = "android"))]
                 window.close().unwrap();
             }
         })

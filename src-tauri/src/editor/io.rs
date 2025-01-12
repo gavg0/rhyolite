@@ -23,7 +23,7 @@ use crate::{CURRENT_OPEN_TAB, RECENT_FILES, TABS}; //Importing the CURRENT_OPEN_
 /// If this newly created path directory does not exist then create it using create_dir_all
 /// function.
 ///
-/// Then return the variable path, that holds the path to the FextifyPlus directory.
+/// Then return the variable path, that holds the path to the Rhyolite directory.
 pub fn get_documents_dir() -> PathBuf {
     let mut path = dirs::document_dir().expect("Could not find Documents directory");
     path.push("Rhyolite");

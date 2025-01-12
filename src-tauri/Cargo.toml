@@ -30,10 +30,10 @@ sanitize-filename = "0.6.0"
 pulldown-cmark = "0.12.2"
 uuid = { version = "1.11.1", features = ["v4"] }
 indexmap = "2.7.0"
-# html2md = "0.2.14"
+html2md = "0.2.14"
 mdka = "1.2.12"
 regex = "1.11.1"
-html2md = { path = "./Crates/markdown_engine" }
+# html2md = { path = "./Crates/markdown_engine" }
 
 [profile.dev]
 incremental = true # Compile your binary in smaller steps.

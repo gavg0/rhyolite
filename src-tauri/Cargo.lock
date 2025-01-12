@@ -1520,12 +1520,14 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "html2md"
-version = "0.1.4"
+version = "0.2.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "be92446e11d68f5d71367d571c229d09ced1f24ab6d08ea0bff329d5f6c0b2a3"
 dependencies = [
- "html5ever 0.29.0",
- "jni",
+ "html5ever 0.26.0",
+ "jni 0.19.0",
  "lazy_static",
- "markup5ever_rcdom 0.5.0-unofficial",
+ "markup5ever_rcdom 0.2.0",
  "percent-encoding",
  "regex",
 ]
@@ -1553,20 +1555,6 @@ dependencies = [
  "log",
  "mac",
  "markup5ever 0.12.1",
- "proc-macro2",
- "quote",
- "syn 2.0.90",
-]
-
-[[package]]
-name = "html5ever"
-version = "0.29.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2e15626aaf9c351bc696217cbe29cb9b5e86c43f8a46b5e2f5c6c5cf7cb904ce"
-dependencies = [
- "log",
- "mac",
- "markup5ever 0.14.0",
  "proc-macro2",
  "quote",
  "syn 2.0.90",
@@ -1921,6 +1909,20 @@ dependencies = [
 
 [[package]]
 name = "jni"
+version = "0.19.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c6df18c2e3db7e453d3c6ac5b3e9d5182664d28788126d39b91f2d1e22b017ec"
+dependencies = [
+ "cesu8",
+ "combine",
+ "jni-sys",
+ "log",
+ "thiserror 1.0.69",
+ "walkdir",
+]
+
+[[package]]
+name = "jni"
 version = "0.21.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1a87aa2bb7d2af34197c04845522473242e1aa17c12f4935d5856491a7fb8c97"
@@ -2125,17 +2127,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "markup5ever"
-version = "0.14.0"
+name = "markup5ever_rcdom"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "82c88c6129bd24319e62a0359cb6b958fa7e8be6e19bb1663bc396b90883aca5"
+checksum = "b9521dd6750f8e80ee6c53d65e2e4656d7de37064f3a7a5d2d11d05df93839c2"
 dependencies = [
- "log",
- "phf 0.11.2",
- "phf_codegen 0.11.3",
- "string_cache",
- "string_cache_codegen",
+ "html5ever 0.26.0",
+ "markup5ever 0.11.0",
  "tendril",
+ "xml5ever 0.17.0",
 ]
 
 [[package]]
@@ -2148,18 +2148,6 @@ dependencies = [
  "markup5ever 0.12.1",
  "tendril",
  "xml5ever 0.18.1",
-]
-
-[[package]]
-name = "markup5ever_rcdom"
-version = "0.5.0-unofficial"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d9cb12459c4cab18dcc580159590f404ad78c0a9c5435ace80288ed43abdce31"
-dependencies = [
- "html5ever 0.29.0",
- "markup5ever 0.14.0",
- "tendril",
- "xml5ever 0.20.0",
 ]
 
 [[package]]
@@ -3742,7 +3730,7 @@ dependencies = [
  "gdkwayland-sys",
  "gdkx11-sys",
  "gtk",
- "jni",
+ "jni 0.21.1",
  "lazy_static",
  "libc",
  "log",
@@ -3797,7 +3785,7 @@ dependencies = [
  "gtk",
  "heck 0.5.0",
  "http",
- "jni",
+ "jni 0.21.1",
  "libc",
  "log",
  "mime",
@@ -3982,7 +3970,7 @@ dependencies = [
  "dpi",
  "gtk",
  "http",
- "jni",
+ "jni 0.21.1",
  "raw-window-handle",
  "serde",
  "serde_json",
@@ -4000,7 +3988,7 @@ checksum = "3707b40711d3b9f6519150869e358ffbde7c57567fb9b5a8b51150606939b2a0"
 dependencies = [
  "gtk",
  "http",
- "jni",
+ "jni 0.21.1",
  "log",
  "objc2",
  "objc2-app-kit",
@@ -5182,7 +5170,7 @@ dependencies = [
  "html5ever 0.26.0",
  "http",
  "javascriptcore-rs",
- "jni",
+ "jni 0.21.1",
  "kuchikiki",
  "libc",
  "ndk",
@@ -5241,6 +5229,17 @@ dependencies = [
 
 [[package]]
 name = "xml5ever"
+version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4034e1d05af98b51ad7214527730626f019682d797ba38b51689212118d8e650"
+dependencies = [
+ "log",
+ "mac",
+ "markup5ever 0.11.0",
+]
+
+[[package]]
+name = "xml5ever"
 version = "0.18.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9bbb26405d8e919bc1547a5aa9abc95cbfa438f04844f5fdd9dc7596b748bf69"
@@ -5248,17 +5247,6 @@ dependencies = [
  "log",
  "mac",
  "markup5ever 0.12.1",
-]
-
-[[package]]
-name = "xml5ever"
-version = "0.20.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2278b4bf33071ba8e30368a59436c65eec8e01c49d5c29b3dfeb0cdc45331383"
-dependencies = [
- "log",
- "mac",
- "markup5ever 0.14.0",
 ]
 
 [[package]]

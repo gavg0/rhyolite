@@ -1,5 +1,5 @@
 // use html2md::parse_html; //html2md module to convert html to markdown
-use markdown_engine::parse_html; //markdown_engine module to convert markdown to html
+use html2md::parse_html; //markdown_engine module to convert markdown to html
 use pulldown_cmark::{html, Options, Parser}; //pulldown_cmark module to parse markdown
 // use mdka; //mdka module to convert markdown to html
 use regex::Regex; //regex module to use Regex type

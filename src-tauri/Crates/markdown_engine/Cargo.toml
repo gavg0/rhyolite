@@ -1,16 +1,22 @@
 [package]
-name = "markdown_engine"
-version = "0.1.0"
+name = "html2md"
+version = "0.1.4"
 edition = "2021"
+authors = ["Oleg `Kanedias` Chernovskiy <kanedias@house-of-maker.online>"]
 
 description = "Library and binary to convert simple html documents into markdown"
+repository = "https://gitlab.com/Kanedias/html2md"
 readme = "README.md"
 keywords = ["html", "markdown", "converter"]
 categories = ["development-tools", "parsing", "parser-implementations"]
 license = "GPL-3.0+"
 
+[badges]
+gitlab = { repository = "Kanedias/html2md", branch = "master" }
+maintenance = { status = "experimental" }
+
 [lib]
-name = "markdown_engine"
+name = "html2md"
 crate-type = ["rlib", "dylib", "staticlib"]
 
 [dependencies]

@@ -25,13 +25,24 @@ use crate::{CURRENT_OPEN_TAB, RECENT_FILES, TABS}; //Importing the CURRENT_OPEN_
 ///
 /// Then return the variable path, that holds the path to the Rhyolite directory.
 pub fn get_documents_dir() -> PathBuf {
-    let mut path = dirs::document_dir().expect("Could not find Documents directory");
-    path.push("Rhyolite");
+    #[cfg(target_os = "android")]
+    {
+        // On Android, use the app's private storage directory
+        let path = PathBuf::from("/data/user/0/com.rhyolite.dev/Rhyolite");
+        // Create the directory if it doesn't exist
+        fs::create_dir_all(&path).expect("Could not create Rhyolite directory");
+        path
+    }
 
-    // Create the directory if it doesn't exist
-    fs::create_dir_all(&path).expect("Could not create Rhyolite directory");
-
-    path
+    #[cfg(not(target_os = "android"))]
+    {
+        // Original desktop behavior
+        let mut path = dirs::document_dir().expect("Could not find Documents directory");
+        path.push("Rhyolite");
+        // Create the directory if it doesn't exist
+        fs::create_dir_all(&path).expect("Could not create Rhyolite directory");
+        path
+    }
 }
 
 /// Return the path to the default Rhyolite Trove directory.

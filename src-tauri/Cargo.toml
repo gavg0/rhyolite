@@ -33,6 +33,7 @@ indexmap = "2.7.0"
 html2md = "0.2.14"
 mdka = "1.2.12"
 regex = "1.11.1"
+tauri-plugin-fs = "2"
 # html2md = { path = "./Crates/markdown_engine" }
 
 [profile.dev]

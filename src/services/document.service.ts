@@ -91,13 +91,11 @@ const saveDocument = async ({
     });
 };
 
-const loadDocument = async (documentId: string): Promise<Document | null> => {
+const loadDocument = async (documentId: string, documentTitle: string): Promise<Document | null> => {
     try {
-        const doc = await apiProvider.getDocumentContent(documentId);
+        const doc = await apiProvider.getDocumentContent(documentId, documentTitle);
         if (!doc) return null;
 
-        // No need to parse JSON since content is already HTML
-        // if (isValidJSON(doc.content)) doc.content = JSON.parse(doc.content);
         return doc;
     } catch (error) {
         console.error("Failed to load document:", error);

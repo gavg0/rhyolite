@@ -16,9 +16,10 @@ export class TauriInvokeServiceProvider implements IApiServiceProvider {
         await invoke("send_current_open_tab", { id: tabId });
     }
 
-    async getDocumentContent(tabId: string): Promise<Document | null> {
+    async getDocumentContent(tabId: string, tabTitle: string): Promise<Document | null> {
         return await invoke<Document | null>("get_document_content", {
             id: tabId,
+            title: tabTitle
         });
     }
 

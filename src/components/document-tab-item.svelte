@@ -22,7 +22,7 @@ let charCount: number = $state(0);
 onMount(async () => {
     documentTitle = tab.title;
     // content = tab.content;
-    const doc = await DocumentService.loadDocument(tab.id);
+    const doc = await DocumentService.loadDocument(tab.id, tab.title);
 
     if(!doc) return;
     documentContent = doc.content;

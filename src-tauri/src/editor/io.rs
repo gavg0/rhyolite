@@ -158,14 +158,14 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
     let markdown_content = markdown_handler::html_to_markdown(&content);
 
     // Add title as heading
-    let full_markdown = format!("# {}\n\n{}", title, markdown_content);
+    // let full_markdown = format!("# {}\n\n{}", title, markdown_content);
 
     // Use .md extension instead of .json
     let safe_filename = sanitize_filename::sanitize(format!("{}.md", title));
     let file_path = trove_dir.join(&safe_filename);
 
     // Write markdown content directly to file
-    match fs::write(&file_path, full_markdown) {
+    match fs::write(&file_path, markdown_content) {
         Ok(_) => Ok(file_path.to_string_lossy().to_string()),
         Err(e) => Err(format!("Failed to write file: {}", e)),
     }
@@ -232,12 +232,12 @@ pub fn get_document_content(id: String, title: String) -> Result<Option<Document
 
     match fs::read_to_string(&file_path) {
         Ok(content) => {
-            let (title, html_output) = markdown_handler::markdown_to_html(&content);
+            let html_output = markdown_handler::markdown_to_html(&content);
 
             Ok(Some(DocumentData {
-                id: id.clone(),
+                id,
                 title,
-                content: html_output, // Now returning HTML instead of markdown
+                content: html_output,
             }))
         }
         Err(e) => Err(format!("Failed to read file: {}", e)),

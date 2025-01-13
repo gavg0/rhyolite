@@ -11,6 +11,8 @@ mod handlers;
 
 use handlers::headers::HeaderHandler;
 use handlers::blocks::{ParagraphHandler, BlockquoteHandler, CodeBlockHandler};
+use handlers::formatting::{MarkHandler, UnderlineHandler, EmphasisHandler, BoldHandler, InlineCodeHandler, StrikeThroughHandler, HorizontalRuleHandler};
+use handlers::lists::{UnorderedListHandler, ListItemHandler};
 
 // Public interface
 pub fn convert_to_markdown(html: &str) -> String {
@@ -45,6 +47,7 @@ impl MarkdownConverter {
         converter.handlers.insert("blockquote", Box::new(BlockquoteHandler));
         converter.handlers.insert("code", Box::new(InlineCodeHandler));
         converter.handlers.insert("pre", Box::new(CodeBlockHandler));
+        converter.handlers.insert("hr", Box::new(HorizontalRuleHandler));
 
         // Register handlers for lists
         converter.handlers.insert("ul", Box::new(UnorderedListHandler));
@@ -150,42 +153,6 @@ impl StyleParser {
     }
 }
 
-struct MarkHandler;
-impl ElementHandler for MarkHandler {
-    fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
-        output.push_str("==");
-        converter.walk_children(node, output, depth);
-        output.push_str("==");
-    }
-}
-
-struct UnderlineHandler;
-impl ElementHandler for UnderlineHandler {
-    fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
-        output.push_str("<u>");
-        converter.walk_children(node, output, depth);
-        output.push_str("</u>");
-    }
-}
-
-struct EmphasisHandler;
-impl ElementHandler for EmphasisHandler {
-    fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
-        output.push('*');
-        converter.walk_children(node, output, depth);
-        output.push('*');
-    }
-}
-
-struct BoldHandler;
-impl ElementHandler for BoldHandler {
-    fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
-        output.push_str("**");
-        converter.walk_children(node, output, depth);
-        output.push_str("**");
-    }
-}
-
 struct LinkHandler;
 impl ElementHandler for LinkHandler {
     fn handle(&self, converter: &MarkdownConverter, node: &Handle, attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
@@ -225,61 +192,5 @@ impl ElementHandler for SpanHandler {
 
         // If no recognized styles, just process children
         converter.walk_children(node, output, depth);
-    }
-}
-
-struct InlineCodeHandler;
-impl ElementHandler for InlineCodeHandler {
-    fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
-        output.push('`');
-        converter.walk_children(node, output, depth);
-        output.push('`');
-    }
-}
-
-struct StrikeThroughHandler;
-impl ElementHandler for StrikeThroughHandler {
-    fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
-        output.push_str("~~");
-        converter.walk_children(node, output, depth);
-        output.push_str("~~");
-    }
-}
-
-struct UnorderedListHandler;
-impl ElementHandler for UnorderedListHandler {
-    fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
-        output.push('\n');
-        converter.walk_children(node, output, depth);
-        output.push('\n');
-    }
-}
-
-struct ListItemHandler;
-impl ElementHandler for ListItemHandler {
-    fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
-        // Check if parent is ordered or unordered list
-        let is_ordered = if let Some(parent) = node.parent.take() {
-            if let NodeData::Element { name, .. } = &parent.upgrade().unwrap().data {
-                name.local.as_ref() == "ol"
-            } else {
-                false
-            }
-        } else {
-            false
-        };
-
-        // Add indentation based on depth
-        output.push_str(&"  ".repeat(depth.saturating_sub(1)));
-        
-        // Add the appropriate list marker
-        if is_ordered {
-            output.push_str("1. "); // Markdown will auto-number these correctly
-        } else {
-            output.push_str("- ");
-        }
-        
-        converter.walk_children(node, output, depth);
-        output.push('\n');
     }
 }

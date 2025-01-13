@@ -33,9 +33,9 @@ pub struct BlockquoteHandler;
 impl ElementHandler for BlockquoteHandler {
     fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
         // Add newline before blockquote if not at start
-        if !output.is_empty() && !output.ends_with('\n') {
-            output.push('\n');
-        }
+        // if !output.is_empty() && !output.ends_with('\n') {
+        output.push('\n');
+        // }
 
         // Create a temporary buffer for the quote content
         let mut quote_content = String::new();

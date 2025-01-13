@@ -15,7 +15,8 @@
         "title": "Rhyolite",
         "width": 900,
         "height": 700,
-        "resizable": true
+        "resizable": true,
+        "decorations": false
       }
     ],
     "security": {

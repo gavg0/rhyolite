@@ -5,36 +5,52 @@
 @tailwind utilities;
 
 html {
-    scroll-behavior: smooth;
+  scroll-behavior: smooth;
+}
+
+:root {
+  --color-text: 255 255 255;
+  --color-subtext2: 241 242 243;
+  --color-subtext1: 216 219 222;
+  --color-subtext0: 194 198 203;
+  --color-overlay2: 172 178 184;
+  --color-overlay1: 150 157 165;
+  --color-overlay0: 128 137 146;
+  --color-surface2: 108 117 125;
+  --color-surface1: 89 97 103;
+  --color-surface0: 70 76 81;
+  --color-base: 51 55 59;
+  --color-crust: 32 35 37;
+  --color-mantle: 13 14 15;
 }
 
 * {
-    font-family: "JetBrains Mono", serif;
-    overscroll-behavior: none;
-    -ms-scroll-chaining: none;
+  font-family: "JetBrains Mono", serif;
+  overscroll-behavior: none;
+  -ms-scroll-chaining: none;
 }
 
 /* Global scrollbar styles */
 ::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #6c7086;
-    border-radius: 999px;
+  background-color: #6c7086;
+  border-radius: 999px;
 }
 
 /* Firefox */
 * {
-    scrollbar-width: thin;
-    scrollbar-color: #6c7086 transparent;
+  scrollbar-width: thin;
+  scrollbar-color: #6c7086 transparent;
 }
 
 body {
-    overscroll-behavior: none;
-    -ms-scroll-chaining: none;
+  overscroll-behavior: none;
+  -ms-scroll-chaining: none;
 }

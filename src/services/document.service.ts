@@ -12,7 +12,7 @@ const getAllDocumentTabs = async (): Promise<Tab[]> => {
     return tabsStore.updateTabsState(tabs);
 };
 
-const addNewDocumentTab = async (): Promise<void> => {
+export const addNewDocumentTab = async (): Promise<void> => {
     try {
         const newTab: Tab = await apiProvider.addNewDocumentTab();
 

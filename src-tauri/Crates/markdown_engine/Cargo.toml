@@ -1,0 +1,12 @@
+[package]
+name = "markdown_engine"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+authors = ["Suyog Tandel(RedddFoxxyy)"]
+description = "Library to convert HTML to custom-markdown for Rhyolite."
+
+[dependencies]
+regex = "1.11.1"
+html5ever = "0.29.0"
+markup5ever_rcdom = "0.5.0-unofficial"

@@ -12,7 +12,7 @@ mod handlers;
 use handlers::headers::HeaderHandler;
 use handlers::blocks::{ParagraphHandler, BlockquoteHandler, CodeBlockHandler};
 use handlers::formatting::{MarkHandler, UnderlineHandler, EmphasisHandler, BoldHandler, InlineCodeHandler, StrikeThroughHandler, HorizontalRuleHandler};
-use handlers::lists::{UnorderedListHandler, ListItemHandler};
+use handlers::lists::{UnorderedListHandler, ListItemHandler, OrderedListHandler};
 
 // Public interface
 pub fn convert_to_markdown(html: &str) -> String {
@@ -51,6 +51,7 @@ impl MarkdownConverter {
 
         // Register handlers for lists
         converter.handlers.insert("ul", Box::new(UnorderedListHandler));
+        converter.handlers.insert("ol", Box::new(OrderedListHandler));
         converter.handlers.insert("li", Box::new(ListItemHandler));
 
         // Register handlers for headers
@@ -65,7 +66,7 @@ impl MarkdownConverter {
     }
 
     pub fn convert_to_markdown(&self, html: &str) -> String {
-        println!("{}", html);
+        // println!("{}", html);
         let dom = self.parse_to_dom(html);
         let mut markdown = String::with_capacity(html.len());
         self.traverse_dom(&dom.document, &mut markdown, 0);

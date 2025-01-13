@@ -33,6 +33,8 @@ indexmap = "2.7.0"
 mdka = "1.2.12"
 regex = "1.11.1"
 markdown_engine = { path = "./Crates/markdown_engine" }
+tauri-plugin-fs = "2"
+
 
 [profile.dev]
 incremental = true # Compile your binary in smaller steps.

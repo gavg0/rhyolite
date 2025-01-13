@@ -217,11 +217,9 @@
 
   let typographyDropdownOpen = $state(false);
   const onSelectHeading = (event: Event) => {
-    console.log(event);
     const headingLevel: string | null = (
       event.target as HTMLInputElement
     ).getAttribute("data-heading-level");
-    console.log(headingLevel);
     if (headingLevel) {
       const level = parseInt(headingLevel) as 1 | 2 | 3 | 4 | 5 | 6;
       $editor.chain().focus().toggleHeading({ level }).run();

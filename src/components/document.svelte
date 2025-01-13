@@ -18,10 +18,12 @@
   let documentContent: any = $state();
   let wordCount: number = $state(0);
   let charCount: number = $state(0);
+  let initialized: boolean = $state(false);
   onMount(async () => {
     documentTitle = tab.title;
     // content = tab.content;
     const doc = await DocumentService.loadDocument(tab.id, tab.title);
+    initialized = true;
 
     if (!doc) return;
     documentContent = doc.content;
@@ -71,11 +73,13 @@
       oninput={handleTitleChange}
     ></textarea>
   </div>
-  <ContentEditor
-    class="overflow-hidden mb-20 p-2"
-    content={documentContent}
-    onchange={handleContentChange}
-  />
+  {#if initialized}
+    <ContentEditor
+      class="overflow-hidden mb-20 p-2"
+      content={documentContent}
+      onchange={handleContentChange}
+    />
+  {/if}
   <div
     class="fixed flex flex-row gap-[20px] text-nowrap self-end bottom-[10px] right-[10px] bg-base px-[10px] py-[5px] rounded-[18px] z-10 text-text text-[0.85em] select-none"
   >

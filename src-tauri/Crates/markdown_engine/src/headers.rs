@@ -1,6 +1,9 @@
 use crate::walk_children;
 use markup5ever_rcdom::Handle;
 pub fn handle_header(tag: &str, node: &Handle, output: &mut String, depth: usize) {
+    if !tag.starts_with('h') {
+        return;
+    }
     // Get header level from h1, h2, etc.
     if let Some(level) = tag.chars().nth(1) {
 

@@ -8,6 +8,7 @@ use markup5ever_rcdom::{RcDom, NodeData, Handle};
 mod headers;
 mod paragraph;
 mod links;
+mod basic_elements;
 
 pub fn convert_to_markdown(html: &String) -> String {
     let dom = parse_to_dom(html.to_string());
@@ -73,10 +74,11 @@ fn traverse_dom(node: &Handle, output: &mut String, depth: usize) {
         },
         // If we find an HTML element (like p, h1, h2, a)
         NodeData::Element { ref name, ref attrs, .. } => {
+            let element_tag = name.local.as_ref();
 
-                match name.local.as_ref() {
+                match element_tag {
                     tag if tag.starts_with('h') => headers::handle_header(tag, node, output, depth),
-                    // For paragraphs: add newlines before and after
+                    // For paragraphs: add newlines before
                     "p" => {
                         output.push_str("\n");
                         walk_children(node, output, depth);

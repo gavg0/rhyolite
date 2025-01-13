@@ -27,7 +27,7 @@ impl ElementHandler for ListItemHandler {
         };
 
         // Add indentation based on depth
-        // output.push_str(&"  ".repeat(depth.saturating_sub(1)));
+        output.push_str(&"  ".repeat(depth.saturating_sub(4)));
         
         // Add the appropriate list marker
         if is_ordered {

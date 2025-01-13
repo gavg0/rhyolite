@@ -7,6 +7,11 @@ use markup5ever_rcdom::{RcDom, NodeData, Handle};
 // use std::borrow::Cow;
 use std::collections::HashMap;
 
+mod handlers;
+
+use handlers::headers::HeaderHandler;
+use handlers::blocks::{ParagraphHandler, BlockquoteHandler, CodeBlockHandler};
+
 // Public interface
 pub fn convert_to_markdown(html: &str) -> String {
     MarkdownConverter::new().convert_to_markdown(html)
@@ -40,6 +45,10 @@ impl MarkdownConverter {
         converter.handlers.insert("blockquote", Box::new(BlockquoteHandler));
         converter.handlers.insert("code", Box::new(InlineCodeHandler));
         converter.handlers.insert("pre", Box::new(CodeBlockHandler));
+
+        // Register handlers for lists
+        converter.handlers.insert("ul", Box::new(UnorderedListHandler));
+        converter.handlers.insert("li", Box::new(ListItemHandler));
 
         // Register handlers for headers
         converter.handlers.insert("h1", Box::new(HeaderHandler::level(1)));
@@ -141,37 +150,6 @@ impl StyleParser {
     }
 }
 
-// Implementation of handlers
-// Header handler implementation
-struct HeaderHandler {
-    level: usize,
-}
-
-impl HeaderHandler {
-    fn level(level: usize) -> Self {
-        Self { level }
-    }
-}
-
-impl ElementHandler for HeaderHandler {
-    fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
-        output.push_str("\n");
-        output.push_str(&"#".repeat(self.level));
-        output.push(' ');
-        converter.walk_children(node, output, depth);
-        // output.push_str("\n");
-    }
-}
-
-struct ParagraphHandler;
-impl ElementHandler for ParagraphHandler {
-    fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
-        output.push_str("\n");
-        converter.walk_children(node, output, depth);
-        output.push_str("\n");
-    }
-}
-
 struct MarkHandler;
 impl ElementHandler for MarkHandler {
     fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
@@ -250,30 +228,6 @@ impl ElementHandler for SpanHandler {
     }
 }
 
-struct BlockquoteHandler;
-impl ElementHandler for BlockquoteHandler {
-    fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
-        // Add newline before blockquote if not at start
-        if !output.is_empty() && !output.ends_with('\n') {
-            output.push('\n');
-        }
-
-        // Create a temporary buffer for the quote content
-        let mut quote_content = String::new();
-        converter.walk_children(node, &mut quote_content, depth + 1);
-
-        // Process the quote content line by line
-        for line in quote_content.trim().lines() {
-            output.push_str("> ");
-            output.push_str(line);
-            output.push('\n');
-        }
-
-        // Add extra newline after blockquote(optional)
-        // output.push('\n');
-    }
-}
-
 struct InlineCodeHandler;
 impl ElementHandler for InlineCodeHandler {
     fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
@@ -292,30 +246,40 @@ impl ElementHandler for StrikeThroughHandler {
     }
 }
 
-// For code blocks with pre + code
-struct CodeBlockHandler;
-impl ElementHandler for CodeBlockHandler {
+struct UnorderedListHandler;
+impl ElementHandler for UnorderedListHandler {
     fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
-        // Get the code element which should be the child
-        if let Some(code_node) = node.children.borrow().first() {
-            if let NodeData::Element { attrs, .. } = &code_node.data {
-                output.push_str("\n```");
-                
-                // Extract language if present
-                for attr in attrs.borrow().iter() {
-                    if attr.name.local.as_ref() == "class" {
-                        if let Some(lang) = attr.value.as_ref().strip_prefix("language-") {
-                            output.push_str(lang);
-                            break;
-                        }
-                    }
-                }
-                output.push('\n');
-                
-                // Process the actual code content
-                converter.walk_children(code_node, output, depth);
-                output.push_str("\n```\n");
+        output.push('\n');
+        converter.walk_children(node, output, depth);
+        output.push('\n');
+    }
+}
+
+struct ListItemHandler;
+impl ElementHandler for ListItemHandler {
+    fn handle(&self, converter: &MarkdownConverter, node: &Handle, _attrs: &[html5ever::Attribute], output: &mut String, depth: usize) {
+        // Check if parent is ordered or unordered list
+        let is_ordered = if let Some(parent) = node.parent.take() {
+            if let NodeData::Element { name, .. } = &parent.upgrade().unwrap().data {
+                name.local.as_ref() == "ol"
+            } else {
+                false
             }
+        } else {
+            false
+        };
+
+        // Add indentation based on depth
+        output.push_str(&"  ".repeat(depth.saturating_sub(1)));
+        
+        // Add the appropriate list marker
+        if is_ordered {
+            output.push_str("1. "); // Markdown will auto-number these correctly
+        } else {
+            output.push_str("- ");
         }
+        
+        converter.walk_children(node, output, depth);
+        output.push('\n');
     }
 }

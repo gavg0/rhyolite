@@ -164,12 +164,12 @@
     }}
   >
     <div
-      class="fixed top-[40%] left-1/2 flex flex-col bg-crust border-2 border-subtext0 rounded-lg p-3 z-[60] w-min-[200px] w-[50%] h-[40%] gap-2 -translate-x-1/2 -translate-y-1/2 overflow-hidden"
+      class="fixed top-[40%] left-1/2 flex flex-col bg-crust rounded-lg p-3 z-[60] w-min-[200px] w-[50%] h-[40%] gap-2 -translate-x-1/2 -translate-y-1/2 overflow-hidden"
     >
       <div class="relative basis-[42px] w-full shrink-0 mb-2 overflow-hidden">
         <textarea
           id="commandPaletteTextarea"
-          class="w-full h-full overflow-hidden resize-none pr-8 p-2 cursor-text text-text bg-surface0 text-left box-border border-2 border-subtext0 outline-none rounded transition-all duration-200 hover:border-overlay0 focus:border-overlay0 focus:outline-none focus:ring-0"
+          class="w-full h-full overflow-hidden resize-none pr-8 p-2 cursor-text text-text bg-surface0 text-left box-border border-2 hover:border-subtext0 outline-none rounded transition-all duration-200 border-overlay0 focus:border-subtext0 focus:outline-none focus:ring-0"
           placeholder="Select a Command"
           bind:value={searchText}
           onkeydown={handleKeydown}
@@ -183,10 +183,11 @@
         id="command-palette-options"
         class="flex overflow-y-auto flex-col gap-[0.5px]"
       >
+        <div class="mx-2">
         {#each commands as command, index}
           <button
             type="button"
-            class="flex justify-between items-center p-1 hover:bg-surface0 cursor-pointer w-full h-[34px] text-left text-text border-none shadow-none rounded transition-colors duration-200"
+            class="flex px-4 justify-between items-center p-1 hover:bg-surface0 cursor-pointer w-full h-[34px] text-left text-text border-none shadow-none rounded transition-colors duration-200"
             class:bg-surface0={selectedIndex === index}
             onclick={() => {
               command.action();
@@ -197,6 +198,7 @@
             <span class="shortcut">{command.shortcut}</span>
           </button>
         {/each}
+        </div>
       </div>
     </div>
   </div>

@@ -175,6 +175,17 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
     let safe_filename = sanitize_filename::sanitize(format!("{}.md", title));
     let file_path = trove_dir.join(&safe_filename);
 
+    let tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
+
+    let old_title = tabs.get(&id).map(|tab| tab.title.clone()).unwrap_or_else(|| String::from("Untitled"));
+    let old_path = trove_dir.join(sanitize_filename::sanitize(format!("{}.md", old_title)));
+
+   
+    if old_path != file_path && old_path.exists(){
+        fs::remove_file(old_path)
+            .map_err(|e| format!("Failed to delete old file: {}", e))?;
+    }
+
     // Write markdown content directly to file
     match fs::write(&file_path, markdown_content) {
         Ok(_) => Ok(file_path.to_string_lossy().to_string()),

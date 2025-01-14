@@ -1,7 +1,7 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use serde::{Deserialize, Serialize};
 use indexmap::IndexMap;
-use std::sync::Mutex;
+use std::{collections::HashMap, sync::Mutex};
 use once_cell::sync::Lazy;
 use tauri::WindowEvent;
 mod editor;
@@ -38,6 +38,7 @@ pub struct UserData {
 //Mutex Variable declarations:-
 ///A Vector data type to store all the tabs in ascending order(depending upon the order value of the Tab):
 pub static TABS: Lazy<Mutex<IndexMap<String, Tab>>> = Lazy::new(|| Mutex::new(IndexMap::new()));
+pub static ID_TO_PATH: Lazy<Mutex<HashMap<String, String>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 ///A String that stores the id of the current open tab in the editor:
 pub static CURRENT_OPEN_TAB: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new("".to_string()));
 pub static RECENT_FILES: Lazy<Mutex<Vec<RecentFileInfo>>> = Lazy::new(|| Mutex::new(Vec::new()));

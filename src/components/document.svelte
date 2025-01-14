@@ -36,7 +36,7 @@
     documentTitle = target.value;
     TabService.updateTabTitleById(tab.id, target.value);
 
-    // saveDocument();
+    saveDocument();
   };
 
   let saveTimeout: number | undefined;
@@ -76,7 +76,7 @@
   </div>
   {#if initialized}
     <ContentEditor
-      class="overflow-auto mb-20 p-2 min-h-96"
+      class="overflow-auto mb-20 p-2 min-h-96 w-[80%] min-w-[350px] mx-auto"
       content={documentContent}
       onchange={handleContentChange}
     />

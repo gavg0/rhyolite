@@ -57,6 +57,7 @@ impl MarkdownConverter {
         converter.handlers.insert("s", Box::new(StrikeThroughHandler));
         converter.handlers.insert("em", Box::new(EmphasisHandler));
         converter.handlers.insert("b", Box::new(BoldHandler));
+        converter.handlers.insert("strong", Box::new(BoldHandler));
         converter.handlers.insert("u", Box::new(UnderlineHandler));
         converter.handlers.insert("a", Box::new(LinkHandler));
         converter.handlers.insert("span", Box::new(SpanHandler));

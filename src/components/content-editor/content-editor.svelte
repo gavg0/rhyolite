@@ -58,29 +58,37 @@
       },
     });
 
-    const CustomBold = Bold.extend({
-      renderHTML({ HTMLAttributes }) {
-        const { style, ...rest } = HTMLAttributes;
-        const newStyle = `font-weight: bold; ${style || ""}`.trim();
-        return ["span", { ...rest, style: newStyle }, 0];
-      },
-      addOptions() {
-        return {
-          ...this.parent?.(),
-          HTMLAttributes: {},
-        };
-      },
-    });
+    // const CustomBold = Bold.extend({
+    //   renderHTML({ HTMLAttributes }) {
+    //     const { style, ...rest } = HTMLAttributes;
+    //     const newStyle = `font-weight: bold; ${style || ""}`.trim();
+    //     return ["span", { ...rest, style: newStyle }, 0];
+    //   },
+    //   addOptions() {
+    //     return {
+    //       ...this.parent?.(),
+    //       HTMLAttributes: {},
+    //     };
+    //   },
+    // });
 
     editor = createEditor({
       extensions: [
         StarterKit.configure({
-          bold: false,
+          bold: {
+            HTMLAttributes: { class: "text-text font-bold" },
+          },
           heading: {
             HTMLAttributes: { class: "text-text" },
           },
+          blockquote: {
+            HTMLAttributes: {
+              class:
+                "border-l-2 border-subtext2 w-fit px-4 text-text text-lg bg-base/60 font-normal leading-none before:content-none after:content-none",
+            },
+          },
         }),
-        CustomBold,
+        // CustomBold,
         TextStyle,
         Color,
         FontSizeTextStyle,
@@ -107,6 +115,9 @@
         }),
         CodeBlockLowlight.configure({
           lowlight,
+          HTMLAttributes: {
+            class: "bg-mantle text-text rounded-lg p-4", // Added bg-surface0
+          },
         }),
         Image,
         YouTube,
@@ -115,7 +126,7 @@
       editorProps: {
         attributes: {
           class:
-            "format lg:format-lg  focus:outline-none format-blue max-w-none text-text",
+            "format text-text text-lg focus:outline-none format-blue max-w-none leading-none",
         },
       },
       // onTransaction: ({ editor }) => {

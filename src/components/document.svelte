@@ -64,6 +64,7 @@
   };
 </script>
 
+<!-- TODO: Decide whether not open tabs should be hidden or removed from DOM -->
 <div class={`${open ? "" : "hidden"} flex flex-col w-full max-w-screen-xl`}>
   <div class="flex h-[80px] mb-6">
     <textarea
@@ -75,7 +76,7 @@
   </div>
   {#if initialized}
     <ContentEditor
-      class="overflow-hidden mb-20 p-2"
+      class="overflow-auto mb-20 p-2 min-h-96"
       content={documentContent}
       onchange={handleContentChange}
     />

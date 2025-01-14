@@ -18,7 +18,7 @@
 
 <main class="flex flex-col h-lvh">
   <TitleBar />
-  <div class="flex items-stretch grow">
+  <div class="flex items-stretch grow overflow-hidden">
     <Sidebar />
     <Workspace />
   </div>

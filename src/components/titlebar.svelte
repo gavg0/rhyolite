@@ -39,7 +39,7 @@
 
 <div
   data-tauri-drag-region
-  class="fixed top-0 left-0 z-50 flex flex-grow-0 bg-base w-full basis-[40px] select-none justify-between items-center px-1 overflow-hidden"
+  class="flex grow-0 shrink-0 bg-base w-full basis-[40px] select-none justify-between items-center px-1 overflow-hidden"
 >
   <div
     class="flex items-center h-full px-4 flex-shrink-1 flex-grow-0 overflow-x-auto gap-1"
@@ -76,7 +76,9 @@
       bind:value={curThemeName}
       on:change={(e) => {
         ThemeStore.updateCurrentThemeState(
-          themes.find((t) => t.name === (e.currentTarget as HTMLSelectElement).value) as Theme,
+          themes.find(
+            (t) => t.name === (e.currentTarget as HTMLSelectElement).value,
+          ) as Theme,
         );
       }}
       on:input={(e) => console.log(e)}

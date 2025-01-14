@@ -1,14 +1,14 @@
-use html2md::parse_html; //html2md module to convert html to markdown
-//use html2md::parse_html; //markdown_engine module to convert markdown to html
+use markdown_engine::convert_to_markdown; //markdown_engine module to convert html to markdown
 use pulldown_cmark::{html, Options, Parser}; //pulldown_cmark module to parse markdown
-// use mdka; //mdka module to convert markdown to html
 use regex::Regex; //regex module to use Regex type
 
 pub fn html_to_markdown(html: &str) -> String {
-    let re = Regex::new(r"<mark>(.*?)</mark>").unwrap();
-    let new_html = re.replace_all(html, "==$1==").to_string();
-    let markdown = parse_html(&new_html);
-    markdown.replace(r"\==", "==")
+    // let re = Regex::new(r"<mark>(.*?)</mark>").unwrap();
+    // let new_html = re.replace_all(html, "==$1==").to_string();
+    // let markdown = parse_html(&new_html);
+    let html_string = html.to_string();
+    // markdown.replace(r"\==", "==")
+    convert_to_markdown(&html_string)
 }
 
 pub fn markdown_to_html(markdown: &str) -> String {

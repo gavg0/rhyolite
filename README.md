@@ -15,7 +15,7 @@
 ## **Current Updates**  
 ### Changes Underway:  
 - Frontend is being restyled to match v0.1.4 after we restructured the frontend code.  
-- Working on a custom markdown engine using html2md crate.  
+- Working on a custom markdown engine.  
 - Project renamed to **Rhyolite**.
 
 > Rhyolite is inspired by volcanic rocks, much like Obsidian. The project is my way to contribute and grow as a developer while sharing something meaningful with the open-source community.

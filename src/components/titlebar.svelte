@@ -39,7 +39,7 @@
 
 <div
   data-tauri-drag-region
-  class="flex flex-grow-0 bg-base w-full basis-[40px] select-none justify-between items-center px-1 overflow-hidden"
+  class="fixed top-0 left-0 flex flex-grow-0 bg-base w-full basis-[40px] select-none justify-between items-center px-1 overflow-hidden"
 >
   <div
     class="flex items-center h-full px-4 flex-shrink-1 flex-grow-0 overflow-x-auto gap-1"

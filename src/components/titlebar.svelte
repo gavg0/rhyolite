@@ -86,7 +86,7 @@
   </div>
   <div class="flex flex-row items-stretch self-stretch flex-shrink-0">
     <button
-      class="px-3 cursor-pointer hover:bg-surface2"
+      class="px-3 cursor-pointer focus-visible:bg-surface2 hover:bg-surface2"
       id="titlebar-minimize"
       onclick={() => appWindow.minimize()}
       aria-label="Minimize"
@@ -94,7 +94,7 @@
       <img src={Minimise} alt="minimize" />
     </button>
     <button
-      class="px-3 cursor-pointer hover:bg-surface2"
+      class="px-3 cursor-pointer focus-visible:bg-surface2 hover:bg-surface2"
       id="titlebar-maximize"
       onclick={() => appWindow.toggleMaximize()}
       aria-label="Maximise"
@@ -102,7 +102,7 @@
       <img src={Maximise} alt="maximize" />
     </button>
     <button
-      class="px-3 cursor-pointer hover:bg-red-700"
+      class="px-3 cursor-pointer focus-visible:bg-red-700 hover:bg-red-700"
       id="titlebar-close"
       onclick={() => appWindow.close()}
       aria-label="Close"

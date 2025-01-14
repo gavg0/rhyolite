@@ -24,6 +24,14 @@
       },
     },
     {
+      name: "Close Tab",
+      shortcut: "Ctrl + C",
+      action: () => {
+        TabService.closeTab();
+        CommandPaletteStore.toggleVisibility();
+      },
+    },
+    {
       name: "New Tab",
       shortcut: "Ctrl + N",
       action: () => {

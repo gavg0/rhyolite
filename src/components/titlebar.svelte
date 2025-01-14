@@ -39,12 +39,13 @@
 
 <div
   data-tauri-drag-region
-  class="fixed top-0 left-0 flex flex-grow-0 bg-base w-full basis-[40px] select-none justify-between items-center px-1 overflow-hidden"
+  class="fixed top-0 left-0 z-50 flex flex-grow-0 bg-base w-full basis-[40px] select-none justify-between items-center px-1 overflow-hidden"
 >
   <div
     class="flex items-center h-full px-4 flex-shrink-1 flex-grow-0 overflow-x-auto gap-1"
     role="tablist"
     aria-label="Document tabs"
+    data-tauri-drag-region
   >
     {#each tabs as tab}
       <button
@@ -75,7 +76,7 @@
       bind:value={curThemeName}
       on:change={(e) => {
         ThemeStore.updateCurrentThemeState(
-          themes.find((t) => t.name === e.currentTarget.value),
+          themes.find((t) => t.name === (e.currentTarget as HTMLSelectElement).value) as Theme,
         );
       }}
       on:input={(e) => console.log(e)}
@@ -83,7 +84,7 @@
   </div>
   <div class="flex flex-row items-stretch self-stretch flex-shrink-0">
     <button
-      class="px-3 cursor-pointer focus:bg-surface2 hover:bg-surface2"
+      class="px-3 cursor-pointer hover:bg-surface2"
       id="titlebar-minimize"
       onclick={() => appWindow.minimize()}
       aria-label="Minimize"
@@ -91,7 +92,7 @@
       <img src={Minimise} alt="minimize" />
     </button>
     <button
-      class="px-3 cursor-pointer focus:bg-surface2 hover:bg-surface2"
+      class="px-3 cursor-pointer hover:bg-surface2"
       id="titlebar-maximize"
       onclick={() => appWindow.toggleMaximize()}
       aria-label="Maximise"
@@ -99,7 +100,7 @@
       <img src={Maximise} alt="maximize" />
     </button>
     <button
-      class="px-3 cursor-pointer focus:bg-red-700 hover:bg-red-700"
+      class="px-3 cursor-pointer hover:bg-red-700"
       id="titlebar-close"
       onclick={() => appWindow.close()}
       aria-label="Close"

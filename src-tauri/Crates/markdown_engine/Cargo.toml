@@ -1,6 +1,6 @@
 [package]
 name = "markdown_engine"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 license = "Apache-2.0"
 authors = ["Suyog Tandel(RedddFoxxyy)"]
@@ -10,3 +10,13 @@ description = "Library to convert HTML to custom-markdown for Rhyolite."
 regex = "1.11.1"
 html5ever = "0.29.0"
 markup5ever_rcdom = "0.5.0-unofficial"
+
+[profile.dev]
+incremental = true # Compile your binary in smaller steps.
+
+[profile.release]
+codegen-units = 1 # Allows LLVM to perform better optimization.
+lto = true # Enables link-time-optimizations.
+opt-level = 3 # Prioritizes speed. Use `z` if you prefer small binary size.
+panic = "abort" # Higher performance by disabling panic handlers.
+strip = true # Ensures debug symbols are removed.

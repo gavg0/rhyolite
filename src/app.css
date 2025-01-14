@@ -59,7 +59,7 @@ html {
 @supports (scrollbar-color: auto) {
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(var(--scrollbar-thumb-color) / 0.8)
+    scrollbar-color: rgba(var(--scrollbar-thumb-color))
       rgba(var(--scrollbar-track-color));
   }
 }

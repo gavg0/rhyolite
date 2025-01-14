@@ -18,7 +18,7 @@
   };
 </script>
 
-<div class="flex grow justify-center mt-[60px] px-10 overflow-auto">
+<div class="flex grow justify-center mt-[30px] px-10 overflow-auto">
   {#each tabs as tab}
     {#if tab.tabType === TabType.Document || tab.tabType === undefined}
       <!-- TODO: Q: How to switch between tabs? -->

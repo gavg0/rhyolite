@@ -28,13 +28,30 @@
     unsubscribeTabsState();
     unsubscribeThemeStore();
   }); // Clean up
+  $effect(() => {
+    if (currentTab) {
+      document
+        .querySelector(
+          currentTab.id === tabs[tabs.length - 1].id
+            ? "#tablist>#new-tab-btn"
+            : "#tablist>.active",
+        )
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "nearest",
+        });
+    }
+  });
 
   const appWindow = getCurrentWindow();
   const onOpenTab = (tab: Tab) => {
     TabsStore.updateCurrentTabState(tab);
   };
-  const selectOptions = themes.map((t) => ({ value: t.name, name: t.name }));
-  let curThemeName = $state(currentTheme?.name);
+  const selectOptions = $derived(
+    themes.map((t) => ({ value: t.name, name: t.name })),
+  );
+  let curThemeName = $derived(currentTheme?.name);
 </script>
 
 <div
@@ -42,14 +59,16 @@
   class="flex grow-0 shrink-0 bg-base w-full basis-[40px] select-none justify-between items-center px-1 overflow-hidden"
 >
   <div
-    class="flex items-center h-full px-4 flex-shrink-1 flex-grow-0 overflow-x-auto gap-1"
+    class="flex items-center h-full px-4 flex-shrink-1 flex-grow-0 overflow-y-hidden overflow-x-auto gap-1"
     role="tablist"
+    id="tablist"
     aria-label="Document tabs"
     data-tauri-drag-region
   >
     {#each tabs as tab}
       <button
         class={`flex justify-left items-center px-4 text-nowrap h-[30px] min-w-[120px] rounded-[18px] flex-shrink text-text hover:bg-surface1 ${currentTab?.id === tab.id ? "bg-surface0" : ""}`}
+        class:active={currentTab?.id === tab.id}
         role="tab"
         aria-controls="editor"
         onclick={() => onOpenTab(tab)}
@@ -62,7 +81,8 @@
 
     <button
       type="button"
-      class="flex justify-left items-center px-4 text-nowrap h-[30px] min-w-[30px] rounded-[18px] flex-shrink text-text m-[0.6%] hover:bg-surface1"
+      class="flex justify-center items-center px-4 text-nowrap h-[30px] w-[30px] aspect-square rounded-[18px] flex-shrink text-text hover:bg-surface1"
+      id="new-tab-btn"
       onclick={addNewDocumentTab}>+</button
     >
   </div>
@@ -73,7 +93,7 @@
       defaultClass="rounded-lg"
       placeholder="Select Theme"
       items={selectOptions}
-      bind:value={curThemeName}
+      value={curThemeName}
       on:change={(e) => {
         ThemeStore.updateCurrentThemeState(
           themes.find(

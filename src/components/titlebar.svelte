@@ -7,6 +7,7 @@
   import TabsStore from "../stores/tabs.store";
   import { type Tab } from "../types/tab";
   import { addNewDocumentTab } from "../services/document.service";
+  import closeTab from "../services/tab.service";
   import ThemeStore from "../stores/theme.store";
   import type { Theme } from "../types/theme";
   import { Select } from "flowbite-svelte";
@@ -56,14 +57,13 @@
 
 <div
   data-tauri-drag-region
-  class="flex grow-0 shrink-0 bg-base w-full basis-[40px] select-none justify-between items-center px-1 overflow-hidden"
+  class="flex grow-0 shrink-0 bg-base w-full basis-[40px] select-none justify-between items-center overflow-hidden"
 >
   <div
-    class="flex items-center h-full px-4 flex-shrink-1 flex-grow-0 overflow-y-hidden overflow-x-auto gap-1"
+    class="flex items-center h-full ml-7 px-4 flex-shrink-1 flex-grow-0 overflow-y-hidden overflow-x-auto gap-1"
     role="tablist"
     id="tablist"
     aria-label="Document tabs"
-    data-tauri-drag-region
   >
     {#each tabs as tab}
       <button

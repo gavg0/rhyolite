@@ -9,6 +9,10 @@
             event.preventDefault();
             DocumentService.deleteDocumentTab();
         }
+        if (event.ctrlKey && event.key === "c") {
+            event.preventDefault();
+            TabService.closeTab();
+        }
         if (event.ctrlKey && event.key === "n") {
             event.preventDefault();
             DocumentService.addNewDocumentTab();

@@ -3,6 +3,9 @@
   import RecentFilesIcon from "$lib/static/recent_files.svg.svelte";
   import { getContext } from "svelte";
   import CommandPaletteStore from "../stores/command-palette.store";
+  import SettingsIcon from "$lib/static/settings.svg.svelte";
+  import SettingsMenuStore from "../stores/settings-menu.store";
+  import SettingsMenu from "$lib/components/settingsmenu.svelte";
 
   const editor: any = getContext("editor");
 </script>
@@ -30,5 +33,17 @@
     >
       <RecentFilesIcon />
     </button>
+    <button
+      class="flex justify-center rounded-lg items-center h-5 px-0.5 py-4 w-full cursor-pointer hover:bg-text/10 transition-all duration-200 focus:outline-none focus:ring-0"
+      id="Settings_button"
+      onclick={() => {
+        SettingsMenuStore.toggleSettingsMenu();
+      }}
+      aria-label="Open Settings Menu"
+      title="Open Settings Menu"
+    >
+      <SettingsIcon />
+    </button>
+    <SettingsMenu />
   </div>
 </main>

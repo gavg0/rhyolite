@@ -100,6 +100,18 @@
         TaskList,
         TaskItem,
         ListItem,
+        TaskItem.configure({
+          HTMLAttributes: {
+            class: "flex gap-2 leading-none", // Added leading-none and changed to items-start
+          },
+          nested: true,
+        }),
+
+        TaskList.configure({
+          HTMLAttributes: {
+            class: "not-prose pl-2",
+          },
+        }),
         Link.configure({
           openOnClick: false,
           autolink: true,

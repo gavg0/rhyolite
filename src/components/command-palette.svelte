@@ -71,13 +71,13 @@
         CommandPaletteStore.toggleVisibility();
       },
     },
-    ...Array(5)
-      .fill(undefined)
-      .map((_, i) => ({
-        name: `Dummy Command ${i}`,
-        shortcut: `Ctrl + ${i}`,
-        action: () => {},
-      })),
+    // ...Array(5)
+    //   .fill(undefined)
+    //   .map((_, i) => ({
+    //     name: `Dummy Command ${i}`,
+    //     shortcut: `Ctrl + ${i}`,
+    //     action: () => {},
+    //   })),
   ];
 
   function handleKeydown(event: KeyboardEvent) {
@@ -192,20 +192,20 @@
         class="flex overflow-y-auto flex-col gap-[0.5px]"
       >
         <div class="mx-2">
-        {#each commands as command, index}
-          <button
-            type="button"
-            class="flex px-4 justify-between items-center p-1 hover:bg-surface0 cursor-pointer w-full h-[34px] text-left text-text border-none shadow-none rounded transition-colors duration-200"
-            class:bg-surface0={selectedIndex === index}
-            onclick={() => {
-              command.action();
-            }}
-            onmouseenter={() => (selectedIndex = index)}
-          >
-            <span>{command.name}</span>
-            <span class="shortcut">{command.shortcut}</span>
-          </button>
-        {/each}
+          {#each commands as command, index}
+            <button
+              type="button"
+              class="flex px-4 justify-between items-center p-1 hover:bg-surface0 cursor-pointer w-full h-[34px] text-left text-text border-none shadow-none rounded transition-colors duration-200"
+              class:bg-surface0={selectedIndex === index}
+              onclick={() => {
+                command.action();
+              }}
+              onmouseenter={() => (selectedIndex = index)}
+            >
+              <span>{command.name}</span>
+              <span class="shortcut">{command.shortcut}</span>
+            </button>
+          {/each}
         </div>
       </div>
     </div>

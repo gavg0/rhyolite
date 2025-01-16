@@ -1,9 +1,8 @@
 <h1 align="center">
     <img src="./src-tauri/icons/icon.png" width=256 alt="rhyolite">
 </h1>
-<h1 align="center">Rhyolite</h1>
 
-<h2 align="center">An Open Source Markdown Editor Inspired by Obsidian!</h2>
+<h1 align="center">An Open Source Markdown Editor Inspired by Obsidian!</h1>
 
 ![Rhyolite Logo](assets/Rhyolite_is_cool_2.png)  
 ![Rhyolite Editor Preview](assets/Rhyolite_is_cool_3.png)

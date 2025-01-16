@@ -146,6 +146,10 @@
       // editor = editor;
 
       // },
+      onCreate: ({ editor }) => {
+        // Update counts when editor is initialized
+        onchange(editor as Editor);
+      },
       onUpdate: ({ editor }) => {
         onchange(editor as Editor);
       },

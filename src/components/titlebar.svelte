@@ -19,15 +19,8 @@
     tabs = value.tabs;
     currentTab = value.currentTab;
   });
-  let themes: Theme[] = $state([]);
-  let currentTheme: Theme | undefined = $state();
-  const unsubscribeThemeStore = ThemeStore.states.subscribe((v) => {
-    currentTheme = v.currentTheme;
-    themes = v.themes;
-  });
   onDestroy(() => {
     unsubscribeTabsState();
-    unsubscribeThemeStore();
   }); // Clean up
   $effect(() => {
     if (currentTab) {
@@ -49,10 +42,6 @@
   const onOpenTab = (tab: Tab) => {
     TabsStore.updateCurrentTabState(tab);
   };
-  const selectOptions = $derived(
-    themes.map((t) => ({ value: t.name, name: t.name })),
-  );
-  let curThemeName = $derived(currentTheme?.name);
 </script>
 
 <div
@@ -87,23 +76,6 @@
     >
   </div>
   <div class="flex-grow"></div>
-  <div class="flex-shrink-0">
-    <Select
-      size="sm"
-      defaultClass="rounded-lg"
-      placeholder="Select Theme"
-      items={selectOptions}
-      value={curThemeName}
-      on:change={(e) => {
-        ThemeStore.updateCurrentThemeState(
-          themes.find(
-            (t) => t.name === (e.currentTarget as HTMLSelectElement).value,
-          ) as Theme,
-        );
-      }}
-      on:input={(e) => console.log(e)}
-    ></Select>
-  </div>
   <div class="flex flex-row items-stretch self-stretch flex-shrink-0">
     <button
       class="flex justify-center items-center w-12 mx-auto cursor-pointer focus-visible:bg-surface2 hover:bg-surface2"

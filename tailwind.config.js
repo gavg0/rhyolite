@@ -27,6 +27,7 @@ export default {
     extend: {},
   },
   plugins: [
+    require("@tailwindcss/typography"),
     flowbitePlugin,
     flowbiteTypographyPlugin({
       wysiwyg: true,

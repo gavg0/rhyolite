@@ -16,6 +16,10 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@codemirror/autocomplete": "^6.18.4",
+    "@codemirror/lang-markdown": "^6.3.2",
+    "@codemirror/language-data": "^6.5.1",
+    "@tailwindcss/typography": "^0.5.16",
     "@tauri-apps/api": "2.2.0",
     "@tauri-apps/plugin-opener": "2.2.4",
     "@tiptap/core": "2.11.2",
@@ -53,8 +57,10 @@
     "@tiptap/extension-youtube": "2.11.2",
     "@tiptap/pm": "2.11.2",
     "@tiptap/starter-kit": "2.11.2",
+    "codemirror": "^6.0.1",
     "flowbite-typography": "1.0.5",
     "lowlight": "3.3.0",
+    "marked": "^15.0.6",
     "svelte-tiptap": "2.1.0",
     "uuid": "11.0.5"
   },

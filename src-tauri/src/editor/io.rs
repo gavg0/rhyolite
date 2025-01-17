@@ -2,7 +2,7 @@
 use std::fs; //Filesystem module
 use std::path::PathBuf; //PathBuf datatype to store path strings
 use uuid::Uuid; //Uuid module to generate unique ids
-// use tauri_plugin_dialog::DialogExt; //DialogExt trait to show dialog boxes
+                // use tauri_plugin_dialog::DialogExt; //DialogExt trait to show dialog boxes
 
 use dirs; //dirs module to get the path of the documents directory
 use sanitize_filename; //sanitize_filename module to sanitize filenames
@@ -175,15 +175,18 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
     let safe_filename = sanitize_filename::sanitize(format!("{}.md", title));
     let file_path = trove_dir.join(&safe_filename);
 
-    let tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
+    let tabs = TABS
+        .lock()
+        .map_err(|e| format!("Failed to lock TABS: {}", e))?;
 
-    let old_title = tabs.get(&id).map(|tab| tab.title.clone()).unwrap_or_else(|| String::from("Untitled"));
+    let old_title = tabs
+        .get(&id)
+        .map(|tab| tab.title.clone())
+        .unwrap_or_else(|| String::from("Untitled"));
     let old_path = trove_dir.join(sanitize_filename::sanitize(format!("{}.md", old_title)));
 
-   
-    if old_path != file_path && old_path.exists(){
-        fs::remove_file(old_path)
-            .map_err(|e| format!("Failed to delete old file: {}", e))?;
+    if old_path != file_path && old_path.exists() {
+        fs::remove_file(old_path).map_err(|e| format!("Failed to delete old file: {}", e))?;
     }
 
     // Write markdown content directly to file
@@ -201,9 +204,7 @@ pub fn delete_document(id: String) -> Result<Option<DocumentData>, String> {
     let mut recent_files = RECENT_FILES
         .lock()
         .map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
-    let tab_title = tabs.get(&id)
-        .map(|tab| tab.title.clone())
-        .unwrap();
+    let tab_title = tabs.get(&id).map(|tab| tab.title.clone()).unwrap();
     recent_files.retain(|doc| doc.id != id);
     let trove_dir = get_trove_dir("Untitled_Trove");
     let filename = sanitize_filename::sanitize(format!("{}.md", tab_title));
@@ -213,18 +214,19 @@ pub fn delete_document(id: String) -> Result<Option<DocumentData>, String> {
     if let Some((index, _, _)) = tabs.shift_remove_full(&id) {
         // Get the tab at the same index (the one that shifted up)
         // If no tab at that index, get the last tab
-        let next_tab = if let Some((next_id, next_tab)) = tabs.get_index(index).or_else(|| tabs.last()) {
-            // Update current open tab
-            let mut current_open_tab = CURRENT_OPEN_TAB
-                .lock()
-                .map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
-            *current_open_tab = next_id.clone();
+        let next_tab =
+            if let Some((next_id, next_tab)) = tabs.get_index(index).or_else(|| tabs.last()) {
+                // Update current open tab
+                let mut current_open_tab = CURRENT_OPEN_TAB
+                    .lock()
+                    .map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
+                *current_open_tab = next_id.clone();
 
-            // Get the document content for the next tab
-            get_document_content(next_id.clone(), next_tab.title.clone())?
-        } else {
-            None
-        };
+                // Get the document content for the next tab
+                get_document_content(next_id.clone(), next_tab.title.clone())?
+            } else {
+                None
+            };
 
         // Delete the file if it exists
         if file_path.exists() {

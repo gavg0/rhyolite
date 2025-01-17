@@ -94,7 +94,7 @@
       <img src={Maximise} alt="maximize" />
     </button>
     <button
-      class="flex justify-center items-center w-12 mx-auto cursor-pointer focus-visible:bg-red-700 hover:bg-red-700"
+      class="flex justify-center items-center w-12 mx-auto cursor-pointer focus-visible:bg-red-500 hover:bg-red-500"
       id="titlebar-close"
       onclick={() => appWindow.close()}
       aria-label="Close"

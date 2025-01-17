@@ -15,7 +15,10 @@
     <button
       class="flex justify-center rounded-lg items-center h-5 px-0.5 py-4 w-full cursor-pointer hover:bg-gray-200/10 transition-all duration-200 focus:outline-none focus:ring-0"
       id="CommandPalette_button"
-      onclick={() => CommandPaletteStore.toggleVisibility()}
+      onclick={(e) => { 
+        e.stopPropagation();
+        CommandPaletteStore.toggleVisibility()
+      }}
       aria-label="Open Command Palette"
       title="Open Command Palette"
     >
@@ -33,7 +36,10 @@
     <button
       class="flex justify-center rounded-lg items-center h-5 px-0.5 py-4 w-full cursor-pointer hover:bg-text/10 transition-all duration-200 focus:outline-none focus:ring-0"
       id="Settings_button"
-      onclick={() => SettingsMenuStore.toggleSettingsMenu()}
+      onclick={(e) => {
+        e.stopPropagation();
+        SettingsMenuStore.toggleSettingsMenu();
+      }}
       aria-label="Open Settings Menu"
       title="Open Settings Menu"
     >

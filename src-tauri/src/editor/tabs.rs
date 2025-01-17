@@ -7,8 +7,9 @@ use crate::CURRENT_OPEN_TAB;
 use crate::RECENT_FILES;
 use crate:: Tab;
 use crate::RecentFileInfo;
+use std::path::PathBuf; 
 
-use super::io::save_user_data;
+use super::io::{save_user_data, get_trove_dir, save_document};
 
 #[tauri::command]
 pub fn send_current_open_tab(id: String) {
@@ -38,10 +39,20 @@ pub fn new_tab() -> Result<Tab, String> {
     // Generate a new unique ID
     let new_id = Uuid::new_v4().to_string();
     
+
+    let trove_dir = get_trove_dir("Untitled_Trove");
+
+    // let title= sanitize_filename::sanitize(format!("{}.md", "Untitled".to_string()));
+    // let path = trove_dir.join(&title);
+    // if path.exists() {
+    //     return Err("File already exists".to_string());
+    // }
+    let title = check_path_exists(&trove_dir, &trove_dir, 0);
+    
     // Create new tab
     let new_tab = Tab {
         id: new_id.clone(),
-        title: "Untitled".to_string(),
+        title: title.clone(),
     };
     
     // Insert into IndexMap
@@ -56,7 +67,7 @@ pub fn new_tab() -> Result<Tab, String> {
     // Update current open tab
     let mut current_open_tab = CURRENT_OPEN_TAB.lock()
         .map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
-    *current_open_tab = new_id;
+    *current_open_tab = new_id.clone();
 
     std::mem::drop(current_open_tab);
     std::mem::drop(tabs);
@@ -64,8 +75,24 @@ pub fn new_tab() -> Result<Tab, String> {
 
     // Save changes to userdata.json
     save_user_data()?;
+    let _ = save_document(new_id, title, String::new());
     
     Ok(new_tab)
+}
+
+fn check_path_exists(path: &PathBuf, trove_dir: &PathBuf, iter: u32) -> String {
+    let title = if iter == 0 {
+        sanitize_filename::sanitize(format!("{}.md", "Untitled"))
+    } else {
+        sanitize_filename::sanitize(format!("{}.md", format!("Untitled {}", iter)))
+    };
+    
+    let file_path = trove_dir.join(&title);
+    if !file_path.exists() {
+        title.strip_suffix(".md").unwrap_or(&title).to_string()
+    } else {
+        check_path_exists(path, trove_dir, iter + 1)
+    }
 }
 
 #[tauri::command]

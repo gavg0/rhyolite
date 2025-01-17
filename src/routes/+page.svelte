@@ -3,7 +3,7 @@
 
   import { onMount } from "svelte";
   import CommandPalette from "../components/command-palette.svelte";
-
+  import RecentFiles from "../components/recentfilesmenu.svelte";
   import Workspace from "../components/workspace.svelte";
   import TitleBar from "../components/titlebar.svelte";
   import HomeHotkeys from "../components/home-hotkeys.svelte";
@@ -24,4 +24,5 @@
   </div>
   <HomeHotkeys />
   <CommandPalette />
+  <RecentFiles />
 </main>

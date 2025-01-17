@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { ChainedCommands } from "@tiptap/core";
+  import { Extension } from "@tiptap/core";
   import Bold from "@tiptap/extension-bold";
   import CharacterCount from "@tiptap/extension-character-count";
   import { Color } from "@tiptap/extension-color";
@@ -72,6 +73,37 @@
     //   },
     // });
 
+    const TabIndent = Extension.create({
+      addKeyboardShortcuts() {
+        return {
+          Tab: () => {
+            const { state, dispatch } = this.editor.view;
+            const { from, to } = state.selection;
+            const indent = "    "; // Four spaces
+
+            // Insert four spaces at the current selection
+            dispatch(state.tr.insertText(indent, from, to));
+            return true; // Prevents the default behavior
+          },
+          "Shift-Tab": () => {
+            const { state, dispatch } = this.editor.view;
+            const { from, to } = state.selection;
+            const indent = "    "; // Four spaces
+            const startOfLine = state.doc.resolve(from).start();
+
+            // Check if the selection starts with four spaces
+            if (state.doc.textBetween(startOfLine, from).startsWith(indent)) {
+              // Remove four spaces before the current selection
+              dispatch(
+                state.tr.delete(startOfLine, startOfLine + indent.length),
+              );
+            }
+            return true; // Prevents the default behavior
+          },
+        };
+      },
+    });
+
     editor = createEditor({
       extensions: [
         StarterKit.configure({
@@ -89,6 +121,7 @@
           },
         }),
         // CustomBold,
+        TabIndent,
         TextStyle,
         Color,
         FontSizeTextStyle,
@@ -146,6 +179,10 @@
       // editor = editor;
 
       // },
+      onCreate: ({ editor }) => {
+        // Update counts when editor is initialized
+        onchange(editor as Editor);
+      },
       onUpdate: ({ editor }) => {
         onchange(editor as Editor);
       },

@@ -20,7 +20,7 @@ const toggleSettingsMenu = (): void => {
 };
 
 export default {
-  subscibe: settingsMenuState.subscribe,
+  subscribe: settingsMenuState.subscribe,
   settingsMenuState,
   isSettingsMenuVisible,
   toggleSettingsMenu,

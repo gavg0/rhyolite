@@ -332,3 +332,5 @@ web_modules/
 /build
 /src-tauri/gen/android
 /.idea
+/.vscode
+package-lock.json

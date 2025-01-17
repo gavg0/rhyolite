@@ -1,10 +1,15 @@
-# Rhyolite
+<h1 align="center">
+    <img src="./src-tauri/icons/icon.png" width=256 alt="rhyolite">
+</h1>
+
+<h1 align="center">An Open Source Markdown Editor Inspired by Obsidian!</h1>
 
 ![Rhyolite Logo](assets/Rhyolite_is_cool_2.png)  
 ![Rhyolite Editor Preview](assets/Rhyolite_is_cool_3.png)
 
-## A Simple Text Editor Built with Tauri!  
-*Inspired by Obsidian.*
+## A Simple Text Editor Built with Tauri
+
+_Inspired by Obsidian._
 
 ---
 
@@ -12,61 +17,76 @@
 
 ---
 
-## **Current Updates**  
-### Changes Underway:  
-- Frontend is being restyled to match v0.1.4 after we restructured the frontend code.  
-- Working on a custom markdown engine.  
+## **Current Updates**
+
+### Changes Underway
+
+- Frontend is being restyled to match v0.1.4 after we restructured the frontend code.
+- Working on a custom markdown engine.
 - Project renamed to **Rhyolite**.
 
 > Rhyolite is inspired by volcanic rocks, much like Obsidian. The project is my way to contribute and grow as a developer while sharing something meaningful with the open-source community.
 
 ---
 
-## For New Contributors  
-1. The `master` branch has undergone **massive restructuring**.  
-2. The app now uses **Flowbite/Tiptap editor styling**, which differs from earlier visuals.  
-3. For the latest stable release visuals, compile the source from the `master-v0.1.4-old` branch.  
+## For New Contributors
+
+1. The `master` branch has undergone **massive restructuring**.
+2. The app now uses **Flowbite/Tiptap editor styling**, which differs from earlier visuals.
+3. For the latest stable release visuals, compile the source from the `master-v0.1.4-old` branch.
 4. Join our **[Discord server](https://discord.gg/K6FAd8FTma)** to collaborate effectively.
 
 ---
 
-## How to Install?  
+## How to Install?
 
-### **Windows**  
-#### 64-bit Systems:  
+### **Windows**
+
+#### 64-bit Systems
+
 - Use the `Rhyolite_[version]_x64_en-US.msi` or `Rhyolite_[version]_x64-setup.exe` installer from the [Releases section](https://github.com/RedddFoxxyy/Rhyolite/releases).
 
-#### 32-bit Systems:  
+#### 32-bit Systems
+
 - Use the `Rhyolite_[version]_x86_en-US.msi` or `Rhyolite_[version]_x86-setup.exe` installer.
 
-#### ARM64 Systems (Snapdragon processors):  
+#### ARM64 Systems (Snapdragon processors)
+
 - Use the `Rhyolite_[version]_arm64_en-US.msi` or `Rhyolite_[version]_arm64-setup.exe`.
 
 ---
 
-### **MacOS**  
-- Use the `Rhyolite_[version]_x64.dmg` for Intel Macs.  
+### **MacOS**
+
+- Use the `Rhyolite_[version]_x64.dmg` for Intel Macs.
 - Use the `Rhyolite_[version]_aarch64.dmg` for M-series Macs.
 
 > **Note:** You may encounter issues since the app isn’t signed yet.
 
 ---
 
-### **Linux**  
-#### Universal Linux Installer:  
-Run this command in your terminal:  
+### **Linux**
+
+#### Universal Linux Installer
+
+Run this command in your terminal:
+
 ```bash
 curl -f https://raw.githubusercontent.com/RedddFoxxyy/Rhyolite/master/packaging/linux/install.sh | sh
 ```
 
-#### Debian/Ubuntu:
+#### Debian/Ubuntu
+
 - Install the .deb package from the Releases section.
 
-#### RHEL/Fedora:
+#### RHEL/Fedora
+
 - Install the .rpm package from the same section.
 
-#### AppImage/Raw Binary:
+#### AppImage/Raw Binary
+
 Make the file executable and run:
+
 ```bash
 chmod +x Rhyolite_[version]_.AppImage
 ./Rhyolite_[version]_.AppImage
@@ -75,11 +95,15 @@ chmod +x Rhyolite_[version]_.AppImage
 ---
 
 ### **Manual Compilation**
+
 - To build the app manually, run:
+
 ```bash
 npm run tauri build
 ```
+
 - For debugging, add `--verbose`:
+
 ```bash
 npm run tauri build --verbose
 ```
@@ -103,6 +127,7 @@ npm run tauri build --verbose
 ---
 
 ## Licensing
+
 ```
 Copyright 2025 RedddFoxxyy
 

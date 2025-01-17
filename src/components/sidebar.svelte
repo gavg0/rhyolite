@@ -5,7 +5,7 @@
   import CommandPaletteStore from "../stores/command-palette.store";
   import SettingsIcon from "$lib/static/settings.svg.svelte";
   import SettingsMenuStore from "../stores/settings-menu.store";
-  import SettingsMenu from "$lib/components/settingsmenu.svelte";
+  import SettingsMenu from "./settingsmenu.svelte";
 
   const editor: any = getContext("editor");
 </script>

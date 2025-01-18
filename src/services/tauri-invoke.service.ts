@@ -79,3 +79,5 @@ export class TauriInvokeServiceProvider implements IApiServiceProvider {
     return await invoke("get_current_open_tab");
   }
 }
+
+

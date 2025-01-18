@@ -39,6 +39,7 @@ pub fn new_tab() -> Result<Tab, String> {
         // If we get the lock, proceed with the rest of the function
         let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
         let mut recent_files = RECENT_FILES.lock().map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
+		let mut current_open_tab = CURRENT_OPEN_TAB.lock().map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
         
         // Generate a new unique ID
         let new_id = Uuid::new_v4().to_string();
@@ -62,8 +63,7 @@ pub fn new_tab() -> Result<Tab, String> {
         });
         
         // Update current open tab
-        let mut current_open_tab = CURRENT_OPEN_TAB.lock()
-            .map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
+
         *current_open_tab = new_id.clone();
         std::mem::drop(current_open_tab);
         std::mem::drop(tabs);

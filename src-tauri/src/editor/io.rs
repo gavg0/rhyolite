@@ -10,7 +10,7 @@ use sanitize_filename; //sanitize_filename module to sanitize filenames
 use crate::editor::markdown_handler;
 
 use crate::{DocumentData, RecentFileInfo, UserData}; //Importing the DocumentData, RecentFileInfo and UserData structs
-use crate::{CURRENT_OPEN_TAB, RECENT_FILES, TABS}; //Importing the CURRENT_OPEN_TAB, RECENT_FILES and TABS mutexes
+use crate::{IO_OPS, CURRENT_OPEN_TAB, RECENT_FILES, TABS}; //Importing the CURRENT_OPEN_TAB, RECENT_FILES and TABS mutexes
 
 /// This function finds the path to the 'documents'
 /// directory for different 'os' and returns the PathBuf(a mutable path string)
@@ -198,50 +198,54 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
 
 #[tauri::command]
 pub fn delete_document(id: String) -> Result<Option<DocumentData>, String> {
-	let mut tabs = TABS
-		.lock()
-		.map_err(|e| format!("Failed to lock TABS: {}", e))?;
-	let mut recent_files = RECENT_FILES
-		.lock()
-		.map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
-	let tab_title = tabs.get(&id).map(|tab| tab.title.clone()).unwrap();
-   
-	let trove_dir = get_trove_dir("Untitled_Trove");
-	let filename = sanitize_filename::sanitize(format!("{}.md", tab_title));
-	let file_path = trove_dir.join(&filename);
-	
-	// Remove the tab and get its index
-	if let Some((index, _, _)) = tabs.shift_remove_full(&id) {
-		// Get the tab at the same index (the one that shifted up)
-		// If no tab at that index, get the last tab
-		let next_tab =
-			if let Some((next_id, next_tab)) = tabs.get_index(index).or_else(|| tabs.last()) {
-				// Update current open tab
-				let mut current_open_tab = CURRENT_OPEN_TAB
-					.lock()
-					.map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
-				*current_open_tab = next_id.clone();
-				// Get the document content for the next tab
-				get_document_content(next_id.clone(), next_tab.title.clone())?
-			} else {
-				None
-			};
-
-		if file_path.exists() {
-			// Delete the file if it exists
-			fs::remove_file(&file_path)
-				.map_err(|e| format!("Failed to delete file {}: {}", file_path.display(), e))?;
-		}
-
-		recent_files.retain(|doc| doc.id != id);
-		std::mem::drop(recent_files);
-		std::mem::drop(tabs);
-		// Save changes to userdata.json
-		save_user_data()?;
-		Ok(next_tab)
-	} else {
-		Err("Tab not found".to_string())
-	}
+    // Try to acquire IO_OPS lock first
+    if let Ok(_io_ops_unlock) = IO_OPS.try_lock() {
+        let mut tabs = TABS
+            .lock()
+            .map_err(|e| format!("Failed to lock TABS: {}", e))?;
+        let mut recent_files = RECENT_FILES
+            .lock()
+            .map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
+        let tab_title = tabs.get(&id).map(|tab| tab.title.clone()).unwrap();
+        
+        let trove_dir = get_trove_dir("Untitled_Trove");
+        let filename = sanitize_filename::sanitize(format!("{}.md", tab_title));
+        let file_path = trove_dir.join(&filename);
+        
+        // Remove the tab and get its index
+        if let Some((index, _, _)) = tabs.shift_remove_full(&id) {
+            // Get the tab at the same index (the one that shifted up)
+            // If no tab at that index, get the last tab
+            let next_tab =
+                if let Some((next_id, next_tab)) = tabs.get_index(index).or_else(|| tabs.last()) {
+                    // Update current open tab
+                    let mut current_open_tab = CURRENT_OPEN_TAB
+                        .lock()
+                        .map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
+                    *current_open_tab = next_id.clone();
+                    // Get the document content for the next tab
+                    get_document_content(next_id.clone(), next_tab.title.clone())?
+                } else {
+                    None
+                };
+            if file_path.exists() {
+                // Delete the file if it exists
+                fs::remove_file(&file_path)
+                    .map_err(|e| format!("Failed to delete file {}: {}", file_path.display(), e))?;
+            }
+            recent_files.retain(|doc| doc.id != id);
+            std::mem::drop(recent_files);
+            std::mem::drop(tabs);
+            // Save changes to userdata.json
+            save_user_data()?;
+            Ok(next_tab)
+        } else {
+            Err("Tab not found".to_string())
+        }
+    } else {
+        // If we can't get the lock, return an error
+        Err("IO operations in progress. Please try again.".to_string())
+    }
 }
 
 #[tauri::command]

@@ -36,6 +36,9 @@ pub struct UserData {
 }
 
 //Mutex Variable declarations:-
+
+pub static IO_OPS: Lazy<Mutex<()>> = Lazy::new(|| Mutex::new(()));
+
 ///A Vector data type to store all the tabs in ascending order(depending upon the order value of the Tab):
 pub static TABS: Lazy<Mutex<IndexMap<String, Tab>>> = Lazy::new(|| Mutex::new(IndexMap::new()));
 pub static ID_TO_PATH: Lazy<Mutex<HashMap<String, String>>> = Lazy::new(|| Mutex::new(HashMap::new()));

@@ -7,6 +7,7 @@ use crate::CURRENT_OPEN_TAB;
 use crate::RECENT_FILES;
 use crate:: Tab;
 use crate::RecentFileInfo;
+use crate::IO_OPS;
 use std::path::PathBuf; 
 
 use super::io::{save_user_data, get_trove_dir, save_document};
@@ -33,51 +34,50 @@ pub fn get_tabs() -> Result<Vec<Tab>, String> {
 
 #[tauri::command]
 pub fn new_tab() -> Result<Tab, String> {
-    let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
-    let mut recent_files = RECENT_FILES.lock().map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
-    
-    // Generate a new unique ID
-    let new_id = Uuid::new_v4().to_string();
-    
-
-    let trove_dir = get_trove_dir("Untitled_Trove");
-
-    // let title= sanitize_filename::sanitize(format!("{}.md", "Untitled".to_string()));
-    // let path = trove_dir.join(&title);
-    // if path.exists() {
-    //     return Err("File already exists".to_string());
-    // }
-    let title = check_path_exists(&trove_dir, 0);
-    
-    // Create new tab
-    let new_tab = Tab {
-        id: new_id.clone(),
-        title: title.clone(),
-    };
-    
-    // Insert into IndexMap
-    tabs.insert(new_id.clone(), new_tab.clone());
-    
-    // Add to recent files
-    recent_files.push(RecentFileInfo {
-        id: new_id.clone(),
-        title: "Untitled".to_string(),
-    });
-    
-    // Update current open tab
-    let mut current_open_tab = CURRENT_OPEN_TAB.lock()
-        .map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
-    *current_open_tab = new_id.clone();
-
-    std::mem::drop(current_open_tab);
-    std::mem::drop(tabs);
-    std::mem::drop(recent_files);
-
-    // Save changes to userdata.json
-    save_user_data()?;
-    let _ = save_document(new_id, title, String::new());
-    
-    Ok(new_tab)
+    // Try to acquire IO_OPS lock first
+    if let Ok(_io_ops_unlock) = IO_OPS.try_lock() {
+        // If we get the lock, proceed with the rest of the function
+        let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
+        let mut recent_files = RECENT_FILES.lock().map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
+        
+        // Generate a new unique ID
+        let new_id = Uuid::new_v4().to_string();
+        
+        let trove_dir = get_trove_dir("Untitled_Trove");
+        let title = check_path_exists(&trove_dir, 0);
+        
+        // Create new tab
+        let new_tab = Tab {
+            id: new_id.clone(),
+            title: title.clone(),
+        };
+        
+        // Insert into IndexMap
+        tabs.insert(new_id.clone(), new_tab.clone());
+        
+        // Add to recent files
+        recent_files.push(RecentFileInfo {
+            id: new_id.clone(),
+            title: "Untitled".to_string(),
+        });
+        
+        // Update current open tab
+        let mut current_open_tab = CURRENT_OPEN_TAB.lock()
+            .map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
+        *current_open_tab = new_id.clone();
+        std::mem::drop(current_open_tab);
+        std::mem::drop(tabs);
+        std::mem::drop(recent_files);
+        
+        // Save changes to userdata.json
+        save_user_data()?;
+        let _ = save_document(new_id, title, String::new());
+        
+        Ok(new_tab)
+    } else {
+        // If we can't get the lock, return an error
+        Err("IO operations in progress. Please try again.".to_string())
+    }
 }
 
 fn check_path_exists(trove_dir: &PathBuf, iter: u32) -> String {

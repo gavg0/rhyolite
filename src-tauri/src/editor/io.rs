@@ -1,4 +1,5 @@
 //! This module provides IO related functions for the app.
+
 use std::fs; //Filesystem module
 use std::path::PathBuf; //PathBuf datatype to store path strings
 use uuid::Uuid; //Uuid module to generate unique ids
@@ -12,18 +13,7 @@ use crate::editor::markdown_handler;
 use crate::{DocumentData, RecentFileInfo, UserData}; //Importing the DocumentData, RecentFileInfo and UserData structs
 use crate::{CURRENT_OPEN_TAB, RECENT_FILES, TABS}; //Importing the CURRENT_OPEN_TAB, RECENT_FILES and TABS mutexes
 
-/// This function finds the path to the 'documents'
-/// directory for different 'os' and returns the PathBuf(a mutable path string)
-///
-/// First we define a mutable variable path of datatype PathBuf,
-/// then we store the path in the variable, returned by the document_dir function that
-/// finds the path of the documents dir.
-///
-/// Then we append the dir 'Rhyolite' to the documents path.
-/// If this newly created path directory does not exist then create it using create_dir_all
-/// function.
-///
-/// Then return the variable path, that holds the path to the Rhyolite directory.
+/// This function returns the path to the documents directory.
 pub fn get_documents_dir() -> PathBuf {
 	#[cfg(target_os = "android")]
 	{
@@ -45,12 +35,7 @@ pub fn get_documents_dir() -> PathBuf {
 	}
 }
 
-/// Return the path to the default Rhyolite Trove directory.
-/// The function takes in the name that the default trove directory will have
-/// and then creates a directory at 'documents/Rhyolite/trove_name' where trove_name is the
-/// name of the default trove.
-///
-/// A trove is a folder that stores Rhyolite notes.
+/// This function returns the path to the default trove directory.
 pub fn get_trove_dir(trove_name: &str) -> PathBuf {
 	//Get the path to documents/Rhyolite.
 	let documents_dir = get_documents_dir();
@@ -65,24 +50,20 @@ pub fn get_trove_dir(trove_name: &str) -> PathBuf {
 	trove_dir
 }
 
-/// This function is called when the app is closing.
-/// It saves the complete tabs information.
-/// It locks the TABS, CURRENT_OPEN_TAB and RECENT_FILES mutexes and then
-/// converts the IndexMap values to Vec for storage.
-/// Then it creates a UserData struct and stores the tabs, last open tab and recent files in it.
-/// Then it creates a directory 'appdata' in the documents directory and stores the userdata in a file
-/// 'userdata.json' in the appdata directory.
-/// If there is an error in saving the userdata, it prints the error.
+/// Runs when the app is closing and saves the user data.
 pub fn on_app_close() {
+
 	// Save the complete tabs information
 	let tabs = TABS
 		.lock()
 		.map_err(|e| format!("Failed to lock TABS: {}", e))
 		.unwrap();
+
 	let current_open_tab = CURRENT_OPEN_TAB
 		.lock()
 		.map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))
 		.unwrap();
+
 	let recent_files = RECENT_FILES
 		.lock()
 		.map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))
@@ -110,14 +91,7 @@ pub fn on_app_close() {
 	}
 }
 
-/// This function saves the user data.
-/// It locks the TABS, CURRENT_OPEN_TAB and RECENT_FILES mutexes and then
-/// converts the IndexMap values to Vec for storage.
-/// Then it creates a UserData struct and stores the tabs, last open tab and recent files in it.
-/// Then it creates a directory 'appdata' in the documents directory and stores the userdata in a file
-/// 'userdata.json' in the appdata directory.
-/// If there is an error in saving the userdata, it returns the error.
-/// If the userdata is saved successfully, it returns Ok(()).
+/// This function saves the user data to the userdata.json file.
 pub fn save_user_data() -> Result<(), String> {
 	let tabs = TABS
 		.lock()
@@ -168,23 +142,23 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
 	// Convert HTML to Markdown
 	let markdown_content = markdown_handler::html_to_markdown(&content);
 
-	// Add title as heading
-	// let full_markdown = format!("# {}\n\n{}", title, markdown_content);
-
-	// Use .md extension instead of .json
+	// Append .md to the title and sanitize it
 	let safe_filename = sanitize_filename::sanitize(format!("{}.md", title));
 	let file_path = trove_dir.join(&safe_filename);
 
+	// Get the current open tab
 	let tabs = TABS
 		.lock()
 		.map_err(|e| format!("Failed to lock TABS: {}", e))?;
 
+	// Get the old title and path(Old title is the title of the document before saving, if changed)
 	let old_title = tabs
 		.get(&id)
 		.map(|tab| tab.title.clone())
 		.unwrap_or_else(|| String::from("Untitled"));
 	let old_path = trove_dir.join(sanitize_filename::sanitize(format!("{}.md", old_title)));
 
+	// if the title has changed, delete the old file
 	if old_path != file_path && old_path.exists() {
 		fs::remove_file(old_path).map_err(|e| format!("Failed to delete old file: {}", e))?;
 	}
@@ -198,20 +172,27 @@ pub fn save_document(id: String, title: String, content: String) -> Result<Strin
 
 #[tauri::command]
 pub fn delete_document(id: String) -> Result<Option<DocumentData>, String> {
+
+	//Get a lock on all the mutexes
 	let mut tabs = TABS
 		.lock()
 		.map_err(|e| format!("Failed to lock TABS: {}", e))?;
+
 	let mut recent_files = RECENT_FILES
 		.lock()
 		.map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
+
+	// Get the title of the document to be deleted from the tabs indexmap
 	let tab_title = tabs.get(&id).map(|tab| tab.title.clone()).unwrap();
    
+	// Get the path of the document to be deleted
 	let trove_dir = get_trove_dir("Untitled_Trove");
 	let filename = sanitize_filename::sanitize(format!("{}.md", tab_title));
 	let file_path = trove_dir.join(&filename);
 	
-	// Remove the tab and get its index
+	// Remove the tab and get its index(shift_remove_full returns the index of the removed tab)
 	if let Some((index, _, _)) = tabs.shift_remove_full(&id) {
+
 		// Get the tab at the same index (the one that shifted up)
 		// If no tab at that index, get the last tab
 		let next_tab =
@@ -227,68 +208,99 @@ pub fn delete_document(id: String) -> Result<Option<DocumentData>, String> {
 				None
 			};
 
+		
+		// Check if the file exists
 		if file_path.exists() {
 			// Delete the file if it exists
 			fs::remove_file(&file_path)
 				.map_err(|e| format!("Failed to delete file {}: {}", file_path.display(), e))?;
 		}
 
+		// Remove the document from the recent files
 		recent_files.retain(|doc| doc.id != id);
+
+		// Drop the locks on the mutexes
 		std::mem::drop(recent_files);
 		std::mem::drop(tabs);
+
 		// Save changes to userdata.json
 		save_user_data()?;
+
+		// Return the next tab as Some(DocumentData) if it exists else None
 		Ok(next_tab)
 	} else {
+		// If the tab is not found, return an error
 		Err("Tab not found".to_string())
 	}
 }
 
+/// This function gets the content of the document by its id and title.
 #[tauri::command]
 pub fn get_document_content(id: String, title: String) -> Result<Option<DocumentData>, String> {
+
+	// Get the path of the document using title
 	let trove_dir = get_trove_dir("Untitled_Trove");
 	let file_path = trove_dir.join(format!("{}.md", title));
 
+	// Check if the file exists
 	if !file_path.exists() {
+		// If the file does not exist, return None
 		return Ok(None);
 	}
 
+	// Read the file content using the file path
 	match fs::read_to_string(&file_path) {
+		// If the file is read successfully, convert the markdown content to HTML
 		Ok(content) => {
 			let html_output = markdown_handler::markdown_to_html(&content);
 
+			// Return the document data as Some(DocumentData)
 			Ok(Some(DocumentData {
 				id,
 				title,
 				content: html_output,
 			}))
 		}
+		// If there is an error in reading the file, return the error
 		Err(e) => Err(format!("Failed to read file: {}", e)),
 	}
 }
 
+/// This function loads the tabs active/opened in the last app section.
 #[tauri::command]
 pub fn load_last_open_tabs() -> Result<Vec<DocumentData>, String> {
+
+	// Get the path of the userdata.json file
 	let appdata_dir = get_documents_dir().join("appdata");
 	let userdata_path = appdata_dir.join("userdata.json");
 
 	// Check if userdata.json exists
 	if userdata_path.exists() {
+
 		// Read and deserialize the UserData
 		match fs::read_to_string(&userdata_path) {
 			Ok(content) => {
+
+				// Deserialize the UserData using serde_json
 				match serde_json::from_str::<UserData>(&content) {
 					Ok(user_data) => {
+
+						// Lock the mutexes and update the values
 						let mut recent_files_lock = RECENT_FILES
 							.lock()
 							.map_err(|e| format!("Failed to lock RECENT_FILES: {}", e))?;
 						*recent_files_lock = user_data.recent_files.clone();
+
+						// Create a vector to store the last open files
 						let mut last_open_files = Vec::new();
+
+						// Update the current open tab
 						let mut current_open_tab = CURRENT_OPEN_TAB
 							.lock()
 							.map_err(|e| format!("Failed to lock CURRENT_OPEN_TAB: {}", e))?;
 						*current_open_tab = user_data.last_open_tab.clone();
 
+						// Lock the tabs mutex and update the values
 						let mut tabs = TABS
 							.lock()
 							.map_err(|e| format!("Failed to lock TABS: {}", e))?;

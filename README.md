@@ -1,40 +1,33 @@
-<h1 align="center">
+<div align="center">
     <img src="./src-tauri/icons/icon.png" width=256 alt="rhyolite">
-</h1>
+</div>
 
 <h1 align="center">An Open Source Markdown Editor Inspired by Obsidian!</h1>
 
 ![Rhyolite Logo](assets/Rhyolite_is_cool_2.png)  
 ![Rhyolite Editor Preview](assets/Rhyolite_is_cool_3.png)
 
-## A Simple Text Editor Built with Tauri
+### Rhyolite is a simple markdown editor build using tauri framework that allows user to edit and work on markdown files.
 
-_Inspired by Obsidian._
 
----
+Please note that **major changes are ongoing**. For the most stable experience, wait for a new binary release or compile the source from the `master-v0.1.4-old` branch.
 
-**This is a prototype.** Please note that **major changes are ongoing**. For the most stable experience, wait for a new binary release or compile the source from the `master-v0.1.4-old` branch.
-
----
 
 ## **Current Updates**
 
 ### Changes Underway
 
-- Frontend is being restyled to match v0.1.4 after we restructured the frontend code.
-- Working on a custom markdown engine.
+- Frontend is being worked on and new features are being added.
+- Working on a adding support for more markdowns.
 - Project renamed to **Rhyolite**.
 
 > Rhyolite is inspired by volcanic rocks, much like Obsidian. The project is my way to contribute and grow as a developer while sharing something meaningful with the open-source community.
 
----
 
 ## For New Contributors
 
-1. The `master` branch has undergone **massive restructuring**.
-2. The app now uses **Flowbite/Tiptap editor styling**, which differs from earlier visuals.
-3. For the latest stable release visuals, compile the source from the `master-v0.1.4-old` branch.
-4. Join our **[Discord server](https://discord.gg/K6FAd8FTma)** to collaborate effectively.
+1. If you want to contribute to the app, you can work on any of the issues that have not been assigned to anyone.
+2. Join our **[Discord server](https://discord.gg/K6FAd8FTma)** to collaborate effectively.
 
 ---
 

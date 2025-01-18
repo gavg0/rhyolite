@@ -1,8 +1,9 @@
 <script lang="ts">
   import Close from "$lib/static/close.svg";
+  import Restore from "$lib/static/restore.svg";
   import Maximise from "$lib/static/maximise.svg";
   import Minimise from "$lib/static/minimise.svg";
-  import { getCurrentWindow } from "@tauri-apps/api/window";
+  import { getCurrentWindow, Window } from "@tauri-apps/api/window";
   import { onDestroy } from "svelte";
   import TabsStore from "../stores/tabs.store";
   import { type Tab } from "../types/tab";
@@ -15,10 +16,27 @@
   let tabs: Tab[] = $state([]);
   let currentTab: Tab | null = $state(null);
 
+  let isMaximized: boolean = $state(false);
+
+  const appWindow = getCurrentWindow();
+
+  // Initial state
+  // getCurrentWindow()
+  //   .isMaximized()
+  //   .then((result) => {
+  //     isMaximized = result;
+  //   });
+
+  // Listen for maximize and unmaximize events
+  appWindow.listen("tauri://resize", async () => {
+    isMaximized = await appWindow.isMaximized();
+  });
+
   const unsubscribeTabsState = TabsStore.states.subscribe((value) => {
     tabs = value.tabs;
     currentTab = value.currentTab;
   });
+
   onDestroy(() => {
     unsubscribeTabsState();
   }); // Clean up
@@ -38,7 +56,6 @@
     }
   });
 
-  const appWindow = getCurrentWindow();
   const onOpenTab = (tab: Tab) => {
     TabsStore.updateCurrentTabState(tab);
   };
@@ -91,7 +108,7 @@
       onclick={() => appWindow.toggleMaximize()}
       aria-label="Maximise"
     >
-      <img src={Maximise} alt="maximize" />
+      <img src={isMaximized ? Restore : Maximise} alt="maximize" />
     </button>
     <button
       class="flex justify-center items-center w-12 mx-auto cursor-pointer focus-visible:bg-red-500 hover:bg-red-500"

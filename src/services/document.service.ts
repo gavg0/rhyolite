@@ -91,7 +91,10 @@ const saveDocument = async ({
     });
 };
 
-const loadDocument = async (documentId: string, documentTitle: string): Promise<Document | null> => {
+const loadDocument = async (
+    documentId: string,
+    documentTitle: string,
+): Promise<Document | null> => {
     try {
         const doc = await apiProvider.getDocumentContent(documentId, documentTitle);
         if (!doc) return null;

@@ -47,7 +47,7 @@ pub fn new_tab() -> Result<Tab, String> {
     // if path.exists() {
     //     return Err("File already exists".to_string());
     // }
-    let title = check_path_exists(&trove_dir, &trove_dir, 0);
+    let title = check_path_exists(&trove_dir, 0);
     
     // Create new tab
     let new_tab = Tab {
@@ -80,18 +80,18 @@ pub fn new_tab() -> Result<Tab, String> {
     Ok(new_tab)
 }
 
-fn check_path_exists(path: &PathBuf, trove_dir: &PathBuf, iter: u32) -> String {
+fn check_path_exists(trove_dir: &PathBuf, iter: u32) -> String {
     let title = if iter == 0 {
-        sanitize_filename::sanitize(format!("{}.md", "Untitled"))
+        sanitize_filename::sanitize("Untitled.md")
     } else {
-        sanitize_filename::sanitize(format!("{}.md", format!("Untitled {}", iter)))
+        sanitize_filename::sanitize(format!("Untitled {}.md", iter))
     };
     
     let file_path = trove_dir.join(&title);
     if !file_path.exists() {
         title.strip_suffix(".md").unwrap_or(&title).to_string()
     } else {
-        check_path_exists(path, trove_dir, iter + 1)
+        check_path_exists(trove_dir, iter + 1)
     }
 }
 

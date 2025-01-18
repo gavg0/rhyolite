@@ -7,7 +7,7 @@ use crate::CURRENT_OPEN_TAB;
 use crate::RECENT_FILES;
 use crate:: Tab;
 use crate::RecentFileInfo;
-use std::path::PathBuf; 
+use std::path::{Path, PathBuf};
 
 use super::io::{save_user_data, get_trove_dir, save_document};
 
@@ -47,7 +47,21 @@ pub fn new_tab() -> Result<Tab, String> {
     // if path.exists() {
     //     return Err("File already exists".to_string());
     // }
-    let title = check_path_exists(&trove_dir, 0);
+    let title = check_path_exists(&trove_dir);
+
+    // Clean up any stale entries in tabs and recent_files that don't exist on disk
+    // but have the same title
+    {
+        tabs.retain(|_, tab| {
+            let file_path = trove_dir.join(sanitize_filename::sanitize(format!("{}.md", &tab.title)));
+            file_path.exists() && tab.title != title
+        });
+        
+        recent_files.retain(|file| {
+            let file_path = trove_dir.join(sanitize_filename::sanitize(format!("{}.md", &file.title)));
+            file_path.exists() && file.title != title
+        });
+    }
     
     // Create new tab
     let new_tab = Tab {
@@ -80,18 +94,20 @@ pub fn new_tab() -> Result<Tab, String> {
     Ok(new_tab)
 }
 
-fn check_path_exists(trove_dir: &PathBuf, iter: u32) -> String {
-    let title = if iter == 0 {
-        sanitize_filename::sanitize("Untitled.md")
-    } else {
-        sanitize_filename::sanitize(format!("Untitled {}.md", iter))
-    };
-    
-    let file_path = trove_dir.join(&title);
-    if !file_path.exists() {
-        title.strip_suffix(".md").unwrap_or(&title).to_string()
-    } else {
-        check_path_exists(trove_dir, iter + 1)
+fn check_path_exists(trove_dir: &Path) -> String {
+    let mut iteration: u32 = 0;
+    loop{
+        let title = if iteration == 0 {
+            sanitize_filename::sanitize("Untitled.md")
+        } else {
+            sanitize_filename::sanitize(format!("Untitled {}.md", &iteration))
+        };
+
+        let file_path = trove_dir.join(&title);
+        if !file_path.exists() {
+            return title.strip_suffix(".md").unwrap_or(&title).to_string();
+        }
+        iteration += 1;
     }
 }
 
@@ -99,13 +115,19 @@ fn check_path_exists(trove_dir: &PathBuf, iter: u32) -> String {
 pub fn update_tab_title(id: String, title: String) -> Result<Tab, String> {
     let mut tabs = TABS.lock().map_err(|e| format!("Failed to lock TABS: {}", e))?;
     
-    // Get the tab, update its title, and insert it back
-    if let Some(mut tab) = tabs.get(&id).cloned() {
-        tab.title = title;
-        tabs.insert(id, tab.clone());
-        Ok(tab)
+    // Check if the new title already exists in other tabs
+    if tabs.values().any(|tab| tab.id != id && tab.title == title) {
+        Err("A tab with this title already exists".to_string())
     } else {
-        Err("Tab not found".to_string())
+
+        // Get the tab, update its title, and insert it back
+        if let Some(mut tab) = tabs.get(&id).cloned() {
+            tab.title = title;
+            tabs.insert(id, tab.clone());
+            Ok(tab)
+        } else {
+            Err("Tab not found".to_string())
+        }
     }
 }
 

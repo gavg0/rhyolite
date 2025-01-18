@@ -187,6 +187,19 @@ pub fn delete_document(id: String) -> Result<Option<DocumentData>, String> {
    
 	// Get the path of the document to be deleted
 	let trove_dir = get_trove_dir("Untitled_Trove");
+
+	// Clean up stale entries that don't exist on disk
+	{
+		tabs.retain(|_, tab| {
+			let file_path = trove_dir.join(sanitize_filename::sanitize(format!("{}.md", &tab.title)));
+			file_path.exists()
+		});
+	
+		recent_files.retain(|file| {
+			let file_path = trove_dir.join(sanitize_filename::sanitize(format!("{}.md", &file.title)));
+			file_path.exists()
+		});
+	}
 	let filename = sanitize_filename::sanitize(format!("{}.md", tab_title));
 	let file_path = trove_dir.join(&filename);
 	

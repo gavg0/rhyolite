@@ -8,109 +8,117 @@ import { isValidJSON } from "../helpers/common.helper";
 const apiProvider = new ApiProvider();
 
 const getAllDocumentTabs = async (): Promise<Tab[]> => {
-    const tabs: Tab[] = await apiProvider.getAllDocumentTabs();
-    return tabsStore.updateTabsState(tabs);
+	const tabs: Tab[] = await apiProvider.getAllDocumentTabs();
+	return tabsStore.updateTabsState(tabs);
 };
 
 export const addNewDocumentTab = async (): Promise<void> => {
-    try {
-        const newTab: Tab = await apiProvider.addNewDocumentTab();
+	try {
 
-        await getAllDocumentTabs();
+		const newTab: Tab = await apiProvider.addNewDocumentTab();
+		tabsStore.updateCurrentTabState(newTab);
 
-        tabsStore.updateCurrentTabState(newTab);
+		let tabs: Tab[] = await getAllDocumentTabs();
+		tabsStore.updateTabsState(tabs);
 
-        await apiProvider.sendCurrentOpenTab(newTab.id);
-    } catch (error) {
-        console.error("Failed to create new document:", error);
-    }
+		await apiProvider.sendCurrentOpenTab(newTab.id);
+	} catch (error) {
+		console.error("Failed to create new document:", error);
+	}
 };
 
 const deleteDocumentTab = async (): Promise<void> => {
-    try {
-        const currentTab: Tab | null = tabsStore.getCurrentTabState();
-        if (currentTab === null) return;
+	try {
+		const currentTab: Tab | null = tabsStore.getCurrentTabState();
+		if (currentTab === null) return;
 
-        await apiProvider.deleteDocument(currentTab.id);
-        const tabs = await getAllDocumentTabs();
+		// Validate tab still exists before deletion
+		const tabStillExists = (await getAllDocumentTabs())
+		.some(tab => tab.id === currentTab.id);
+			
+		if (!tabStillExists) return;
 
-        if (tabs.length > 0) {
-            const lastTab = tabs[tabs.length - 1];
-            tabsStore.updateCurrentTabState(lastTab);
-        } else {
-            await addNewDocumentTab();
-        }
-    } catch (error) {
-        console.error("Failed to delete document:", error);
-    }
+		await apiProvider.deleteDocument(currentTab.id);
+		const tabs = await getAllDocumentTabs();
+		tabsStore.updateTabsState(tabs);
+
+		if (tabs.length > 0) {
+			const lastTab = tabs[tabs.length - 1];
+			tabsStore.updateCurrentTabState(lastTab);
+		} else {
+			await addNewDocumentTab();
+		}
+	} catch (error) {
+		console.error("Failed to delete document:", error);
+	}
 };
 
 const loadRecentDocuments = async (): Promise<void> => {
-    try {
-        const docs: Document[] = await apiProvider.getLastOpenedTabs();
+	try {
+		const docs: Document[] = await apiProvider.getLastOpenedTabs();
 
-        if (docs.length > 0) {
-            // await apiProvider.resetTabsOrderCount();
+		if (docs.length > 0) {
+			// await apiProvider.resetTabsOrderCount();
 
-            // Load each document as a tab
-            for (const doc of docs) {
-                await apiProvider.loadTab({
-                    documentId: doc.id,
-                    documentTitle: doc.title,
-                });
-            }
+			// Load each document as a tab
+			for (const doc of docs) {
+				await apiProvider.loadTab({
+					documentId: doc.id,
+					documentTitle: doc.title,
+				});
+			}
 
-            // Update the tabs in UI
-            await getAllDocumentTabs();
+			// Update the tabs in UI
+			await getAllDocumentTabs();
 
-            // Load the last open document into the editor
-            const open_tab: string = await apiProvider.getCurrentOpenTab();
-            await TabService.switchTab(open_tab);
-        } else {
-            // If no documents exist, create a new tab
-            await addNewDocumentTab();
-        }
-    } catch (error) {
-        console.error("Failed to load documents:", error);
-    }
+			// Load the last open document into the editor
+			const open_tab: string = await apiProvider.getCurrentOpenTab();
+			await TabService.switchTab(open_tab);
+		} else {
+			// If no documents exist, create a new tab
+			await addNewDocumentTab();
+		}
+	} catch (error) {
+		console.error("Failed to load documents:", error);
+	}
 };
 
 const saveDocument = async ({
-    documentId,
-    documentTitle,
-    documentContent,
+	documentId,
+	documentTitle,
+	documentContent,
 }: {
-    documentId: string;
-    documentTitle: string;
-    documentContent: any;
+	documentId: string;
+	documentTitle: string;
+	documentContent: any;
 }): Promise<void> => {
-    await apiProvider.saveDocument({
-        documentId,
-        documentTitle,
-        documentContent: documentContent || "",
-    });
+	await apiProvider.saveDocument({
+		documentId,
+		documentTitle,
+		documentContent: documentContent || "",
+	});
 };
 
 const loadDocument = async (
-    documentId: string,
-    documentTitle: string,
+	documentId: string,
+	documentTitle: string,
 ): Promise<Document | null> => {
-    try {
-        const doc = await apiProvider.getDocumentContent(documentId, documentTitle);
-        if (!doc) return null;
+	try {
+		const doc = await apiProvider.getDocumentContent(documentId, documentTitle);
+		if (!doc) return null;
 
-        return doc;
-    } catch (error) {
-        console.error("Failed to load document:", error);
-        return null;
-    }
+		return doc;
+	} catch (error) {
+		console.error("Failed to load document:", error);
+		return null;
+	}
 };
 
 export default {
-    getAllDocumentTabs,
-    addNewDocumentTab,
-    deleteDocumentTab,
-    loadRecentDocuments,
-    saveDocument,
-    loadDocument,
+	getAllDocumentTabs,
+	addNewDocumentTab,
+	deleteDocumentTab,
+	loadRecentDocuments,
+	saveDocument,
+	loadDocument,
 };

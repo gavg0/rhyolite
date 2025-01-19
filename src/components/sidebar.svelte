@@ -39,6 +39,7 @@
       onclick={(e) => {
         e.stopPropagation();
         SettingsMenuStore.toggleSettingsMenu();
+        console.log(SettingsMenuStore.isSettingsMenuVisible());
       }}
       aria-label="Open Settings Menu"
       title="Open Settings Menu"

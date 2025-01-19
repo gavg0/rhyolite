@@ -5,10 +5,10 @@
     import ContentEditorStore from "../stores/content-editor.store";
 
     const handleKeydown = (event: KeyboardEvent): void => {
-        if (event.ctrlKey && event.key === "d") {
-            event.preventDefault();
-            DocumentService.deleteDocumentTab();
-        }
+        // if (event.ctrlKey && event.key === "d") {
+        //     event.preventDefault();
+        //     DocumentService.deleteDocumentTab();
+        // }
         if (event.ctrlKey && event.key === "c") {
             event.preventDefault();
             TabService.closeTab();

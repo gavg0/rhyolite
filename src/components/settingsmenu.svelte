@@ -11,10 +11,10 @@
   import settingsMenuState from "../stores/settings-menu.store";
   import ThemeStore from "../stores/theme.store";
   import type { Theme } from "../types/theme";
-    import settingsMenuStore from "../stores/settings-menu.store";
+  import settingsMenuStore from "../stores/settings-menu.store";
 
   let settingsVisible = $state(false);
-  let buttonPosition = { top: 150, left: 44 };
+  let buttonPosition = { top: 150, left: 44, bottom: 15 };
   let boxDimensions = { width: 200, height: 200 };
   let themes: Theme[] = $state([]);
   let currentTheme: Theme | undefined = undefined;
@@ -26,14 +26,20 @@
   });
 
   const menuButtons = [
-    { label: "General Settings", onClick: () => console.log("Opening General Settings...") },
-    { label: "Theme", onClick: () => showThemeOptions = !showThemeOptions }, 
-    { label: "Keyboard Shortcuts", onClick: () => console.log("Opening Keyboard Shortcuts...") },
+    {
+      label: "General Settings",
+      onClick: () => console.log("Opening General Settings..."),
+    },
+    { label: "Theme", onClick: () => (showThemeOptions = !showThemeOptions) },
+    {
+      label: "Keyboard Shortcuts",
+      onClick: () => console.log("Opening Keyboard Shortcuts..."),
+    },
     { label: "About", onClick: () => console.log("Opening About...") },
     { label: "Close", onClick: () => settingsMenuState.toggleSettingsMenu() },
   ];
 
-  const unsubscribeSettingsMenuStore = settingsMenuState.subscribe(state => {
+  const unsubscribeSettingsMenuStore = settingsMenuState.subscribe((state) => {
     settingsVisible = state.settingsMenuVisible;
   });
 
@@ -45,7 +51,7 @@
 
   const changeTheme = (theme: Theme) => {
     ThemeStore.updateCurrentThemeState(theme);
-    showThemeOptions = false; 
+    showThemeOptions = false;
     settingsVisible = false;
   };
 
@@ -68,10 +74,9 @@
 
   $effect(() => {
     if (self) {
-      document.addEventListener("click", closeSettingsOnClickOutside); 
+      document.addEventListener("click", closeSettingsOnClickOutside);
       document.addEventListener("keydown", closeSettingsOnEscape);
     }
-
   });
 </script>
 
@@ -83,7 +88,7 @@
     class:opacity-100={settingsVisible}
     class:translate-y-5={!settingsVisible}
     class:opacity-0={!settingsVisible}
-    style="top: {buttonPosition.top}px; left: {buttonPosition.left}px; width: {boxDimensions.width}px;"
+    style="bottom: {buttonPosition.bottom}px; left: {buttonPosition.left}px; width: {boxDimensions.width}px;"
   >
     {#each menuButtons as { label, onClick }}
       <button
@@ -100,7 +105,8 @@
           {:else if label === "About"}
             <Info class="w-4 h-4" />
           {:else if label === "Close"}
-            <X class="w-4 h-4" />          {/if}
+            <X class="w-4 h-4" />
+          {/if}
           {label}
         </div>
         {#if label === "Theme"}
@@ -111,7 +117,7 @@
 
     {#if showThemeOptions}
       <div
-        class="absolute left-full rounded-lg p-1 top-0 mt-8 ml-1 w-max bg-base shadow-xl"
+        class="absolute left-full rounded-lg p-1 bottom-[58%] mt-8 ml-1 w-max bg-base shadow-xl"
         style="width: {boxDimensions.width}px;"
       >
         {#each themes as theme}

@@ -1,5 +1,10 @@
 import { type Writable, writable, get } from "svelte/store";
 import type { Theme } from "../types/theme";
+import { defaultTheme } from "$lib/themes/default";
+import { greenScreenTheme } from "$lib/themes/greenscreen";
+import { coffeeTheme } from "$lib/themes/coffee";
+import { catppuccinMacchiatoTheme } from "$lib/themes/catppuccinMacchiato";
+// import { rosePaneMainTheme } from "$lib/themes/rosePineMain";
 
 export interface IThemesStates {
   themes: Theme[];
@@ -7,82 +12,11 @@ export interface IThemesStates {
 }
 
 const DEFAULT_THEMES: Theme[] = [
-  {
-    name: "Default",
-    colorscheme: "dark",
-    colors: {
-      text: "#ffffff",
-      subtext2: "#f1f2f3",
-      subtext1: "#d8dbde",
-      subtext0: "#c2c6cb",
-      overlay2: "#acb2b8",
-      overlay1: "#969da5",
-      overlay0: "#808992",
-      surface2: "#6c757d",
-      surface1: "#596167",
-      surface0: "#464c51",
-      base: "#33373b",
-      crust: "#202325",
-      mantle: "#0d0e0f",
-    },
-  },
-  {
-    name: "Green Screen",
-    colorscheme: "dark",
-    colors: {
-      text: "#ffffff",
-      subtext2: "#f1f2f3",
-      subtext1: "#d8dbde",
-      subtext0: "#c2c6cb",
-      overlay2: "#acb2b8",
-      overlay1: "#969da5",
-      overlay0: "#808992",
-      surface2: "#609060",
-      surface1: "#508010",
-      surface0: "#40a040",
-      base: "#335f3b",
-      crust: "#203325",
-      mantle: "#081d08",
-    },
-  },
-  {
-    name: "Coffee",
-    colorscheme: "light",
-    colors: {
-      text: "#FFDBB5",
-      subtext2: "#FFEAC5",
-      subtext1: "#d8dbde",
-      subtext0: "#c2c6cb",
-      overlay2: "#acb2b8",
-      overlay1: "#969da5",
-      overlay0: "#808992",
-      surface2: "#a07349",
-      surface1: "#845f3c",
-      surface0: "#684b2f",
-      base: "#4c3622",
-      crust: "#2f2215",
-      mantle: "#130e09",
-    },
-  },
-  {
-    name: "Catppuccin Macchiato",
-    colorscheme: "dark",
-    colors: {
-      text: "#cad3f5",
-      subtext2: "#bec5e0",
-      subtext1: "#b8c0e0",
-      subtext0: "#a5adcb",
-      overlay2: "#939ab7",
-      overlay1: "#8087a2",
-      overlay0: "#6e738d",
-      surface2: "#5e6277",
-      surface1: "#5b6078",
-      surface0: "#494d64",
-      base: "#363a4f",
-      crust: "#24273a",
-      mantle: "#1e2030",
-    },
-  },
+  defaultTheme,
+  greenScreenTheme,
+  coffeeTheme,
+  catppuccinMacchiatoTheme,
+  // rosePaneMainTheme,
 ];
 
 const states: Writable<IThemesStates> = writable<IThemesStates>({

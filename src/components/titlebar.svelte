@@ -8,7 +8,7 @@
   import TabsStore from "../stores/tabs.store";
   import { type Tab } from "../types/tab";
   import { addNewDocumentTab } from "../services/document.service";
-  import closeTab from "../services/tab.service";
+  import tabService from "../services/tab.service";
 
   let tabs: Tab[] = $state([]);
   let currentTab: Tab | null = $state(null);
@@ -18,6 +18,10 @@
   const appWindow = getCurrentWindow();
 
   let hoverTabId: String | null = $state(null);
+
+  const onTabClose = async(tabId: string) => {
+    await tabService.closeTab(tabId);
+  };
 
 
   appWindow.listen("tauri://resize", async () => {
@@ -79,14 +83,15 @@
         : tab.title || "Untitled"}
     </button>
     <button
-    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-text bg-base rounded-[18px] h-[20px] w-[20px] flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-red-500 hover:text-white"
+    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-text bg-base rounded-[18px] h-[20px] w-[20px] flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-red-500 hover:text-text"
     class:opacity-100={currentTab?.id === tab.id || hoverTabId === tab.id}
       onclick={(e) => {
-        e.stopPropagation(); 
-        console.log(`Closed tab: ${tab.title}`); 
+        e.stopPropagation();
+        console.log("close tab");
+        onTabClose(tab.id);
       }}
     >
-      X
+      x
     </button>
   </div>
   

@@ -15,14 +15,14 @@
   }
 
   let commands: Command[] = [
-    // {
-    //   name: "Delete Tab",
-    //   shortcut: "Ctrl + D",
-    //   action: () => {
-    //     DocumentService.deleteDocumentTab();
-    //     CommandPaletteStore.toggleVisibility();
-    //   },
-    // },
+    {
+       name: "Delete Tab",
+       shortcut: "Ctrl + D",
+       action: () => {
+         DocumentService.deleteDocumentTab();
+         CommandPaletteStore.toggleVisibility();
+       },
+    },
     {
       name: "Close Tab",
       shortcut: "Ctrl + C",

@@ -4,11 +4,21 @@
     import CommandPaletteStore from "../stores/command-palette.store";
     import ContentEditorStore from "../stores/content-editor.store";
 
+    let activeKeys = new Set();
+
+    const handleKeyup = (event: KeyboardEvent): void => {
+        // remove the keys from the activeKeys set
+        activeKeys.delete(event.key)
+    }
     const handleKeydown = (event: KeyboardEvent): void => {
-        // if (event.ctrlKey && event.key === "d") {
-        //     event.preventDefault();
-        //     DocumentService.deleteDocumentTab();
-        // }
+        // check if key is already in the activeKeys set 
+        if (!activeKeys.has(event.key)) {
+            activeKeys.add(event.key);
+        } else return;
+        if (event.ctrlKey && event.key === "d") {
+             event.preventDefault();
+             DocumentService.deleteDocumentTab();
+        }
         if (event.ctrlKey && event.key === "c") {
             event.preventDefault();
             TabService.closeTab();
@@ -47,4 +57,4 @@
     }
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window on:keydown={handleKeydown} on:keyup={handleKeyup} />

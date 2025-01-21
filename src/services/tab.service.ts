@@ -34,6 +34,8 @@ const closeTab = async (tabId?: string) => {
             }
         } else {
             await apiProvider.CloseCurrentTab(tabToClose.id);
+            const tabs = await docservice.getAllDocumentTabs();
+            TabsStore.updateCurrentTabState(currentTab);
         }
     } catch (error) {
         console.error("Failed to delete document:", error);

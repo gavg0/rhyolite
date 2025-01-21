@@ -6,7 +6,7 @@ import { coffeeTheme } from "$lib/themes/coffee";
 import { catppuccinMacchiatoTheme } from "$lib/themes/catppuccinMacchiato";
 import { catppuccinMochaTheme } from "$lib/themes/catppuccinMocha";
 import { catppuccinLatteTheme } from "$lib/themes/catppuccinLatte";
-// import { rosePaneMainTheme } from "$lib/themes/rosePineMain";
+import { rosePaneMainTheme } from "$lib/themes/rosePineMain";
 
 export interface IThemesStates {
   themes: Theme[];
@@ -20,7 +20,7 @@ const DEFAULT_THEMES: Theme[] = [
   catppuccinMacchiatoTheme,
   catppuccinMochaTheme,
   catppuccinLatteTheme,
-  // rosePaneMainTheme,
+  rosePaneMainTheme,
   ]
 
 const states: Writable<IThemesStates> = writable<IThemesStates>({

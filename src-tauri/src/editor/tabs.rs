@@ -7,7 +7,7 @@ use crate::CURRENT_OPEN_TAB;
 use crate::RECENT_FILES;
 use crate:: Tab;
 use crate::RecentFileInfo;
-use std::path::{Path, PathBuf};
+use std::path::{Path, /*PathBuf*/};
 
 use super::io::{save_user_data, get_trove_dir, save_document};
 

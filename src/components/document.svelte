@@ -76,7 +76,7 @@
   </div>
   {#if initialized}
     <ContentEditor
-      class="overflow-auto mb-20 p-2 min-h-96 w-[75%] min-w-[350px] mx-auto"
+      class="overflow-auto mb-20 p-2 min-h-96 w-[80%] min-w-[400px] mx-auto"
       content={documentContent}
       onchange={handleContentChange}
     />

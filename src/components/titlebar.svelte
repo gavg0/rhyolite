@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Close from "$lib/static/close.svg";
-  import Restore from "$lib/static/restore.svg";
-  import Maximise from "$lib/static/maximise.svg";
-  import Minimise from "$lib/static/minimise.svg";
+  import Close from "$lib/static/close.svg.svelte";
+  import Restore from "$lib/static/restore.svg.svelte";
+  import Maximise from "$lib/static/maximise.svg.svelte";
+  import Minimise from "$lib/static/minimise.svg.svelte";
   import { getCurrentWindow, Window } from "@tauri-apps/api/window";
   import { onDestroy } from "svelte";
   import TabsStore from "../stores/tabs.store";
@@ -111,7 +111,7 @@
       onclick={() => appWindow.minimize()}
       aria-label="Minimize"
     >
-      <img src={Minimise} alt="minimize" />
+      <Minimise />
     </button>
     <button
       class="flex justify-center items-center w-12 mx-auto cursor-pointer focus-visible:bg-surface2 hover:bg-surface2"
@@ -119,7 +119,11 @@
       onclick={() => appWindow.toggleMaximize()}
       aria-label="Maximise"
     >
-      <img src={isMaximized ? Restore : Maximise} alt="maximize" />
+      {#if isMaximized}
+        <Restore />
+      {:else}
+        <Maximise />
+      {/if}
     </button>
     <button
       class="flex justify-center items-center w-12 mx-auto cursor-pointer focus-visible:bg-red-500 hover:bg-red-500"
@@ -127,7 +131,7 @@
       onclick={() => appWindow.close()}
       aria-label="Close"
     >
-      <img src={Close} alt="close" />
+      <Close />
     </button>
   </div>
 </div>

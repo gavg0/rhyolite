@@ -4,8 +4,9 @@
 
 <h1 align="center">An Open Source Markdown Editor Inspired by Obsidian!</h1>
 
-![Rhyolite Logo](assets/Rhyolite_is_cool_2.png)  
-![Rhyolite Editor Preview](assets/Rhyolite_is_cool_3.png)
+![Rhyolite Editor Preview GIF](assets/readme_gif.gif)
+![Rhyolite Editor Preview](assets/Rhyolite_is_Cool!.png)  
+![Rhyolite Editor Preview Command Palette](assets/rhyolite_command_preview.png)
 
 ### Rhyolite is a simple markdown editor build using tauri framework that allows user to edit and work on markdown files.
 

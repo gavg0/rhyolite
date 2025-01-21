@@ -8,10 +8,7 @@
   import TabsStore from "../stores/tabs.store";
   import { type Tab } from "../types/tab";
   import { addNewDocumentTab } from "../services/document.service";
-  import closeTab from "../services/tab.service";
-  import ThemeStore from "../stores/theme.store";
-  import type { Theme } from "../types/theme";
-  import { Select } from "flowbite-svelte";
+  import tabService from "../services/tab.service";
 
   let tabs: Tab[] = $state([]);
   let currentTab: Tab | null = $state(null);
@@ -20,14 +17,13 @@
 
   const appWindow = getCurrentWindow();
 
-  // Initial state
-  // getCurrentWindow()
-  //   .isMaximized()
-  //   .then((result) => {
-  //     isMaximized = result;
-  //   });
+  let hoverTabId: string | null = $state(null);
 
-  // Listen for maximize and unmaximize events
+  const onTabClose = async(tabId: string) => {
+    await tabService.closeTab(tabId);
+  };
+
+
   appWindow.listen("tauri://resize", async () => {
     isMaximized = await appWindow.isMaximized();
   });
@@ -71,20 +67,38 @@
     id="tablist"
     aria-label="Document tabs"
   >
-    {#each tabs as tab}
-      <button
-        class={`flex justify-left items-center px-4 text-nowrap h-[30px] w-fit rounded-[18px] flex-shrink text-text hover:bg-surface1 ${currentTab?.id === tab.id ? "bg-surface0" : ""}`}
-        class:active={currentTab?.id === tab.id}
-        role="tab"
-        aria-controls="editor"
-        onclick={() => onOpenTab(tab)}
+  {#each tabs as tab}
+  <div class="relative group flex items-center justify-between"> 
+    <button
+      class={`flex justify-left items-center pl-4 pr-2 text-nowrap h-[30px] w-fit rounded-[18px] flex-shrink text-text transition-colors duration-100 hover:bg-surface1 ${currentTab?.id === tab.id ? "bg-surface0" : ""}`}
+      class:active={currentTab?.id === tab.id}
+      role="tab"
+      aria-controls="editor"
+      onclick={() => onOpenTab(tab)}
+      onmouseenter={() => (hoverTabId = tab.id)}
+      onmouseleave={() => (hoverTabId = null)}
+    >
+      {tab.title.length > 20
+        ? tab.title.slice(0, 20) + "..."
+        : tab.title || "Untitled"}
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
+      <div
+      class="text-text bg-transparent ml-2 p-1 rounded-[18px] h-[20px] w-[20px] flex justify-center items-center opacity-0 transition-opacity duration-100 hover:bg-surface2 hover:text-subtext1"
+      class:opacity-100={currentTab?.id === tab.id || hoverTabId === tab.id}
+        onclick={(e) => {
+          e.stopPropagation();
+          const tabToCloseId = hoverTabId || tab.id;
+          // console.log(`close tab ${tabToCloseId}`);
+          onTabClose(tabToCloseId);
+        }}
       >
-        {tab.title.length > 20
-          ? tab.title.slice(0, 20) + "..."
-          : tab.title || "Untitled"}
-      </button>
-    {/each}
-
+      <Close/>
+      </div>
+    </button>
+  </div>
+  
+{/each}
     <button
       type="button"
       class="flex justify-center items-center px-4 text-nowrap h-[30px] w-[30px] aspect-square rounded-[18px] flex-shrink text-text hover:bg-surface1"

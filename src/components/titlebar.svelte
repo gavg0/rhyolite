@@ -89,7 +89,7 @@
         onclick={(e) => {
           e.stopPropagation();
           const tabToCloseId = hoverTabId || tab.id;
-          console.log(`close tab ${tabToCloseId}`);
+          // console.log(`close tab ${tabToCloseId}`);
           onTabClose(tabToCloseId);
         }}
       >

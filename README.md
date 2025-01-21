@@ -65,7 +65,7 @@ Please note that **major changes are ongoing**. For the most stable experience, 
 Run this command in your terminal:
 
 ```bash
-curl -f https://raw.githubusercontent.com/RedddFoxxyy/Rhyolite/master/packaging/linux/install.sh | sh
+curl -f https://raw.githubusercontent.com/rhyolite-org/Rhyolite/master/packaging/linux/install.sh | sh
 ```
 
 #### Debian/Ubuntu

@@ -23,6 +23,7 @@
   import ListItem from "@tiptap/extension-list-item";
   import TaskItem from "@tiptap/extension-task-item";
   import TaskList from "@tiptap/extension-task-list";
+  import Heading from "@tiptap/extension-heading";
   import { ChevronDownOutline, ChevronUpOutline } from "flowbite-svelte-icons";
   import { all, createLowlight } from "lowlight";
   import ContentEditorStore from "../../stores/content-editor.store";
@@ -56,6 +57,27 @@
             },
           },
         };
+      },
+    });
+
+    const CustomHeader = Heading.configure({
+      levels: [1, 2, 3, 4, 5, 6],
+    }).extend({
+      renderHTML({ node, HTMLAttributes }) {
+        const level = node.attrs.level as 1 | 2 | 3 | 4 | 5 | 6;
+        const sizes = {
+          1: "text-5xl text-text font-extrabold my-3",
+          2: "text-4xl text-text font-extrabold my-3",
+          3: "text-3xl text-text font-extrabold my-3",
+          4: "text-2xl text-text font-extrabold my-3",
+          5: "text-xl text-text font-extrabold my-3",
+          6: "text-lg text-text font-extrabold my-3",
+        };
+
+        const className =
+          `${HTMLAttributes.class || ""} ${sizes[level]}`.trim();
+
+        return [`h${level}`, { ...HTMLAttributes, class: className }, 0];
       },
     });
 
@@ -110,9 +132,7 @@
           bold: {
             HTMLAttributes: { class: "text-text font-bold" },
           },
-          heading: {
-            HTMLAttributes: { class: "text-text" },
-          },
+          heading: false,
           blockquote: {
             HTMLAttributes: {
               class:
@@ -121,6 +141,7 @@
           },
         }),
         // CustomBold,
+        CustomHeader,
         TabIndent,
         TextStyle,
         Color,
@@ -171,7 +192,7 @@
       editorProps: {
         attributes: {
           class:
-            "format text-text text-lg focus:outline-none format-blue max-w-none leading-none",
+            "format text-text text-base focus:outline-none format-blue max-w-none leading-none",
         },
       },
       // onTransaction: ({ editor }) => {

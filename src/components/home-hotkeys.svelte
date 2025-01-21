@@ -2,6 +2,7 @@
     import DocumentService from "../services/document.service";
     import TabService from "../services/tab.service";
     import CommandPaletteStore from "../stores/command-palette.store";
+    import TabsStore from "../stores/tabs.store";
     import ContentEditorStore from "../stores/content-editor.store";
 
     let activeKeys = new Set();
@@ -21,7 +22,10 @@
         }
         if (event.ctrlKey && event.key === "c") {
             event.preventDefault();
-            TabService.closeTab();
+            const currentTabId = TabsStore.getCurrentTabState()?.id;  
+            if (currentTabId) {
+                TabService.closeTab(currentTabId); 
+            }
         }
         if (event.ctrlKey && event.key === "n") {
             event.preventDefault();

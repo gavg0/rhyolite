@@ -4,6 +4,8 @@ import { defaultTheme } from "$lib/themes/default";
 import { greenScreenTheme } from "$lib/themes/greenscreen";
 import { coffeeTheme } from "$lib/themes/coffee";
 import { catppuccinMacchiatoTheme } from "$lib/themes/catppuccinMacchiato";
+import { catppuccinMochaTheme } from "$lib/themes/catppuccinMocha";
+import { catppuccinLatteTheme } from "$lib/themes/catppuccinLatte";
 // import { rosePaneMainTheme } from "$lib/themes/rosePineMain";
 
 export interface IThemesStates {
@@ -16,6 +18,8 @@ const DEFAULT_THEMES: Theme[] = [
   greenScreenTheme,
   coffeeTheme,
   catppuccinMacchiatoTheme,
+  catppuccinMochaTheme,
+  catppuccinLatteTheme,
   // rosePaneMainTheme,
   ]
 

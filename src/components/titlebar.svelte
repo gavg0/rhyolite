@@ -17,7 +17,7 @@
 
   const appWindow = getCurrentWindow();
 
-  let hoverTabId: String | null = $state(null);
+  let hoverTabId: string | null = $state(null);
 
   const onTabClose = async(tabId: string) => {
     await tabService.closeTab(tabId);
@@ -68,7 +68,7 @@
     aria-label="Document tabs"
   >
   {#each tabs as tab}
-  <div class="relative group"> 
+  <div class="relative group flex items-center justify-between"> 
     <button
       class={`flex justify-left items-center px-4 text-nowrap h-[30px] min-w-[120px] rounded-[18px] flex-shrink text-text hover:bg-surface1 ${currentTab?.id === tab.id ? "bg-surface0" : ""} group-hover:bg-surface1`}
       class:active={currentTab?.id === tab.id}
@@ -83,12 +83,13 @@
         : tab.title || "Untitled"}
     </button>
     <button
-    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-text bg-base rounded-[18px] h-[20px] w-[20px] flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-red-500 hover:text-text"
+    class="absolute right-0 top-1/2 transform -translate-y-1/2 text-text bg-surface1 rounded-[18px] h-[30px] w-[30px] flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-surface2 hover:text-subtext1"
     class:opacity-100={currentTab?.id === tab.id || hoverTabId === tab.id}
       onclick={(e) => {
         e.stopPropagation();
-        console.log("close tab");
-        onTabClose(tab.id);
+        const tabToCloseId = hoverTabId || tab.id;
+        console.log(`close tab ${tabToCloseId}`);
+        onTabClose(tabToCloseId);
       }}
     >
       x

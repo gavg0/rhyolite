@@ -23,27 +23,27 @@
   };
 
   const menuButtons = [
-    // {
-    //   label: "General Settings",
-    //   icon: SlidersHorizontal,
-    //   onClick: () => console.log("Opening General Settings...")
-    // },
+    {
+      label: "General Settings",
+      icon: SlidersHorizontal,
+      onClick: () => console.log("Opening General Settings...")
+    },
     {
       label: "Theme",
       icon: Palette,
       onClick: () => (showThemeOptions = !showThemeOptions),
       hasSubmenu: true,
     },
-    // {
-    //   label: "Keyboard Shortcuts",
-    //   icon: Keyboard,
-    //   onClick: () => console.log("Opening Keyboard Shortcuts...")
-    // },
-    // {
-    //   label: "About",
-    //   icon: Info,
-    //   onClick: () => console.log("Opening About...")
-    // }
+    {
+      label: "Keyboard Shortcuts",
+      icon: Keyboard,
+      onClick: () => console.log("Opening Keyboard Shortcuts...")
+    },
+    {
+      label: "About",
+      icon: Info,
+      onClick: () => console.log("Opening About...")
+    }
   ];
 
   const handleCloseEvent = (e: MouseEvent | KeyboardEvent) => {

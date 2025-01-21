@@ -17,8 +17,8 @@
             activeKeys.add(event.key);
         } else return;
         if (event.ctrlKey && event.key === "d") {
-             event.preventDefault();
-             DocumentService.deleteDocumentTab();
+            event.preventDefault();
+            DocumentService.deleteDocumentTab();
         }
         if (event.ctrlKey && event.key === "c") {
             event.preventDefault();

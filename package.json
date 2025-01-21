@@ -1,6 +1,6 @@
 {
   "name": "rhyolite",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A simple text editor written in Tauri, inspired by Obsidian.",
   "type": "module",
   "author": {
@@ -17,7 +17,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@tauri-apps/api": "2.2.0",
-    "@tauri-apps/plugin-opener": "2.2.4",
+    "@tauri-apps/plugin-opener": "2.2.5",
     "@tiptap/core": "2.11.2",
     "@tiptap/extension-blockquote": "2.11.2",
     "@tiptap/extension-bold": "2.11.2",
@@ -55,26 +55,26 @@
     "@tiptap/starter-kit": "2.11.2",
     "flowbite-typography": "1.0.5",
     "lowlight": "3.3.0",
-    "lucide-svelte": "^0.473.0",
+    "lucide-svelte": "0.473.0",
     "svelte-tiptap": "2.1.0",
     "uuid": "11.0.5"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "3.0.8",
-    "@sveltejs/kit": "2.15.2",
+    "@sveltejs/kit": "2.16.1",
     "@sveltejs/vite-plugin-svelte": "5.0.3",
-    "@tauri-apps/cli": "2.2.4",
+    "@tauri-apps/cli": "2.2.5",
     "autoprefixer": "10.4.20",
     "flowbite": "2.5.2",
     "flowbite-svelte": "0.47.4",
     "flowbite-svelte-icons": "2.0.2",
-    "postcss": "8.5.0",
-    "prettier": "^3.4.2",
+    "postcss": "8.5.1",
+    "prettier": "3.4.2",
     "prettier-plugin-svelte": "^3.3.2",
-    "svelte": "5.17.4",
+    "svelte": "5.19.1",
     "svelte-check": "4.1.4",
     "tailwindcss": "3.4.17",
     "typescript": "5.7.3",
-    "vite": "6.0.7"
+    "vite": "6.0.11"
   }
 }

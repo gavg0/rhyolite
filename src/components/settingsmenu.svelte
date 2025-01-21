@@ -16,34 +16,34 @@
   let self: HTMLElement | null = $state(null);
   let themes: Theme[] = $state([]);
   let originalTheme: Theme | undefined;
-  
+
   const layout = {
     position: { top: 150, left: 44, bottom: 15 },
-    dimensions: { width: 200, height: 200 }
+    dimensions: { width: 200, height: 200 },
   };
 
   const menuButtons = [
-    {
-      label: "General Settings",
-      icon: SlidersHorizontal,
-      onClick: () => console.log("Opening General Settings...")
-    },
+    // {
+    //   label: "General Settings",
+    //   icon: SlidersHorizontal,
+    //   onClick: () => console.log("Opening General Settings...")
+    // },
     {
       label: "Theme",
       icon: Palette,
       onClick: () => (showThemeOptions = !showThemeOptions),
-      hasSubmenu: true
+      hasSubmenu: true,
     },
-    {
-      label: "Keyboard Shortcuts",
-      icon: Keyboard,
-      onClick: () => console.log("Opening Keyboard Shortcuts...")
-    },
-    {
-      label: "About",
-      icon: Info,
-      onClick: () => console.log("Opening About...")
-    }
+    // {
+    //   label: "Keyboard Shortcuts",
+    //   icon: Keyboard,
+    //   onClick: () => console.log("Opening Keyboard Shortcuts...")
+    // },
+    // {
+    //   label: "About",
+    //   icon: Info,
+    //   onClick: () => console.log("Opening About...")
+    // }
   ];
 
   const handleCloseEvent = (e: MouseEvent | KeyboardEvent) => {
@@ -58,7 +58,7 @@
 
   // Store the original theme when opening the menu
   const storeOriginalTheme = () => {
-    ThemeStore.states.subscribe(v => {
+    ThemeStore.states.subscribe((v) => {
       originalTheme = v.currentTheme;
     })();
   };
@@ -91,7 +91,7 @@
         showThemeOptions = false;
         resetTheme(); // Reset to original theme when closing without selecting
       }
-    })
+    }),
   ];
 
   // Apply theme and close menu
@@ -102,7 +102,7 @@
   };
 
   onDestroy(() => {
-    unsubscribe.forEach(unsub => unsub());
+    unsubscribe.forEach((unsub) => unsub());
     document.removeEventListener("click", handleCloseEvent);
     document.removeEventListener("keydown", handleCloseEvent);
     resetTheme(); // Ensure theme is reset if component is destroyed while previewing
@@ -117,7 +117,8 @@
     class:opacity-100={settingsVisible}
     class:translate-y-5={!settingsVisible}
     class:opacity-0={!settingsVisible}
-    style="bottom: {layout.position.bottom}px; left: {layout.position.left}px; width: {layout.dimensions.width}px;"
+    style="bottom: {layout.position.bottom}px; left: {layout.position
+      .left}px; width: {layout.dimensions.width}px;"
   >
     {#each menuButtons as { label, icon: Icon, onClick, hasSubmenu }}
       <button

@@ -5,78 +5,107 @@
     Palette,
     Keyboard,
     Info,
-    X,
   } from "lucide-svelte";
-  import { onDestroy, type Component } from "svelte";
-  import settingsMenuState from "../stores/settings-menu.store";
+  import { onDestroy } from "svelte";
+  import settingsMenuStore from "../stores/settings-menu.store";
   import ThemeStore from "../stores/theme.store";
   import type { Theme } from "../types/theme";
-  import settingsMenuStore from "../stores/settings-menu.store";
 
   let settingsVisible = $state(false);
-  let buttonPosition = { top: 150, left: 44, bottom: 15 };
-  let boxDimensions = { width: 200, height: 200 };
-  let themes: Theme[] = $state([]);
-  let currentTheme: Theme | undefined = undefined;
   let showThemeOptions = $state(false);
-
-  const unsubscribeThemeStore = ThemeStore.states.subscribe((v) => {
-    currentTheme = v.currentTheme;
-    themes = v.themes;
-  });
+  let self: HTMLElement | null = $state(null);
+  let themes: Theme[] = $state([]);
+  let originalTheme: Theme | undefined;
+  
+  const layout = {
+    position: { top: 150, left: 44, bottom: 15 },
+    dimensions: { width: 200, height: 200 }
+  };
 
   const menuButtons = [
     {
       label: "General Settings",
-      onClick: () => console.log("Opening General Settings..."),
+      icon: SlidersHorizontal,
+      onClick: () => console.log("Opening General Settings...")
     },
-    { label: "Theme", onClick: () => (showThemeOptions = !showThemeOptions) },
+    {
+      label: "Theme",
+      icon: Palette,
+      onClick: () => (showThemeOptions = !showThemeOptions),
+      hasSubmenu: true
+    },
     {
       label: "Keyboard Shortcuts",
-      onClick: () => console.log("Opening Keyboard Shortcuts..."),
+      icon: Keyboard,
+      onClick: () => console.log("Opening Keyboard Shortcuts...")
     },
-    { label: "About", onClick: () => console.log("Opening About...") },
-    { label: "Close", onClick: () => settingsMenuState.toggleSettingsMenu() },
+    {
+      label: "About",
+      icon: Info,
+      onClick: () => console.log("Opening About...")
+    }
   ];
 
-  const unsubscribeSettingsMenuStore = settingsMenuState.subscribe((state) => {
-    settingsVisible = state.settingsMenuVisible;
-  });
-
-  onDestroy(() => {
-    unsubscribeSettingsMenuStore();
-    unsubscribeThemeStore();
-    document.removeEventListener("click", closeSettingsOnClickOutside);
-  });
-
-  const changeTheme = (theme: Theme) => {
-    ThemeStore.updateCurrentThemeState(theme);
-    showThemeOptions = false;
-    settingsVisible = false;
-  };
-
-  let self: HTMLElement | null = $state(null);
-
-  function closeSettingsOnClickOutside(e: MouseEvent) {
-    if (!self?.contains(e.target as Node)) {
+  const handleCloseEvent = (e: MouseEvent | KeyboardEvent) => {
+    if (
+      (e instanceof MouseEvent && !self?.contains(e.target as Node)) ||
+      (e instanceof KeyboardEvent && e.key === "Escape")
+    ) {
       e.stopPropagation();
       settingsMenuStore.toggleSettingsMenu();
-      document.removeEventListener("click", closeSettingsOnClickOutside);
     }
-  }
+  };
 
-  function closeSettingsOnEscape(e: KeyboardEvent) {
-    if (e.key === "Escape") {
-      settingsMenuStore.toggleSettingsMenu();
-      document.removeEventListener("keydown", closeSettingsOnEscape);
-    }
-  }
+  // Store the original theme when opening the menu
+  const storeOriginalTheme = () => {
+    ThemeStore.states.subscribe(v => {
+      originalTheme = v.currentTheme;
+    })();
+  };
 
-  $effect(() => {
-    if (self) {
-      document.addEventListener("click", closeSettingsOnClickOutside);
-      document.addEventListener("keydown", closeSettingsOnEscape);
+  // Preview theme on hover
+  const previewTheme = (theme: Theme) => {
+    ThemeStore.updateCurrentThemeState(theme);
+  };
+
+  // Restore original theme when mouse leaves
+  const resetTheme = () => {
+    if (originalTheme) {
+      ThemeStore.updateCurrentThemeState(originalTheme);
     }
+  };
+
+  const unsubscribe = [
+    ThemeStore.states.subscribe((v) => {
+      themes = v.themes;
+    }),
+    settingsMenuStore.subscribe((state) => {
+      settingsVisible = state.settingsMenuVisible;
+      if (state.settingsMenuVisible) {
+        document.addEventListener("click", handleCloseEvent);
+        document.addEventListener("keydown", handleCloseEvent);
+        storeOriginalTheme(); // Store original theme when opening menu
+      } else {
+        document.removeEventListener("click", handleCloseEvent);
+        document.removeEventListener("keydown", handleCloseEvent);
+        showThemeOptions = false;
+        resetTheme(); // Reset to original theme when closing without selecting
+      }
+    })
+  ];
+
+  // Apply theme and close menu
+  const changeTheme = (theme: Theme) => {
+    ThemeStore.updateCurrentThemeState(theme);
+    originalTheme = theme; // Update original theme to the new selection
+    settingsMenuStore.toggleSettingsMenu();
+  };
+
+  onDestroy(() => {
+    unsubscribe.forEach(unsub => unsub());
+    document.removeEventListener("click", handleCloseEvent);
+    document.removeEventListener("keydown", handleCloseEvent);
+    resetTheme(); // Ensure theme is reset if component is destroyed while previewing
   });
 </script>
 
@@ -88,28 +117,18 @@
     class:opacity-100={settingsVisible}
     class:translate-y-5={!settingsVisible}
     class:opacity-0={!settingsVisible}
-    style="bottom: {buttonPosition.bottom}px; left: {buttonPosition.left}px; width: {boxDimensions.width}px;"
+    style="bottom: {layout.position.bottom}px; left: {layout.position.left}px; width: {layout.dimensions.width}px;"
   >
-    {#each menuButtons as { label, onClick }}
+    {#each menuButtons as { label, icon: Icon, onClick, hasSubmenu }}
       <button
         class="w-full p-1 rounded-lg text-left text-text cursor-pointer transition-all duration-300 text-sm hover:bg-surface1 focus:bg-surface1 flex flex-row justify-between items-center"
         onclick={onClick}
       >
         <div class="flex flex-row gap-1.5 items-center">
-          {#if label === "Theme"}
-            <Palette class="w-4 h-4" />
-          {:else if label === "General Settings"}
-            <SlidersHorizontal class="w-4 h-4" />
-          {:else if label === "Keyboard Shortcuts"}
-            <Keyboard class="w-4 h-4" />
-          {:else if label === "About"}
-            <Info class="w-4 h-4" />
-          {:else if label === "Close"}
-            <X class="w-4 h-4" />
-          {/if}
+          <Icon class="w-4 h-4" />
           {label}
         </div>
-        {#if label === "Theme"}
+        {#if hasSubmenu}
           <ChevronRight class="w-4 h-4" />
         {/if}
       </button>
@@ -117,15 +136,17 @@
 
     {#if showThemeOptions}
       <div
+        role="menu"
+        tabindex="0"
         class="absolute left-full rounded-lg p-1 bottom-[58%] mt-8 ml-1 w-max bg-base shadow-xl"
-        style="width: {boxDimensions.width}px;"
+        style="width: {layout.dimensions.width}px;"
+        onmouseleave={resetTheme}
       >
         {#each themes as theme}
           <button
             class="w-full p-1 rounded-lg text-left text-text bg-transparent cursor-pointer transition-all duration-300 text-sm hover:bg-surface1 focus:bg-surface1"
-            onclick={() => {
-              changeTheme(theme), settingsMenuState.toggleSettingsMenu();
-            }}
+            onmouseenter={() => previewTheme(theme)}
+            onclick={() => changeTheme(theme)}
           >
             {theme.name}
           </button>

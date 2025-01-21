@@ -73,7 +73,7 @@
   >
     {#each tabs as tab}
       <button
-        class={`flex justify-left items-center px-4 text-nowrap h-[30px] min-w-[120px] rounded-[18px] flex-shrink text-text hover:bg-surface1 ${currentTab?.id === tab.id ? "bg-surface0" : ""}`}
+        class={`flex justify-left items-center px-4 text-nowrap h-[30px] w-fit rounded-[18px] flex-shrink text-text hover:bg-surface1 ${currentTab?.id === tab.id ? "bg-surface0" : ""}`}
         class:active={currentTab?.id === tab.id}
         role="tab"
         aria-controls="editor"

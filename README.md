@@ -69,6 +69,12 @@ Run this command in your terminal:
 curl -f https://raw.githubusercontent.com/rhyolite-org/Rhyolite/master/packaging/linux/install.sh | sh
 ```
 
+To Uninstall:
+
+```bash
+curl -f https://raw.githubusercontent.com/rhyolite-org/rhyolite/refs/heads/master/packaging/linux/uninstall.sh | sh
+```
+
 #### Debian/Ubuntu
 
 - Install the .deb package from the Releases section.

@@ -77,10 +77,15 @@
           blockquote: {
             HTMLAttributes: {
               class:
-                "border-l-2 border-subtext2 m-1 p-2 w-fit text-text text-lg bg-base/60 font-normal not-italic leading-none before:content-none after:content-none",
+                "border-l-2 border-subtext2 m-1 p-4 w-fit text-text text-base bg-base/60 font-normal not-italic leading-none before:content-none after:content-none",
             },
           },
           paragraph: false,
+          code: {
+            HTMLAttributes: {
+              class: "bg-surface0 text-text font-normal",
+            },
+          },
         }),
         CustomParagraph,
         CustomHeader,

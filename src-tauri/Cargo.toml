@@ -41,7 +41,11 @@ incremental = true # Compile your binary in smaller steps.
 
 [profile.release]
 codegen-units = 1 # Allows LLVM to perform better optimization.
-lto = true # Enables link-time-optimizations.
-opt-level = 3 # Prioritizes speed. Use `z` if you prefer small binary size.
+lto = true        # Enables link-time-optimizations.
+opt-level = 3     # Prioritizes speed. Use `z` if you prefer small binary size.
 # panic = "abort" # Higher performance by disabling panic handlers.
 strip = true # Ensures debug symbols are removed.
+
+[target.x86_64-unknown-linux-gnu]
+linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]

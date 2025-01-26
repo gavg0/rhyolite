@@ -1,0 +1,127 @@
+[
+  {
+    "title": "General",
+    "description": "General settings",
+    "setting": [
+      {
+        "title": "Language",
+        "description": "Language settings",
+        "select": [
+          "English"
+        ],
+        "check": null,
+        "selected": "English"
+      },
+      {
+        "title": "Checkbox test",
+        "description": "Checkbox test",
+        "select": null,
+        "check": true,
+        "selected": null
+      }
+    ]
+  },
+  {
+    "title": "Appearance",
+    "description": "Appearance settings",
+    "setting": [
+      {
+        "title": "Theme",
+        "description": "Theme settings",
+        "select": [
+          "Light",
+          "Dark",
+          "Custom"
+        ],
+        "check": null,
+        "selected": "Custom"
+      },
+      {
+        "title": "App Font",
+        "description": "Select a font to use in the app",
+        "select": [
+          "Roboto",
+          "Arial",
+          "Times New Roman",
+          "Courier New"
+        ],
+        "check": null,
+        "selected": "Roboto"
+      },
+      {
+        "title": "App Font Size",
+        "description": "Select a font size to use in the app",
+        "select": [
+          "Small",
+          "Medium",
+          "Large"
+        ],
+        "check": null,
+        "selected": "Medium"
+      },
+      {
+        "title": "App Font Weight",
+        "description": "Select a font weight to use in the app",
+        "select": [
+          "Light",
+          "Regular",
+          "Bold"
+        ],
+        "check": null,
+        "selected": "Regular"
+      },
+      {
+        "title": "Editor Font",
+        "description": "Select a font to use in the editor",
+        "select": [
+          "Roboto",
+          "Arial",
+          "Times New Roman",
+          "Courier New"
+        ],
+        "check": null,
+        "selected": "Roboto"
+      },
+      {
+        "title": "Editor Font Size",
+        "description": "Select a font size to use in the editor",
+        "select": [
+          "Small",
+          "Medium",
+          "Large"
+        ],
+        "check": null,
+        "selected": "Medium"
+      },
+      {
+        "title": "Editor Font Weight",
+        "description": "Select a font weight to use in the editor",
+        "select": [
+          "Light",
+          "Regular",
+          "Bold"
+        ],
+        "check": null,
+        "selected": "Regular"
+      }
+    ]
+  },
+  {
+    "title": "Shortcuts",
+    "description": "Shortcuts settings",
+    "setting": [
+      {
+        "title": "Checkbox test",
+        "description": "Checkbox test",
+        "select": null,
+        "check": false,
+        "selected": null
+      }
+    ]
+  },
+  {
+    "title": "Sync",
+    "description": "Sync settings",
+    "setting": []
+  }
+]

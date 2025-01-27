@@ -11,13 +11,6 @@
         ],
         "check": null,
         "selected": "English"
-      },
-      {
-        "title": "Checkbox test",
-        "description": "Checkbox test",
-        "select": null,
-        "check": true,
-        "selected": null
       }
     ]
   },
@@ -34,7 +27,7 @@
           "Custom"
         ],
         "check": null,
-        "selected": "Custom"
+        "selected": "Dark"
       },
       {
         "title": "App Font",
@@ -46,7 +39,7 @@
           "Courier New"
         ],
         "check": null,
-        "selected": "Roboto"
+        "selected": "Times New Roman"
       },
       {
         "title": "App Font Size",
@@ -111,11 +104,103 @@
     "description": "Shortcuts settings",
     "setting": [
       {
-        "title": "Checkbox test",
-        "description": "Checkbox test",
-        "select": null,
+        "title": "Delete Document",
+        "description": "Delete the current document",
+        "select": [
+          "Ctrl+D",
+          "Cmd+D",
+          "Delete"
+        ],
+        "check": null,
+        "selected": "meta+backspace"
+      },
+      {
+        "title": "Close Tab",
+        "description": "Close the current tab",
+        "select": [
+          "Ctrl+C",
+          "Cmd+W",
+          "Alt+F4"
+        ],
+        "check": null,
+        "selected": "meta+w"
+      },
+      {
+        "title": "New Document",
+        "description": "Create a new document",
+        "select": [
+          "Ctrl+N",
+          "Cmd+N",
+          "Alt+N"
+        ],
         "check": false,
-        "selected": null
+        "selected": "meta+n"
+      },
+      {
+        "title": "Toggle Toolbar",
+        "description": "Show/hide the toolbar",
+        "select": [
+          "Ctrl+T",
+          "Cmd+T",
+          "F11"
+        ],
+        "check": null,
+        "selected": "meta+b"
+      },
+      {
+        "title": "Cycle Tabs",
+        "description": "Switch between tabs",
+        "select": [
+          "Ctrl+Tab",
+          "Cmd+`",
+          "Alt+Tab"
+        ],
+        "check": null,
+        "selected": "meta+a"
+      },
+      {
+        "title": "Force Close Tab",
+        "description": "Force close the current tab",
+        "select": [
+          "Ctrl+Alt+C",
+          "Cmd+Alt+W",
+          "Shift+Alt+F4"
+        ],
+        "check": null,
+        "selected": "ctrl+c"
+      },
+      {
+        "title": "Go to First Tab",
+        "description": "Switch to the first tab",
+        "select": [
+          "Ctrl+1",
+          "Cmd+1",
+          "Alt+1"
+        ],
+        "check": null,
+        "selected": "ctrl+1"
+      },
+      {
+        "title": "Go to Last Tab",
+        "description": "Switch to the last tab",
+        "select": [
+          "Ctrl+9",
+          "Cmd+9",
+          "Alt+9"
+        ],
+        "check": null,
+        "selected": "ctrl+2"
+      },
+      {
+        "title": "Command Palette",
+        "description": "Open the command palette",
+        "select": [
+          "Ctrl+P",
+          "Cmd+P",
+          "F1"
+        ],
+        "check": null,
+        "selected": "ctrl+3"
       }
     ]
   },
